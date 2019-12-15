@@ -1,0 +1,12 @@
+mklink %0\..\Debug\openal32.dll "%LIBPATH%\SFML-2.5.1\bin\openal32.dll"
+mklink %0\..\Debug\sfml-audio-2.dll "%LIBPATH%\SFML-2.5.1\bin\sfml-audio-2.dll"
+mklink %0\..\Debug\sfml-audio-d-2.dll "%LIBPATH%\SFML-2.5.1\bin\sfml-audio-d-2.dll"
+mklink %0\..\Debug\sfml-graphics-2.dll "%LIBPATH%\SFML-2.5.1\bin\sfml-graphics-2.dll"
+mklink %0\..\Debug\sfml-graphics-d-2.dll "%LIBPATH%\SFML-2.5.1\bin\sfml-graphics-d-2.dll"
+mklink %0\..\Debug\sfml-network-2.dll "%LIBPATH%\SFML-2.5.1\bin\sfml-network-2.dll"
+mklink %0\..\Debug\sfml-network-d-2.dll "%LIBPATH%\SFML-2.5.1\bin\sfml-network-d-2.dll"
+mklink %0\..\Debug\sfml-system-2.dll "%LIBPATH%\SFML-2.5.1\bin\sfml-system-2.dll"
+mklink %0\..\Debug\sfml-system-d-2.dll "%LIBPATH%\SFML-2.5.1\bin\sfml-system-d-2.dll"
+mklink %0\..\Debug\sfml-window-2.dll "%LIBPATH%\SFML-2.5.1\bin\sfml-window-2.dll"
+mklink %0\..\Debug\sfml-window-d-2.dll "%LIBPATH%\SFML-2.5.1\bin\sfml-window-d-2.dll"
+pause
