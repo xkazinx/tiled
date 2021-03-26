@@ -8,9 +8,7 @@ private:
 	std::random_device _rd;
 
 public:
-	Random() {
-		_mt = mk<std::mt19937>(_rd());
-	}
+	Random();
 
 	~Random();
 
@@ -29,13 +27,5 @@ public:
 		return T(0);
 	}
 
-	bool Probability(const float & num) {
-		if (num > 1.f)
-			return true;
-		else if (num < 0.f)
-			return false;
-
-		std::bernoulli_distribution d(num);
-		return d(get());
-	}
+	bool Probability(const float & num);
 };

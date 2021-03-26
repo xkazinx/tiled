@@ -1,5 +1,4 @@
 #pragma once
-#include <Ultralight/Ultralight.h>
 #include "FpsCounter.h"
 
 class App

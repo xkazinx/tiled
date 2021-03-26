@@ -21,4 +21,7 @@ public:
 	Player * GetPlayer();
 
 	vector<unique_ptr<Object>> _objects;
+
+	u16 _proyectiles_hit, _proyectiles_missed,
+		enemies_killed, enemies_missed;
 };
