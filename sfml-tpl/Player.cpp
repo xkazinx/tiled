@@ -1,21 +1,72 @@
 #include "stdafx.h"
 #include "Player.h"
 #include "Camera.h"
+#include "SGame.h"
+#include "SceneMgr.h"
+#include "PNormal.h"
 
 Player::Player(const Vector2f & pos) 
 	: Object(pos, ObjectID::Player),
-	_triangle(20.f, 3)
+	_triangle(20.f, 3),
+	_weapon(Weapon::Normal)
 {
 	_triangle.setOrigin({ _triangle.getRadius(), _triangle.getRadius() });
 	_triangle.rotate(90.f);
+
+	_circles[0].setFillColor(sf::Color::Red);
+	_circles[0].setRadius(10.f);
+	_circles[0].setPosition({ -18.f, -25.f });
+	
+	_circles[1].setFillColor(sf::Color::Red);
+	_circles[1].setRadius(10.f);
+	_circles[1].setPosition({ -18.f, 5.f });
 }
 
 Player::~Player()
 {
 }
 
+void Player::Render(TargetStatesRef && ts) const
+{
+	if (_weapon != Weapon::Normal)
+	{
+		ts().draw(_circles[0], ts.states);
+		ts().draw(_circles[1], ts.states);
+	}
+
+	ts().draw(_triangle, ts.states);
+}
+
 void Player::Update(const sf::Time & delta)
 {
+	static sf::Clock timer;
+	if (Key::isKeyPressed(Key::A))
+	{
+		if (timer.getElapsedTime().asMilliseconds() >= 100)
+		{
+			timer.restart();
+
+			auto& pos = g_player->getPosition();
+			switch (g_player->_weapon)
+			{
+			case Weapon::Normal:
+				g_game->_projectiles.push_back(mk<PNormal>(
+					g_player->getPosition()
+					));
+				break;
+
+			case Weapon::Triple:
+				for (u8 i = 0; i < 3; i++)
+				{
+					g_game->_projectiles.push_back(mk<PNormal>(
+						sf::Vector2f{ pos.x, pos.y - 15.f + (i * 15.f) })
+					);
+				}
+				break;
+			}
+		}
+	}
+
 	constexpr auto camera_velocity = .05f;
 	Vector2f velocity(camera_velocity, 0.f);
 
@@ -64,5 +115,30 @@ void Player::Update(const sf::Time & delta)
 		}
 
 		setPosition(pos);
+	}
+}
+
+void Player::SetWeapon(Weapon weapon)
+{
+	_weapon = weapon;
+	switch (weapon)
+	{
+	case Weapon::Normal:
+		
+		break;
+
+	case Weapon::Laser:
+		for (auto& circle : _circles)
+		{
+			circle.setFillColor(sf::Color::Green);
+		}
+		break;
+
+	case Weapon::Triple:
+		for (auto& circle : _circles)
+		{
+			circle.setFillColor(sf::Color::Blue);
+		}
+		break;
 	}
 }

@@ -10,6 +10,8 @@ class Background;
 class Button;
 class Player;
 class Object;
+class SGame;
+class Player;
 
 #define DEBUG_MODE
 
@@ -22,6 +24,9 @@ namespace global
 	extern unique_ptr<Camera> g_camera;
 	extern unique_ptr<TextMgr> g_text;
 	extern unique_ptr<Random> g_rand;
+
+	extern SGame* g_game;
+	extern Player* g_player;
 
 	extern RenderWindow & GetWindow();
 
@@ -136,10 +141,20 @@ enum class ObjectID : u8 {
 
 	None,
 	Player,
-	Projectile,
+	PNormal,
+	PDot,
 	Enemy,
 	Star,
 	Background,
+	Max,
+};
+
+enum class Weapon : u8
+{
+	Normal,
+	Triple,
+	Laser,
+	Dot,
 	Max,
 };
 

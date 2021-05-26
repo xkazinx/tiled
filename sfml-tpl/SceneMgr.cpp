@@ -12,6 +12,8 @@ SceneMgr::SceneMgr()
 	At(ID::Main) = mk<SMain>();
 	At(ID::Game) = mk<SGame>();
 
+	g_game = (SGame*)At(ID::Game).get();
+
 	Set(ID::Main);
 }
 

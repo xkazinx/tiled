@@ -18,9 +18,8 @@ public:
 		return _objects[0];
 	}
 
-	Player * GetPlayer();
-
 	vector<unique_ptr<Object>> _objects;
+	vector<unique_ptr<Object>> _projectiles;
 
 	u16 _proyectiles_hit, _proyectiles_missed,
 		enemies_killed, enemies_missed;

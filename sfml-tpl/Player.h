@@ -8,13 +8,13 @@ public:
 
 	~Player();
 	
-	void Render(TargetStatesRef && ts) const override {
-		ts().draw(_triangle, ts.states);
-	}
+	void Render(TargetStatesRef && ts) const override;
 
-	sf::CircleShape _triangle;
+	sf::CircleShape _triangle, _circles[2];
 	sf::Vector2f _velocity;
 
 	void Update(const sf::Time & delta) override;
+	void SetWeapon(Weapon weapon);
+	Weapon _weapon;
 };
 

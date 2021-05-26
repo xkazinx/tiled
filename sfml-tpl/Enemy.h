@@ -20,6 +20,8 @@ public:
 
 	void HandleCollition(const Object * object);
 
+	sf::Clock _fire_timer;
+private:
 	bool _HasExpired() const override;
 };
 

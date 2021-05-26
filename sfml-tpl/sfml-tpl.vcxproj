@@ -166,8 +166,9 @@
     <ClInclude Include="FpsCounter.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="PDot.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="Projectile.h" />
+    <ClInclude Include="PNormal.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneMgr.h" />
@@ -188,8 +189,9 @@
     <ClCompile Include="FpsCounter.cpp" />
     <ClCompile Include="global.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="PDot.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="PNormal.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneMgr.cpp" />

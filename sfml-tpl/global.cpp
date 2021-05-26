@@ -13,6 +13,9 @@ namespace global
 	unique_ptr<TextMgr> g_text;
 	unique_ptr<Random> g_rand;
 
+	SGame* g_game;
+	Player* g_player;
+
 	RenderWindow & GetWindow() {
 		return g_app->_window;
 	}
@@ -36,9 +39,9 @@ namespace global
 	{
 		void Initialize() {
 			// unordered
-
 			g_rand = mk<Random>();
 			g_text = mk<TextMgr>();
+
 
 			// ordered
 			g_camera = mk<Camera>();

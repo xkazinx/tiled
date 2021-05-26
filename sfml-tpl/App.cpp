@@ -67,12 +67,12 @@ App * App::Tick()
 			g_scene->Update(elapsed);
 		}, [&]()
 		{
-			_window.setView(*g_camera.get());
-			_window.draw(*g_camera.get());
+			_window.setView(*g_camera);
+			_window.draw(*g_camera);
 			_window.setView(_window.getDefaultView());
 		});
 
-		//this_thread::sleep_for(chrono::milliseconds(1));
+		this_thread::sleep_for(chrono::milliseconds(1));
 	}
 
 	return this;

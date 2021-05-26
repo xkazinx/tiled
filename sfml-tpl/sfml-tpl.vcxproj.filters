@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="main">
+      <UniqueIdentifier>{c5858c36-4c2a-4f07-96e6-b256326233f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\app">
+      <UniqueIdentifier>{a2ae25f5-a17b-415a-881e-c427a1c9a0fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\ph">
+      <UniqueIdentifier>{23f1edb3-f2e9-461b-b454-d9b1a3ccf4e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\tick">
+      <UniqueIdentifier>{4e7fd040-6b3b-479a-8c61-ad84661ec30c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\tick\fps">
+      <UniqueIdentifier>{1c730ab8-24ae-4009-958d-c3089e01f756}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ui">
+      <UniqueIdentifier>{35947048-8c43-4a68-9b1e-11ffa5b509b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scene">
+      <UniqueIdentifier>{7468f047-c6c8-464c-a84e-0fed3f580422}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="global.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="App.h">
+      <Filter>main\app</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>main\ph</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>main\ph</Filter>
+    </ClInclude>
+    <ClInclude Include="Ticker.h">
+      <Filter>main\tick</Filter>
+    </ClInclude>
+    <ClInclude Include="FpsCounter.h">
+      <Filter>main\tick\fps</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Object.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Background.h" />
+    <ClInclude Include="Random.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="Button.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="TextMgr.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="UIComponent.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneMgr.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SGame.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SMain.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="PNormal.h" />
+    <ClInclude Include="PDot.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="global.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="sfml-tpl.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>main\app</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>main\ph</Filter>
+    </ClCompile>
+    <ClCompile Include="Ticker.cpp">
+      <Filter>main\tick</Filter>
+    </ClCompile>
+    <ClCompile Include="FpsCounter.cpp">
+      <Filter>main\tick\fps</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Background.cpp" />
+    <ClCompile Include="Random.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Button.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="TextMgr.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="UIComponent.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneMgr.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SGame.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SMain.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="PNormal.cpp" />
+    <ClCompile Include="PDot.cpp" />
+  </ItemGroup>
+</Project>
