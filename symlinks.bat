@@ -9,4 +9,6 @@ mklink %0\..\deploy\client\sfml-system-2.dll "%LIBPATH%\SFML-2.5.1\bin\sfml-syst
 mklink %0\..\deploy\client\sfml-system-d-2.dll "%LIBPATH%\SFML-2.5.1\bin\sfml-system-d-2.dll"
 mklink %0\..\deploy\client\sfml-window-2.dll "%LIBPATH%\SFML-2.5.1\bin\sfml-window-2.dll"
 mklink %0\..\deploy\client\sfml-window-d-2.dll "%LIBPATH%\SFML-2.5.1\bin\sfml-window-d-2.dll"
+mklink /d "%LIBPATH%\MySQL Connector C 6.1" "%ProgramFiles(x86)%\MySQL\MySQL Connector C 6.1"
+mklink %0\..\deploy\server\libmysql.dll "%ProgramFiles(x86)%\MySQL\MySQL Connector C 6.1\lib\libmysql.dll"
 pause
