@@ -60,4 +60,7 @@
 - Use Visual Studio's `Live Share` (download from Visual Studio 2019 itself)
 
 - Use [Google Drive](https://www.google.com/intl/es/drive/download/) to sync the compiled `client.exe` and `server.exe`
-> So when using `Live Share` and host's computer compiles the projects, it could be set with `symlinks` so that the compiled files are shared with the host and the participants
+  > So when using `Live Share` and host's computer compiles the projects, it could be set with `symlinks` so that the compiled files are shared with the host and the participants
+
+- Use [AnyDesk](https://anydesk.com/es) in case we both need remote access
+  > Like, to see something in the same executable, code synchronously, or debug at the same time
