@@ -2,21 +2,22 @@
 #include "Random.h"
 
 Random::Random()
+	: _engine(_device())
 {
-	_mt = mk<std::mt19937>(_rd());
+
 }
 
 Random::~Random()
 {
 }
 
-bool Random::Probability(const float & num)
+bool Random::Probability(float num)
 {
 	if(num > 1.f)
 		return true;
 	else if(num < 0.f)
 		return false;
 
-	std::bernoulli_distribution d(num);
-	return d(get());
+	std::bernoulli_distribution dist(num);
+	return dist(_engine);
 }

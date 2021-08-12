@@ -1,15 +1,11 @@
 #include "stdafx.h"
 #include "App.h"
 
-#include "Ticker.h"
-#include "Camera.h"
-#include "SceneMgr.h"
-
 App::App()
 {
+	g_app = this;
 	global::app::Initialize();
-
-	_CreateWindow();
+	InitializeWindow();
 }
 
 App::~App()
@@ -17,9 +13,9 @@ App::~App()
 	global::app::Deinitialize();
 }
 
-void App::_CreateWindow()
+void App::InitializeWindow()
 {
-	ContextSettings settings;
+	/*ContextSettings settings;
 	{
 		settings.depthBits = 24;
 		settings.stencilBits = 8;
@@ -34,64 +30,30 @@ void App::_CreateWindow()
 	_window.setActive(true);
 	_window.setVerticalSyncEnabled(true);
 
-	// Initialise GLEW for the extended functions.
-	glewExperimental = GL_TRUE;
-	if (glewInit() != GLEW_OK)
-	{
-		cout << "glewInit != GLEW_OK";
-		return;
-	}
-
-	_AdjustViewport(_window.getSize().x, _window.getSize().y);
+	AdjustViewport(_window.getSize().x, _window.getSize().y);*/
 }
 
-void App::_AdjustViewport(const GLsizei & x, const GLsizei & y)
+void App::AdjustViewport(const GLsizei & x, const GLsizei & y)
 {
 	// Configure the viewport (the same size as the window)
 	glViewport(0, 0, x, y);
 }
 
-App * App::Tick() 
+int App::Tick() 
 {
 	glClearColor(0.f, 0.f, 0.f, 1.f);
 	
-	Ticker ticker;
 	while (_window.isOpen())
 	{
 		if (!HandleEvents())
 			break;
 
-		ticker.Tick([&]()
-		{
-			sf::Time elapsed = _delta_clock.restart();
-			g_scene->Update(elapsed);
-		}, [&]()
-		{
-			_window.setView(*g_camera);
-			_window.draw(*g_camera);
-			_window.setView(_window.getDefaultView());
-		});
+		// Update
+		// Render
 
 		this_thread::sleep_for(chrono::milliseconds(1));
 	}
 
-	return this;
-}
-
-void App::Render() 
-{ 
-	auto gl_states = [&]() 
-	{
-		_window.pushGLStates();
-		return mk<Guard>([&]() {
-			_window.popGLStates();
-		});
-	};
-}
-
-int App::Destroy() 
-{
-	g_app.reset();
 	return 0;
 }
 
@@ -102,18 +64,19 @@ bool App::HandleEvents()
 	{
 		if (event.type == sf::Event::Closed)
 		{
-			_window.close();
+			//_window.close();
 			return false;
 		}
 
 		// Adjust the viewport when the window is resized
 		if (event.type == sf::Event::Resized)
 		{
-			auto _ = WindowGuard();
-			_AdjustViewport(event.size.width, event.size.height);
+			//auto _ = WindowGuard();
+			//_AdjustViewport(event.size.width, event.size.height);
 		}
-		else {
-			g_scene->HandleEvent(event);
+		else 
+		{
+			//g_scene->HandleEvent(event);
 		}
 	}
 
