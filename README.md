@@ -39,12 +39,12 @@
 10. Setup Debugging and opening with Ctrl+F5
 > Client
 - In `Solution Explorer`, right click the `client` project, press on `Properties`, and in `Debugging` set:
-> Make sure set `Configuration` at top as `All configurations` so that it applies both for Debug and Release
+  - Make sure to first set `Configuration` at top as `All configurations` so that it applies both for Debug and Release
 - Command: `$(SolutionDir)..\deploy\client\$(TargetName)$(TargetExt)`
 - Working Directory: `$(SolutionDir)..\deploy\client\`
 > Server
 - In `Solution Explorer`, right click the `server` project, press on `Properties`, and in `Debugging` set:
-> Make sure set `Configuration` at top as `All configurations` so that it applies both for Debug and Release
+  - Make sure to first set `Configuration` at top as `All configurations` so that it applies both for Debug and Release
 - Command: `$(SolutionDir)..\deploy\server\$(TargetName)$(TargetExt)`
 - Working Directory: `$(SolutionDir)..\deploy\server\`
 
