@@ -21,15 +21,29 @@
 5. Download [SFML](https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-32-bit.zip)
 - Extract in `LIBPATH` folder
 
-6. Download [ENet](http://enet.bespin.org/Downloads.html)
+6. Download and Compile [ENet](http://enet.bespin.org/Downloads.html)
 - Extract in `LIBPATH` folder
+- Run project `enet.dsp`
+- In `Solution Explorer`, right click the `enet` project, press on `Properties` and in `C/C++`->`General` change `Debug Information Format` from `Program Database for Edit and Continue (/ZI)` to `Program Database (/Zi)`
+- Build Solution (Ctrl+Shift+B) both in `Debug` and `Release` (the dropdown to toggle between them can be found at the top)
+> This will generate `enet.lib` to use it both in `Debug` and `Release` projects
 
-7. Clone repository
+7. Clone `tileship` repository
 
 8. Run `symlinks.bat` as Administrator
 > This will link `.dll` files from libraries placed at LIBPATH folder into the `deploy` project's directories
 
-9. Open `tileship.sln`
+9. Open `src\tileship.sln`
+- Build Solution (Ctrl+Shift+B)
 
-10. Build Solution (Ctrl+Shift+B)
+10. Setup Debugging and opening with Ctrl+F5
+> Client
+- In `Solution Explorer`, right click the `client` project, press on `Properties`, and in `Debugging` set:
+- Command: `$(SolutionDir)..\deploy\client\$(TargetName)$(TargetExt)`
+- Working Directory: `$(SolutionDir)..\deploy\client\`
+> Server
+- In `Solution Explorer`, right click the `server` project, press on `Properties`, and in `Debugging` set:
+- Command: `$(SolutionDir)..\deploy\server\$(TargetName)$(TargetExt)`
+- Working Directory: `$(SolutionDir)..\deploy\server\`
 
+> TODO: CREATE SERVER PROJECT AND EDIT SYMLINKS.BAT FOR MYSQL
