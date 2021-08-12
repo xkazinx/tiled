@@ -42,7 +42,7 @@ void App::AdjustViewport(const GLsizei & x, const GLsizei & y)
 int App::Tick() 
 {
 	glClearColor(0.f, 0.f, 0.f, 1.f);
-	
+
 	while (_window.isOpen())
 	{
 		if (!HandleEvents())

@@ -72,8 +72,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(LIBPATH)\SFML-2.5.1\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(LIBPATH)\SFML-2.5.1\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(LIBPATH)\enet-1.3.17\include;$(LIBPATH)\SFML-2.5.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LIBPATH)\enet-1.3.17\$(Configuration);$(LIBPATH)\SFML-2.5.1\lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)\..\build\$(ProjectName)\$(Configuration)\</OutDir>
+    <TargetName>$(ProjectName)_d</TargetName>
+    <IntDir>$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -82,8 +85,10 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(LIBPATH)\glew-2.1.0\include;$(LIBPATH)\freeglut\include;$(LIBPATH)\ultralight-sdk-0.9.1-win\include;$(LIBPATH)\SFML-2.5.0\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(LIBPATH)\glew-2.1.0\lib\Release\Win32;$(LIBPATH)\freeglut\lib;$(LIBPATH)\ultralight-sdk-0.9.1-win\lib\win\x86;$(LIBPATH)\SFML-2.5.0\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(LIBPATH)\enet-1.3.17\include;$(LIBPATH)\SFML-2.5.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LIBPATH)\enet-1.3.17\$(Configuration);$(LIBPATH)\SFML-2.5.1\lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)\..\build\$(ProjectName)\$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -97,12 +102,32 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeaderOutputFile>$(OutDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <ModuleDependenciesFile>$(OutDir)$(IntDir)</ModuleDependenciesFile>
+      <ProgramDataBaseFileName>$(OutDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName>$(OutDir)</XMLDocumentationFileName>
+      <BrowseInformationFile>$(OutDir)</BrowseInformationFile>
+      <ObjectFileName>$(OutDir)$(IntDir)</ObjectFileName>
+      <SourceDependenciesFile>$(OutDir)</SourceDependenciesFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>..\..\deploy\client\$(TargetName)$(TargetExt)</OutputFile>
+      <ManifestFile>$(OutDir)$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
+      <LinkTimeCodeGenerationObjectFile>$(OutDir)$(TargetName).iobj</LinkTimeCodeGenerationObjectFile>
+      <IncrementalLinkDatabaseFile>$(OutDir)$(TargetName).ilk</IncrementalLinkDatabaseFile>
     </Link>
+    <Manifest>
+      <OutputManifestFile>$(OutDir)$(TargetName)$(TargetExt).embed.manifest</OutputManifestFile>
+    </Manifest>
+    <ManifestResourceCompile>
+      <ResourceOutputFileName>$(OutDir)$(TargetName)$(TargetExt).embed.manifest.res</ResourceOutputFileName>
+    </ManifestResourceCompile>
+    <BuildLog>
+      <Path>$(OutDir)$(MSBuildProjectName).log</Path>
+    </BuildLog>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -130,14 +155,28 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeaderOutputFile>$(OutDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <ModuleDependenciesFile>$(OutDir)$(IntDir)</ModuleDependenciesFile>
+      <ProgramDataBaseFileName>$(OutDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <XMLDocumentationFileName>$(OutDir)</XMLDocumentationFileName>
+      <BrowseInformationFile>$(OutDir)</BrowseInformationFile>
+      <ObjectFileName>$(OutDir)$(IntDir)</ObjectFileName>
+      <SourceDependenciesFile>$(OutDir)</SourceDependenciesFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>winmm.lib;glew32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ManifestFile>$(OutDir)$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
+      <LinkTimeCodeGenerationObjectFile>$(OutDir)$(TargetName).iobj</LinkTimeCodeGenerationObjectFile>
+      <OutputFile>..\..\deploy\client\$(TargetName)$(TargetExt)</OutputFile>
+      <IncrementalLinkDatabaseFile>$(OutDir)$(TargetName).ilk</IncrementalLinkDatabaseFile>
     </Link>
+    <BuildLog>
+      <Path>$(OutDir)$(MSBuildProjectName).log</Path>
+    </BuildLog>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

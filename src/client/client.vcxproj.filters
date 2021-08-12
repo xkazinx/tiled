@@ -13,12 +13,6 @@
     <Filter Include="main\tick">
       <UniqueIdentifier>{4e7fd040-6b3b-479a-8c61-ad84661ec30c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ui">
-      <UniqueIdentifier>{35947048-8c43-4a68-9b1e-11ffa5b509b9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="scene">
-      <UniqueIdentifier>{7468f047-c6c8-464c-a84e-0fed3f580422}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="global.h">
