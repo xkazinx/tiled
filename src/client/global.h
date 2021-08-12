@@ -6,18 +6,15 @@ class Random;
 
 #define DEBUG_MODE
 
-namespace global
+namespace Global
 {
 	constexpr char kAppName[] = "Tileship";
 
 	extern App* g_app;
 	extern unique_ptr<Random> g_rand;
-
-	namespace app
-	{
-		extern void Initialize();
-		extern void Deinitialize();
-	}
+	
+	extern void Initialize();
+	extern void Deinitialize();
 
 	class Guard {
 	public:

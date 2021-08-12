@@ -4,13 +4,13 @@
 App::App()
 {
 	g_app = this;
-	global::app::Initialize();
+	Global::Initialize();
 	InitializeWindow();
 }
 
 App::~App()
 {
-	global::app::Deinitialize();
+	Global::Deinitialize();
 }
 
 void App::InitializeWindow()

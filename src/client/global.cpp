@@ -1,24 +1,21 @@
 #include "stdafx.h"
-#include "global.h"
+#include "Global.h"
 #include "Random.h"
 
-namespace global
+namespace Global
 {
 	App* g_app;
 	unique_ptr<Random> g_rand;
+	
+	void Initialize() {
+		// unordered
+		g_rand = make_unique<Random>();
 
-	namespace app
-	{
-		void Initialize() {
-			// unordered
-			g_rand = make_unique<Random>();
+		// ordered
+	}
 
-			// ordered
-		}
+	void Deinitialize() {
 
-		void Deinitialize() {
-
-		}
 	}
 }
 

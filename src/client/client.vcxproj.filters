@@ -1,47 +1,41 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="main">
-      <UniqueIdentifier>{c5858c36-4c2a-4f07-96e6-b256326233f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="main\app">
+    <Filter Include="app">
       <UniqueIdentifier>{a2ae25f5-a17b-415a-881e-c427a1c9a0fe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="main\ph">
+    <Filter Include="app\ph">
       <UniqueIdentifier>{23f1edb3-f2e9-461b-b454-d9b1a3ccf4e6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="main\tick">
-      <UniqueIdentifier>{4e7fd040-6b3b-479a-8c61-ad84661ec30c}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="global.h">
-      <Filter>main</Filter>
-    </ClInclude>
     <ClInclude Include="App.h">
-      <Filter>main\app</Filter>
+      <Filter>app</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
-      <Filter>main\ph</Filter>
+      <Filter>app\ph</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
-      <Filter>main\ph</Filter>
+      <Filter>app\ph</Filter>
     </ClInclude>
     <ClInclude Include="Random.h" />
+    <ClInclude Include="Global.h">
+      <Filter>app</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="global.cpp">
-      <Filter>main</Filter>
-    </ClCompile>
-    <ClCompile Include="sfml-tpl.cpp">
-      <Filter>main</Filter>
-    </ClCompile>
     <ClCompile Include="App.cpp">
-      <Filter>main\app</Filter>
+      <Filter>app</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
-      <Filter>main\ph</Filter>
+      <Filter>app\ph</Filter>
     </ClCompile>
     <ClCompile Include="Random.cpp" />
+    <ClCompile Include="main.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="Global.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
