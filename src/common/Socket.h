@@ -1,8 +1,5 @@
 #pragma once
 
-#include <string> // remove
-using namespace std;
-
 class Socket
 {
 public:

@@ -200,6 +200,14 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="Global.h" />
+    <ClInclude Include="imgui\imconfig.h" />
+    <ClInclude Include="imgui\imgui-SFML.h" />
+    <ClInclude Include="imgui\imgui-SFML_export.h" />
+    <ClInclude Include="imgui\imgui.h" />
+    <ClInclude Include="imgui\imgui_internal.h" />
+    <ClInclude Include="imgui\imstb_rectpack.h" />
+    <ClInclude Include="imgui\imstb_textedit.h" />
+    <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="LoginScene.h" />
     <ClInclude Include="Random.h" />
@@ -214,6 +222,12 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="Global.cpp" />
+    <ClCompile Include="imgui\imgui-SFML.cpp" />
+    <ClCompile Include="imgui\imgui.cpp" />
+    <ClCompile Include="imgui\imgui_demo.cpp" />
+    <ClCompile Include="imgui\imgui_draw.cpp" />
+    <ClCompile Include="imgui\imgui_tables.cpp" />
+    <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="LoginScene.cpp" />
     <ClCompile Include="Random.cpp" />

@@ -10,10 +10,13 @@ App::App()
 	g_sock->Connect("127.0.0.1", 1234);
 
 	InitializeWindow();
+
+	ImGui::SFML::Init(_window);
 }
 
 App::~App()
 {
+	ImGui::SFML::Shutdown();
 	Global::Deinitialize();
 }
 
@@ -45,9 +48,9 @@ void App::AdjustViewport(const GLsizei & x, const GLsizei & y)
 
 int App::Tick() 
 {
-	_window.clear(sf::Color::Black);
 
 	sf::RenderStates states;
+	sf::Clock delta_clock;
 
 	while (_window.isOpen())
 	{
@@ -55,11 +58,20 @@ int App::Tick()
 			break;
 		
 		HandleSocket();
-		
+
 		// Update
 		g_scene->Tick();
+		ImGui::SFML::Update(_window, delta_clock.restart());
+
+		ImGui::Begin("Hello, world!");
+		ImGui::Button("Look at this pretty button");
+		ImGui::End();
+
+		_window.clear(sf::Color::Black);
+
 		// Render
 		g_scene->Render(_window, states);
+		ImGui::SFML::Render(_window);
 
 		_window.display();
 
@@ -72,8 +84,11 @@ int App::Tick()
 bool App::HandleEvents()
 {
 	sf::Event ev;
+
 	while (_window.pollEvent(ev))
 	{
+		ImGui::SFML::ProcessEvent(ev);
+
 		if (ev.type == sf::Event::Closed)
 		{
 			//_window.close();
