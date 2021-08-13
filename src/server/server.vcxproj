@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(LIBPATH)/MySQL Connector C 6.1/include;$(LIBPATH)\enet-1.3.17\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\common;$(LIBPATH)/MySQL Connector C 6.1/include;$(LIBPATH)\enet-1.3.17\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(LIBPATH)/MySQL Connector C 6.1/lib;$(LIBPATH)\enet-1.3.17\$(Configuration);$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\..\build\$(ProjectName)\$(Configuration)\</OutDir>
     <TargetName>$(ProjectName)_d</TargetName>

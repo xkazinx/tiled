@@ -3,6 +3,8 @@
 
 class App;
 class Random;
+class SceneMgr;
+class Socket;
 
 #define DEBUG_MODE
 
@@ -12,7 +14,9 @@ namespace Global
 
 	extern App* g_app;
 	extern unique_ptr<Random> g_rand;
-	
+	extern unique_ptr<SceneMgr> g_scene;
+	extern unique_ptr<Socket> g_sock;
+
 	extern void Initialize();
 	extern void Deinitialize();
 
@@ -72,6 +76,18 @@ namespace Global
 			}
 		}
 	}
+
+	namespace scene
+	{
+		enum ID : u8
+		{
+			Login,
+			Main,
+			Lobby,
+			Game,
+			Result,
+		};
+	}
 }
 
 namespace font {
@@ -83,3 +99,5 @@ namespace font {
 	using FontNames = const vector<string>;
 	extern FontNames kNames;
 }
+
+using SceneID = Global::scene::ID;

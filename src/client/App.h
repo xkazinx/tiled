@@ -12,8 +12,10 @@ public:
 	bool HandleEvents();
 
 	RenderWindow _window;
+
+	void HandleSocket();
+
 private:
 	void InitializeWindow();
 	void AdjustViewport(const GLsizei& x, const GLsizei& y);
 };
-

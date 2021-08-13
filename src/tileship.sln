@@ -7,6 +7,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "client", "client\client.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "server", "server\server.vcxproj", "{3B73D4A5-6BFC-4959-BEB1-45DCA13834B6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{8C0947C4-1BA3-49D3-BF16-EBBAD65BFD66}"
+	ProjectSection(SolutionItems) = preProject
+		common\common.cpp = common\common.cpp
+		common\common.h = common\common.h
+		common\Socket.cpp = common\Socket.cpp
+		common\Socket.h = common\Socket.h
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
