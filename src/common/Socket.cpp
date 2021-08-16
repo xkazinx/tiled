@@ -42,7 +42,34 @@ Socket::~Socket()
 
 bool Socket::Service(ENetEvent& ev)
 {
-	return enet_host_service(_host, &ev, 1) > 0;
+	if (enet_host_service(_host, &ev, 1) > 0)
+	{
+		switch (ev.type)
+		{
+		case ENET_EVENT_TYPE_CONNECT:
+			printf("A new client connected from %x:%u.\n",
+				ev.peer->address.host,
+				ev.peer->address.port);
+			
+			ev.peer->data = nullptr;
+			return true;
+
+		case ENET_EVENT_TYPE_RECEIVE:
+			printf("A packet of length %u was received from %s on channel %u.\n",
+				ev.packet->dataLength,
+				(const char*)ev.peer->data,
+				ev.channelID);
+			return true;
+
+		case ENET_EVENT_TYPE_DISCONNECT:
+			printf("%s disconnected.\n", (const char*)ev.peer->data);
+			
+			ev.peer->data = nullptr;
+			return true;
+		}
+	}
+
+	return false;
 }
 
 bool Socket::Connect(const string& ip, u16 port)

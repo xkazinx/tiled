@@ -11,13 +11,15 @@ public:
 
 	Socket(Type type, u8 peers = 0);
 	~Socket();
-
+	
 	static u8 Count;
 	
 	ENetHost* _host;
 	Type _type;
 
 	auto IsClient() const { return _type == Type::Client; }
+
+	// Must call enet_packet_destroy(ev.packet); after processing packet
 	bool Service(ENetEvent& ev);
 
 	// Client only

@@ -113,33 +113,21 @@ bool App::HandleEvents()
 void App::HandleSocket()
 {
 	ENetEvent ev;
-	while(g_sock->Service(ev) != ENET_EVENT_TYPE_NONE)
+	while(g_sock->Service(ev))
 	{
 		switch (ev.type)
 		{
 		case ENET_EVENT_TYPE_CONNECT:
-			printf("A new client connected from %x:%u.\n",
-				ev.peer->address.host,
-				ev.peer->address.port);
-
-			/* Store any relevant client information here. */
-			ev.peer->data = (void*)"Client information";
+			//OnConnect();
 			break;
 
 		case ENET_EVENT_TYPE_RECEIVE:
-			printf("A packet of length %u containing %s was received from %s on channel %u.\n",
-				ev.packet->dataLength,
-				ev.packet->data,
-				(const char*)ev.peer->data,
-				ev.channelID);
-			/* Clean up the packet now that we're done using it. */
+			//OnPacket(ev.packet);
 			enet_packet_destroy(ev.packet);
 			break;
 
 		case ENET_EVENT_TYPE_DISCONNECT:
-			printf("%s disconnected.\n", (const char*)ev.peer->data);
-			/* Reset the peer's client information. */
-			ev.peer->data = nullptr;
+			//OnDisconnect();
 			break;
 		}
 	}
