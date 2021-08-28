@@ -63,7 +63,6 @@ bool Socket::Service(ENetEvent& ev)
 
 		case ENET_EVENT_TYPE_DISCONNECT:
 			printf("%s disconnected.\n", (const char*)ev.peer->data);
-			
 			ev.peer->data = nullptr;
 			return true;
 		}

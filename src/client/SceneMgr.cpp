@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "SceneMgr.h"
 #include "LoginScene.h"
+#include "GameScene.h"
 
 SceneMgr::SceneMgr()
 {
-	Set(ID::Login);
+	Set(ID::Game);
 }
 
 SceneMgr::~SceneMgr()
@@ -19,7 +20,7 @@ void SceneMgr::Set(ID id)
 	case ID::Login: _ptr = make_unique<LoginScene>(); break;
 	case ID::Main: break;
 	case ID::Lobby: break;
-	case ID::Game: break;
+	case ID::Game: _ptr = make_unique<GameScene>(); break; break;
 	case ID::Result: break;
 	default: break;
 	}

@@ -9,6 +9,7 @@ namespace Global
 	unique_ptr<Random> g_rand;
 	unique_ptr<SceneMgr> g_scene;
 	unique_ptr<Socket> g_sock;
+	Map* g_map;
 
 	void Initialize() {
 		// unordered

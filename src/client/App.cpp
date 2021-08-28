@@ -63,10 +63,6 @@ int App::Tick()
 		g_scene->Tick();
 		ImGui::SFML::Update(_window, delta_clock.restart());
 
-		ImGui::Begin("Hello, world!");
-		ImGui::Button("Look at this pretty button");
-		ImGui::End();
-
 		_window.clear(sf::Color::Black);
 
 		// Render

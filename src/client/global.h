@@ -5,6 +5,7 @@ class App;
 class Random;
 class SceneMgr;
 class Socket;
+class Map;
 
 #define DEBUG_MODE
 
@@ -16,6 +17,7 @@ namespace Global
 	extern unique_ptr<Random> g_rand;
 	extern unique_ptr<SceneMgr> g_scene;
 	extern unique_ptr<Socket> g_sock;
+	extern Map* g_map;
 
 	extern void Initialize();
 	extern void Deinitialize();

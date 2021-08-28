@@ -68,6 +68,12 @@
       <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui-SFML_export.h" />
+    <ClInclude Include="Map.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Tile.h">
+      <Filter>scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp">
@@ -121,6 +127,12 @@
     </ClCompile>
     <ClCompile Include="imgui\imgui-SFML.cpp">
       <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Tile.cpp">
+      <Filter>scene</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
