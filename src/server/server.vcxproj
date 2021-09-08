@@ -85,8 +85,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(LIBPATH)\MySQL Connector 6.1\include;$(LIBPATH)\enet-1.3.17\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(LIBPATH)\MySQL Connector 6.1\lib;$(LIBPATH)\enet-1.3.17\$(Configuration);$(LibraryPath)</LibraryPath>
+    <IncludePath>..\common;$(LIBPATH)/MySQL Connector C 6.1/include;$(LIBPATH)\enet-1.3.17\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LIBPATH)/MySQL Connector C 6.1/lib;$(LIBPATH)\enet-1.3.17\$(Configuration);$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\..\build\$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -96,7 +96,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -114,7 +114,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>..\..\deploy\client\$(TargetName)$(TargetExt)</OutputFile>
+      <OutputFile>..\..\deploy\server\$(TargetName)$(TargetExt)</OutputFile>
       <ManifestFile>$(OutDir)$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
       <LinkTimeCodeGenerationObjectFile>$(OutDir)$(TargetName).iobj</LinkTimeCodeGenerationObjectFile>
       <IncrementalLinkDatabaseFile>$(OutDir)$(TargetName).ilk</IncrementalLinkDatabaseFile>
@@ -147,7 +147,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -171,7 +171,7 @@
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ManifestFile>$(OutDir)$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
       <LinkTimeCodeGenerationObjectFile>$(OutDir)$(TargetName).iobj</LinkTimeCodeGenerationObjectFile>
-      <OutputFile>..\..\deploy\client\$(TargetName)$(TargetExt)</OutputFile>
+      <OutputFile>..\..\deploy\server\$(TargetName)$(TargetExt)</OutputFile>
       <IncrementalLinkDatabaseFile>$(OutDir)$(TargetName).ilk</IncrementalLinkDatabaseFile>
     </Link>
     <BuildLog>
@@ -203,6 +203,8 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\common\common.cpp" />
+    <ClCompile Include="..\common\Socket.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="main.cpp" />

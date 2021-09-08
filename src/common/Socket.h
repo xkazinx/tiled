@@ -9,7 +9,7 @@ public:
 		Server
 	};
 
-	Socket(Type type, u8 peers = 0);
+	Socket(Type type, szt peers = 0);
 	~Socket();
 	
 	static u8 Count;

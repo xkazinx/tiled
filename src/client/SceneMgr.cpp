@@ -5,7 +5,7 @@
 
 SceneMgr::SceneMgr()
 {
-	Set(ID::Game);
+	Set(ID::Login);
 }
 
 SceneMgr::~SceneMgr()
@@ -29,6 +29,7 @@ void SceneMgr::Set(ID id)
 void SceneMgr::Render(sf::RenderTarget& tgt, const sf::RenderStates& states) const
 {
 	_ptr->Render(tgt, states);
+	_ptr->ProcessUI();
 }
 
 void SceneMgr::Tick()

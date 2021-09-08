@@ -10,10 +10,12 @@ public:
 	static constexpr auto kID = SceneID::Login;
 
 	void Tick() override;
+	
 	void Render(sf::RenderTarget& tgt, const sf::RenderStates& states) const override;
 	void HandleEvents(const sf::Event& ev) override;
+	void ProcessUI() const override;
 
 	sf::CircleShape _circle;
 
-	string _username;
+	string _username, _password;
 };

@@ -7,5 +7,6 @@ public:
 	~App();
 
 	int Tick();
+	void HandleSocket();
 };
 

@@ -7,8 +7,6 @@ App::App()
 	g_app = this;
 	Global::Initialize();
 
-	g_sock->Connect("127.0.0.1", 1234);
-
 	InitializeWindow();
 
 	ImGui::SFML::Init(_window);
@@ -16,7 +14,7 @@ App::App()
 
 App::~App()
 {
-	ImGui::SFML::Shutdown();
+	ImGui::SFML::Shutdown(); 
 	Global::Deinitialize();
 }
 
@@ -48,7 +46,6 @@ void App::AdjustViewport(const GLsizei & x, const GLsizei & y)
 
 int App::Tick() 
 {
-
 	sf::RenderStates states;
 	sf::Clock delta_clock;
 
@@ -114,6 +111,7 @@ void App::HandleSocket()
 		switch (ev.type)
 		{
 		case ENET_EVENT_TYPE_CONNECT:
+			cout << "CONECTADO" << endl;
 			//OnConnect();
 			break;
 

@@ -7,6 +7,9 @@
     <Filter Include="app\ph">
       <UniqueIdentifier>{23f1edb3-f2e9-461b-b454-d9b1a3ccf4e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="common">
+      <UniqueIdentifier>{3d119c3c-4581-4ae9-bc3c-c69223a4ab0d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -34,6 +37,12 @@
     </ClCompile>
     <ClCompile Include="Global.cpp">
       <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Socket.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\common.cpp">
+      <Filter>common</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
