@@ -10,6 +10,8 @@ App::App()
 	InitializeWindow();
 
 	ImGui::SFML::Init(_window);
+
+	g_sock->Connect("localhost", 321);
 }
 
 App::~App()

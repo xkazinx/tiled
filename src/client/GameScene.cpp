@@ -39,5 +39,5 @@ void GameScene::Render(sf::RenderTarget& tgt, const sf::RenderStates& states) co
 
 void GameScene::HandleEvents(const sf::Event& ev)
 {
-
+	
 }

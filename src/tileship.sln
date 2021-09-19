@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{8C0947
 	ProjectSection(SolutionItems) = preProject
 		common\common.cpp = common\common.cpp
 		common\common.h = common\common.h
+		common\netops.h = common\netops.h
 		common\Socket.cpp = common\Socket.cpp
 		common\Socket.h = common\Socket.h
 	EndProjectSection

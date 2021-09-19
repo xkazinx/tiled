@@ -47,12 +47,18 @@ bool Socket::Service(ENetEvent& ev)
 		switch (ev.type)
 		{
 		case ENET_EVENT_TYPE_CONNECT:
-			printf("A new client connected from %x:%u.\n",
-				ev.peer->address.host,
-				ev.peer->address.port);
+		{
+			constexpr auto ip_size = 3 * 4 + 3;
+			array<char, ip_size + 1> ip;
+			enet_address_get_host_ip(&ev.peer->address, ip.data(), ip.size());
+
+			cout << "A new client connected from " << ip.data() << 
+				" (" << ev.peer->address.host << ")" <<
+				":" << ev.peer->address.port << endl;
 			
 			ev.peer->data = nullptr;
 			return true;
+		}
 
 		case ENET_EVENT_TYPE_RECEIVE:
 			printf("A packet of length %u was received from %s on channel %u.\n",

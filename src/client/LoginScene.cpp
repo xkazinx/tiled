@@ -49,10 +49,7 @@ void LoginScene::ProcessUI() const
 
 	if (ImGui::Button("Login"))
 	{
-		if (!g_sock->Connect("localhost", 321))
-		{
-			cout << "Couldn't connect" << endl;
-		}
+		//g_sock->Send(CreatePacket(Op::Login, _username, _password));
 	}
 
 	ImGui::End();

@@ -74,7 +74,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\common;$(LIBPATH)/MySQL Connector C 6.1/include;$(LIBPATH)\enet-1.3.17\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(LIBPATH)/MySQL Connector C 6.1/lib;$(LIBPATH)\enet-1.3.17\$(Configuration);$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)\..\build\$(ProjectName)\$(Configuration)\</OutDir>
+    <OutDir>$(Configuration)\</OutDir>
     <TargetName>$(ProjectName)_d</TargetName>
     <IntDir>$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -87,7 +87,7 @@
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>..\common;$(LIBPATH)/MySQL Connector C 6.1/include;$(LIBPATH)\enet-1.3.17\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(LIBPATH)/MySQL Connector C 6.1/lib;$(LIBPATH)\enet-1.3.17\$(Configuration);$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)\..\build\$(ProjectName)\$(Configuration)\</OutDir>
+    <OutDir>$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -101,7 +101,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(OutDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <ModuleDependenciesFile>$(OutDir)$(IntDir)</ModuleDependenciesFile>
       <ProgramDataBaseFileName>$(OutDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
@@ -109,12 +109,14 @@
       <BrowseInformationFile>$(OutDir)</BrowseInformationFile>
       <ObjectFileName>$(OutDir)$(IntDir)</ObjectFileName>
       <SourceDependenciesFile>$(OutDir)</SourceDependenciesFile>
+      <ModuleOutputFile>$(OutDir)</ModuleOutputFile>
+      <AssemblerListingLocation>$(OutDir)</AssemblerListingLocation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>..\..\deploy\server\$(TargetName)$(TargetExt)</OutputFile>
+      <OutputFile>..\..\deploy\$(ProjectName)\$(TargetName)$(TargetExt)</OutputFile>
       <ManifestFile>$(OutDir)$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
       <LinkTimeCodeGenerationObjectFile>$(OutDir)$(TargetName).iobj</LinkTimeCodeGenerationObjectFile>
       <IncrementalLinkDatabaseFile>$(OutDir)$(TargetName).ilk</IncrementalLinkDatabaseFile>
@@ -154,7 +156,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(OutDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <ModuleDependenciesFile>$(OutDir)$(IntDir)</ModuleDependenciesFile>
       <ProgramDataBaseFileName>$(OutDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
@@ -162,6 +164,7 @@
       <BrowseInformationFile>$(OutDir)</BrowseInformationFile>
       <ObjectFileName>$(OutDir)$(IntDir)</ObjectFileName>
       <SourceDependenciesFile>$(OutDir)</SourceDependenciesFile>
+      <AssemblerListingLocation>$(OutDir)</AssemblerListingLocation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -171,7 +174,7 @@
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ManifestFile>$(OutDir)$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
       <LinkTimeCodeGenerationObjectFile>$(OutDir)$(TargetName).iobj</LinkTimeCodeGenerationObjectFile>
-      <OutputFile>..\..\deploy\server\$(TargetName)$(TargetExt)</OutputFile>
+      <OutputFile>..\..\deploy\$(ProjectName)\$(TargetName)$(TargetExt)</OutputFile>
       <IncrementalLinkDatabaseFile>$(OutDir)$(TargetName).ilk</IncrementalLinkDatabaseFile>
     </Link>
     <BuildLog>
@@ -199,6 +202,9 @@
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="Global.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerMgr.h" />
+    <ClInclude Include="Sql.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -208,6 +214,9 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerMgr.cpp" />
+    <ClCompile Include="Sql.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

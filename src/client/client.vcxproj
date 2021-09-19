@@ -74,9 +74,13 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\common;$(LIBPATH)\enet-1.3.17\include;$(LIBPATH)\SFML-2.5.1\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(LIBPATH)\enet-1.3.17\$(Configuration);$(LIBPATH)\SFML-2.5.1\lib;$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)\..\build\$(ProjectName)\$(Configuration)\</OutDir>
+    <OutDir>$(Configuration)\</OutDir>
     <TargetName>$(ProjectName)_d</TargetName>
     <IntDir>$(Configuration)\</IntDir>
+    <CopyLocalDeploymentContent>true</CopyLocalDeploymentContent>
+    <CopyLocalProjectReference>true</CopyLocalProjectReference>
+    <CopyLocalDebugSymbols>true</CopyLocalDebugSymbols>
+    <CopyCppRuntimeToOutputDir>true</CopyCppRuntimeToOutputDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -87,8 +91,12 @@
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>..\common;$(LIBPATH)\enet-1.3.17\include;$(LIBPATH)\SFML-2.5.1\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(LIBPATH)\enet-1.3.17\$(Configuration);$(LIBPATH)\SFML-2.5.1\lib;$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)\..\build\$(ProjectName)\$(Configuration)\</OutDir>
+    <OutDir>$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
+    <CopyLocalDeploymentContent>true</CopyLocalDeploymentContent>
+    <CopyLocalProjectReference>true</CopyLocalProjectReference>
+    <CopyLocalDebugSymbols>true</CopyLocalDebugSymbols>
+    <CopyCppRuntimeToOutputDir>true</CopyCppRuntimeToOutputDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -101,7 +109,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>CLIENT;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(OutDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <ModuleDependenciesFile>$(OutDir)$(IntDir)</ModuleDependenciesFile>
       <ProgramDataBaseFileName>$(OutDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
@@ -109,12 +117,14 @@
       <BrowseInformationFile>$(OutDir)</BrowseInformationFile>
       <ObjectFileName>$(OutDir)$(IntDir)</ObjectFileName>
       <SourceDependenciesFile>$(OutDir)</SourceDependenciesFile>
+      <AssemblerListingLocation>$(OutDir)</AssemblerListingLocation>
+      <ModuleOutputFile>$(OutDir)</ModuleOutputFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>..\..\deploy\client\$(TargetName)$(TargetExt)</OutputFile>
+      <OutputFile>..\..\deploy\$(ProjectName)\$(TargetName)$(TargetExt)</OutputFile>
       <ManifestFile>$(OutDir)$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
       <LinkTimeCodeGenerationObjectFile>$(OutDir)$(TargetName).iobj</LinkTimeCodeGenerationObjectFile>
       <IncrementalLinkDatabaseFile>$(OutDir)$(TargetName).ilk</IncrementalLinkDatabaseFile>
@@ -154,7 +164,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>CLIENT;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(OutDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <ModuleDependenciesFile>$(OutDir)$(IntDir)</ModuleDependenciesFile>
       <ProgramDataBaseFileName>$(OutDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>

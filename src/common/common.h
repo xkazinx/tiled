@@ -1,4 +1,6 @@
 #pragma once
+#include <cassert>
+#include <netops.h>
 
 namespace common
 {
@@ -22,6 +24,14 @@ namespace tile
 #endif
 
 }
+
+namespace player
+{
+	using Idx = u16;
+	constexpr Idx kNullIdx = 0;
+	constexpr Idx kMax = 512;
+}
 }
 
 using namespace common;
+using PlayerIdx = player::Idx;

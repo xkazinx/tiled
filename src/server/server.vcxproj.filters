@@ -24,6 +24,9 @@
     <ClInclude Include="Global.h">
       <Filter>app</Filter>
     </ClInclude>
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerMgr.h" />
+    <ClInclude Include="Sql.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp">
@@ -44,5 +47,8 @@
     <ClCompile Include="..\common\common.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerMgr.cpp" />
+    <ClCompile Include="Sql.cpp" />
   </ItemGroup>
 </Project>
