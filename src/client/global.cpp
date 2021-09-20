@@ -23,8 +23,12 @@ namespace Global
 	void Deinitialize() {
 
 	}
-}
 
+	void Send(const OutPktRef out, enet_uint8 channel)
+	{
+		g_sock->Send(out, channel);
+	}
+}
 
 namespace font {
 	FontNames kNames = {

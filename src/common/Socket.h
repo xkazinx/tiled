@@ -26,4 +26,7 @@ public:
 	ENetPeer* _peer;
 
 	bool Connect(const string& ip, u16 port);
+	
+	void Send(OutPktRef out, enet_uint8 channel = 0u) const;
+	void Send(ENetPeer* peer, OutPktRef out, const enet_uint8 channel) const;
 };

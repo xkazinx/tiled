@@ -2,6 +2,7 @@
 #include "Global.h"
 #include <Socket.h>
 #include "PlayerMgr.h"
+#include "Player.h"
 
 namespace Global
 {
@@ -19,5 +20,10 @@ namespace Global
 
 	void Deinitialize() {
 
+	}
+
+	void Send(const Player* player, OutPktRef&& out, enet_uint8 channel)
+	{
+		g_sock->Send(player->_peer, out, channel);
 	}
 }

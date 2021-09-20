@@ -37,7 +37,7 @@ void GameScene::Render(sf::RenderTarget& tgt, const sf::RenderStates& states) co
 	_map->Render(tgt, states);
 }
 
-void GameScene::HandleEvents(const sf::Event& ev)
+void GameScene::HandleEvents([[maybe_unused]] const sf::Event& ev)
 {
 	
 }

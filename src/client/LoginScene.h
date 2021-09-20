@@ -17,5 +17,5 @@ public:
 
 	sf::CircleShape _circle;
 
-	string _username, _password;
+	char _username[64]{}, _password[64]{};
 };

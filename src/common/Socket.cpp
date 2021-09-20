@@ -86,3 +86,13 @@ bool Socket::Connect(const string& ip, u16 port)
 
 	return (_peer = enet_host_connect(_host, &address, 1, 0)) != nullptr;
 }
+
+void Socket::Send(OutPktRef out, enet_uint8 channel /*= 0u*/) const
+{
+	out->Send((Socket*)this, channel);
+}
+
+void Socket::Send(ENetPeer* peer, OutPktRef out, const enet_uint8 channel) const
+{
+	out->Send(peer, channel);
+}

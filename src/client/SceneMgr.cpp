@@ -15,14 +15,16 @@ SceneMgr::~SceneMgr()
 
 void SceneMgr::Set(ID id)
 {
+	using enum ID;
 	switch(id)
 	{
-	case ID::Login: _ptr = make_unique<LoginScene>(); break;
-	case ID::Main: break;
-	case ID::Lobby: break;
-	case ID::Game: _ptr = make_unique<GameScene>(); break; break;
-	case ID::Result: break;
-	default: break;
+	case Login:	_ptr = make_unique<LoginScene>();	break;
+	case Main:										break;
+	case Lobby:										break;
+	case Game:	_ptr = make_unique<GameScene>();	break;
+	case Result:									break;
+	default: 
+		break;
 	}
 }
 
@@ -37,7 +39,7 @@ void SceneMgr::Tick()
 	
 }
 
-bool SceneMgr::HandleEvent(const sf::Event& ev)
+bool SceneMgr::HandleEvent([[maybe_unused]] const sf::Event& ev)
 {
 	return false;
 }

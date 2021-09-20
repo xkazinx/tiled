@@ -1,8 +1,14 @@
 #pragma once
 #include <cassert>
 
-enum NetOp : u8
+enum class NetOp : u8
+{
+	Main,
+	Disconnect,
+};
+
+enum class MainOp : u8
 {
 	Login,
-	Disconnect,
+
 };

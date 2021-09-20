@@ -3,6 +3,7 @@
 class App;
 class Socket;
 class PlayerMgr;
+class Player;
 
 namespace Global
 {
@@ -14,4 +15,6 @@ namespace Global
 
 	extern void Initialize();
 	extern void Deinitialize();
+
+	extern void Send(const Player* player, OutPktRef&& out, enet_uint8 channel = 0);
 }

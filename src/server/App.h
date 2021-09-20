@@ -2,7 +2,7 @@
 
 class Player;
 
-class App
+class App final : Broadcaster<MainOp>
 {
 public:
 	App();
@@ -10,10 +10,12 @@ public:
 
 	int Tick();
 	void HandleSocket();
-	void OnConnect(ENetEvent& ev);
-	void OnPacket(ENetEvent& ev);
-	void OnDisconnect(ENetEvent& ev);
-	Player* OnAuth(const ENetEvent& ev) const;
+	void OnConnect(ENetEvent & ev);
+	void OnPacket(ENetEvent & ev);
+	void OnDisconnect(ENetEvent & ev);
+	[[nodiscard]] Player* OnAuth(const ENetEvent & ev) const;
+
+	void NetOperationProcess() override;
 
 private:
 	void NetOp_Login();

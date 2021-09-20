@@ -1,5 +1,4 @@
 #pragma once
-#include "App.h"
 
 class App;
 class Random;
@@ -22,7 +21,10 @@ namespace Global
 	extern void Initialize();
 	extern void Deinitialize();
 
-	class Guard {
+	extern void Send(const OutPktRef out, enet_uint8 channel = 0);
+
+	class Guard
+	{
 	public:
 		template<typename T>
 		Guard(T func)

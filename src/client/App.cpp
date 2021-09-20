@@ -3,6 +3,7 @@
 #include "SceneMgr.h"
 
 App::App()
+	: Broadcaster<MainOp>(NetOp::Main)
 {
 	g_app = this;
 	Global::Initialize();
@@ -18,6 +19,21 @@ App::~App()
 {
 	ImGui::SFML::Shutdown(); 
 	Global::Deinitialize();
+}
+
+void App::NetOperationProcess()
+{
+	cout << "NetOperationProcess Op: " << (int)GetOperation() << endl;
+	switch(GetOperation())
+	{
+	case MainOp::Login:
+		cout << "Login response" << endl;
+		break;
+
+	default:
+		// #todo
+		break;
+	}
 }
 
 void App::InitializeWindow()

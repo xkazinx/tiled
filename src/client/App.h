@@ -1,10 +1,13 @@
 #pragma once
+#include "Broadcaster.h" // #why do I need to include this?
 
-class App
+class App final : public Broadcaster<MainOp>
 {
 public:
 	App();
 	~App();
+
+	void NetOperationProcess() override;
 
 	int Tick();
 
