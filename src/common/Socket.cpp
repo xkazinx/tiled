@@ -1,9 +1,12 @@
 #include "stdafx.h"
-#include "Socket.h"
+#include "socket.h"
 
+namespace common
+{
 u8 Socket::Count = 0;
 
-Socket::Socket(Type type, szt peers) : _type(type)
+Socket::Socket(Type type, szt peers)
+	: _type(type)
 {
 	if (Count++ == 0)
 	{
@@ -15,15 +18,12 @@ Socket::Socket(Type type, szt peers) : _type(type)
 	address.host = ENET_HOST_ANY;
 	address.port = 321;
 	
-	_host = enet_host_create(IsClient() ? nullptr : &address, /* create a client host */
-		IsClient() ? 1 : peers /* only allow 1 outgoing connection */,
-		1 /* allow up 2 channels to be used, 0 and 1 */,
-		0 /* assume any amount of incoming bandwidth */,
-		0 /* assume any amount of outgoing bandwidth */);
+	_host = enet_host_create(IsClient() ? nullptr : &address, 
+		IsClient() ? 1 : peers, 1, 0, 0);
 	
 	if (!_host)
 	{
-		cout << "Error on Socket::Socket()";
+		cout << "Error: enet_host_create" << endl;
 	}
 }
 
@@ -40,36 +40,28 @@ Socket::~Socket()
 	}
 
 }
-bool Socket::Service(ENetEvent& ev)
+bool Socket::Service(ENetEvent & ev) const
 {
 	if (enet_host_service(_host, &ev, 0) != 0)
 	{
 		switch (ev.type)
 		{
 		case ENET_EVENT_TYPE_CONNECT:
-		{
-			constexpr auto ip_size = 3 * 4 + 3;
-			array<char, ip_size + 1> ip;
-			enet_address_get_host_ip(&ev.peer->address, ip.data(), ip.size());
-
-			cout << "A new client connected from " << ip.data() << 
-				" (" << ev.peer->address.host << ")" <<
-				":" << ev.peer->address.port << endl;
-			
+			cout << "Client connected from " << FetchIP(ev.peer) << ":" << ev.peer->address.port << endl;;
 			ev.peer->data = nullptr;
 			return true;
-		}
 
 		case ENET_EVENT_TYPE_RECEIVE:
-			printf("A packet of length %u was received from %s on channel %u.\n",
-				ev.packet->dataLength,
-				(const char*)ev.peer->data,
-				ev.channelID);
+			cout << "A packet of " << ev.packet->dataLength << " bytes was received by " << 
+				(ev.peer->data ? *static_cast<PlayerIdx*>(ev.peer->data) : 0) << " from channel " << (int)ev.channelID << endl;
 			return true;
 
 		case ENET_EVENT_TYPE_DISCONNECT:
-			printf("%s disconnected.\n", (const char*)ev.peer->data);
-			ev.peer->data = nullptr;
+			if (ev.peer->data)
+			{
+				cout << *static_cast<PlayerIdx*>(ev.peer->data) << " disconnected" << endl;
+				ev.peer->data = nullptr;
+			}
 			return true;
 		}
 	}
@@ -89,10 +81,22 @@ bool Socket::Connect(const string& ip, u16 port)
 
 void Socket::Send(OutPktRef out, enet_uint8 channel /*= 0u*/) const
 {
-	out->Send((Socket*)this, channel);
+	out->Send(_peer, channel);
 }
 
 void Socket::Send(ENetPeer* peer, OutPktRef out, const enet_uint8 channel) const
 {
 	out->Send(peer, channel);
+}
+
+string Socket::FetchIP(ENetPeer* peer)
+{
+	char data[15]{};
+	if (enet_address_get_host_ip(&peer->address, data, sizeof(data)) < 0)
+	{
+		cout << "Error on Fetching IP" << endl;
+	}
+
+	return data;
+}
 }

@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "App.h"
-#include <Socket.h>
 #include "Player.h"
 #include "PlayerMgr.h"
 
@@ -74,8 +73,9 @@ void App::OnDisconnect([[maybe_unused]] ENetEvent& ev)
 Player* App::OnAuth(const ENetEvent& ev) const
 {
 	Player* player = nullptr;
-	auto& player_idx = (PlayerIdx*&)(ev.peer->data);
-	if (!player_idx)
+
+	if (auto& player_idx = reinterpret_cast<PlayerIdx*&>(ev.peer->data); 
+		!player_idx)
 	{
 		for (PlayerIdx i = 1; i < player::kMax; i++)
 		{
@@ -86,7 +86,7 @@ Player* App::OnAuth(const ENetEvent& ev) const
 				player_idx = new PlayerIdx(i);
 				player = p.get();
 				g_player_mgr->_list.push_back(p.get());
-				cout << "Player connected: " << i;
+				cout << "Player authored: " << i << endl;
 				break;
 			}
 		}
@@ -128,8 +128,8 @@ void App::NetOp_Login()
 		return;
 
 	//sql->Query("INSER ({},{})", username, password);
-	string username = "user";
-	string password = "pass";
+	string username = "BUFFERRRRRRRRR";
+	string password = "BUFFERRRRRRRRR";
 
 	GetPacket()->Read(username, password);
 	cout << "User: " << username << " | Password: " << password << endl;

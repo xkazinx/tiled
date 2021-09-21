@@ -222,7 +222,6 @@
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="LoginScene.h" />
     <ClInclude Include="Map.h" />
-    <ClInclude Include="Random.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneMgr.h" />
     <ClInclude Include="stdafx.h" />
@@ -231,7 +230,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\common.cpp" />
-    <ClCompile Include="..\common\Socket.cpp" />
+    <ClCompile Include="..\common\packet.cpp" />
+    <ClCompile Include="..\common\random.cpp" />
+    <ClCompile Include="..\common\socket.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="Global.cpp" />
@@ -244,7 +245,6 @@
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="LoginScene.cpp" />
     <ClCompile Include="Map.cpp" />
-    <ClCompile Include="Random.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneMgr.cpp" />

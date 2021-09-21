@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Global.h"
 #include "SceneMgr.h"
-#include "Random.h"
 
 namespace Global
 {
@@ -11,7 +10,8 @@ namespace Global
 	unique_ptr<Socket> g_sock;
 	Map* g_map;
 
-	void Initialize() {
+	void Initialize()
+	{
 		// unordered
 		g_rand = make_unique<Random>();
 		g_scene = make_unique<SceneMgr>();
@@ -20,18 +20,21 @@ namespace Global
 		// ordered
 	}
 
-	void Deinitialize() {
+	void Deinitialize()
+	{
 
 	}
 
 	void Send(const OutPktRef out, enet_uint8 channel)
-	{
+{
 		g_sock->Send(out, channel);
 	}
 }
 
-namespace font {
-	FontNames kNames = {
+namespace font
+{
+	FontNames kNames = 
+	{
 		"arial.ttf",
 	};
 }

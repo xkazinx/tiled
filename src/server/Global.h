@@ -1,7 +1,6 @@
 #pragma once
 
 class App;
-class Socket;
 class PlayerMgr;
 class Player;
 

@@ -211,7 +211,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\common.cpp" />
-    <ClCompile Include="..\common\Socket.cpp" />
+    <ClCompile Include="..\common\packet.cpp" />
+    <ClCompile Include="..\common\random.cpp" />
+    <ClCompile Include="..\common\socket.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="main.cpp" />

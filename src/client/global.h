@@ -1,9 +1,7 @@
 #pragma once
 
 class App;
-class Random;
 class SceneMgr;
-class Socket;
 class Map;
 
 #define DEBUG_MODE

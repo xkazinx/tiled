@@ -11,5 +11,6 @@ public:
 
 	PlayerIdx _idx;
 	ENetPeer* _peer;
+	string _ip;
 };
 
