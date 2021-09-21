@@ -128,15 +128,23 @@ void App::NetOp_Login()
 		return;
 
 	//sql->Query("INSER ({},{})", username, password);
-	string username = "BUFFERRRRRRRRR";
-	string password = "BUFFERRRRRRRRR";
+	string username = "user1";
+	string password = "pass1";
 
-	GetPacket()->Read(username, password);
+	//GetPacket()->Read(username, password);
 	cout << "User: " << username << " | Password: " << password << endl;
 
 	//auto query = "SELECT * FROM players WHERE players.username = " + username + " AND players.password = " + hash + " LIMIT 1";
-	auto query = "INSERT INTO `players` (username, password) VALUES(\'" + username + "\',\'" + password + "\');";
-	mysql_real_query(sql->Get(), query.data(), query.size());
+
+	// sql->Query("INSERT INTO `players` (username, password) VALUES(\'" + username + "\',\'" + password + "\');");
+	sql->Insert("players",
+		vector<string>{"username", "password" },
+		vector<vector<string>>{
+			{ { "Gabriel" }, { "123" } },
+			{ { "Kazin" }, { "321" } },
+			{ { "Kazi4n" }, { "3214" } }
+		}
+	);
 	// auto player = GetPacketPlayer();
 	// auto username = GetPacket()->Pop<string>();
 	// auto password = GetPacket()->Pop<string>();

@@ -54,7 +54,7 @@ void LoginScene::ProcessUI() const
 		//auto out = OutPkt::CreateDynamic(NetOp::Login,sizeof(_username) + sizeof(_password));
 		auto str1 = string("hola");
 		auto str2 = string("bro");
-		g_app->Send(MainOp::Login, packet::SerializableString(str1, 2), packet::SerializableString(str2));
+		g_app->Send(MainOp::Login/*, packet::SerializableString(str1, 2), packet::SerializableString(str2)*/);
 
 		/*
 		 *auto out = OutPkt::CreateDynamic(NetOp::Main, sizeof(string("hola")) + sizeof(string("bro")));

@@ -51,6 +51,9 @@ using std::forward;
 
 #include <functional>
 
+#include <format>
+using std::format;
+
 #include <cassert>
 
 // common filter

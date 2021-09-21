@@ -95,8 +95,6 @@ namespace common::packet
 		}
 		else if (IsFixedString() || IsFixedChar())
 		{
-			out.Write(_sz);
-
 			if (out.HasOverflowed(_sz))
 				return;
 
@@ -132,6 +130,11 @@ namespace common::packet
 
 			std::copy_n(in->GetPointer<char>(), _sz, IsString() ? &_ref[0] : (char*)_data[0]);
 		}
+	}
+
+	packet::Size SerializableString::GetPacketSize() const
+	{
+		return (IsString() || IsChar()) ? (sizeof(Size) + _sz) : _sz;
 	}
 
 	SerializableString::~SerializableString() = default;

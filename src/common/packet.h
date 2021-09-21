@@ -70,10 +70,7 @@ namespace common
 
 			void Read(In * in) override;
 
-			packet::Size GetPacketSize() const override
-			{
-				return sizeof(Size) + _sz;
-			}
+			packet::Size GetPacketSize() const override;
 
 			auto IsString() const
 			{
@@ -187,7 +184,7 @@ namespace common
 			}
 
 			static OutPacketPtr CreateDynamic(const NetOp net_op, const Size sz)
-			{
+			{ 
 				auto pkt = std::make_unique<Out>(sz + sizeof(net_op));
 				pkt->Write(net_op);
 				return pkt;
