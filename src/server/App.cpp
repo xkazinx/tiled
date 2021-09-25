@@ -126,25 +126,34 @@ void App::NetOp_Login()
 	auto sql = Sql::Create();
 	if (!sql)
 		return;
+	
+	packet::SerializableString username(2);
+	packet::SerializableString password;
 
-	//sql->Query("INSER ({},{})", username, password);
-	string username = "user1";
-	string password = "pass1";
+	auto algo = GetPacket()->ReadAs<int>();
+	GetPacket()->Read(username, password);
 
-	//GetPacket()->Read(username, password);
+	cout << "algo " << algo;
 	cout << "User: " << username << " | Password: " << password << endl;
 
-	//auto query = "SELECT * FROM players WHERE players.username = " + username + " AND players.password = " + hash + " LIMIT 1";
-
-	// sql->Query("INSERT INTO `players` (username, password) VALUES(\'" + username + "\',\'" + password + "\');");
-	sql->Insert("players",
+	/*sql->Insert("players",
 		vector<string>{"username", "password" },
-		vector<vector<string>>{
-			{ { "Gabriel" }, { "123" } },
-			{ { "Kazin" }, { "321" } },
-			{ { "Kazi4n" }, { "3214" } }
-		}
-	);
+		vector<vector<string>>{{ { username }, { password } }}
+	);*/
+
+	auto res = sql->Select("players", { "username", "password" });
+	while (auto it = res->Pop())
+	{
+		cout << it->Get<string>("username") << endl;
+		cout << it->Get<string>("password") << endl;
+		cout << endl;
+		/*auto u = it->Get<string>("username");
+		auto p = it->Get<string>("password");
+		cout << 
+			"username: " << u << " " <<
+			"password: " << p << endl;*/
+	}
+
 	// auto player = GetPacketPlayer();
 	// auto username = GetPacket()->Pop<string>();
 	// auto password = GetPacket()->Pop<string>();

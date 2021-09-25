@@ -24,13 +24,23 @@ namespace common
 			virtual Size GetPacketSize() const = 0;
 		};
 
-		class SerializableString final : public Serializable
+		class SerializableString final : public Serializable, public string
 		{
 		public:
 			using Size = enet_uint16;
 			static string kDummy;
 
+			SerializableString()
+				: _data(nullptr), _sz(0), _ref((string&)*this)
+			{}
+
 			~SerializableString() override;
+
+			SerializableString(Size sz)
+				: _data(nullptr), _sz(sz), _ref((string&)*this)
+			{
+				
+			}
 
 			// String with any length
 			explicit SerializableString(string& str)
@@ -74,25 +84,25 @@ namespace common
 
 			auto IsString() const
 			{
-				return &_ref != &kDummy && !_data;
+				return !_data && _sz == 0;
 			}
 
 			auto IsFixedString() const
 			{
-				return !_data && _sz == 0;
+				return !_data && _sz != 0;
 			}
 
 			auto IsChar() const
 			{
-				return _data && _sz != 0;
+				return _data && _sz == 0;
 			}
 
 			auto IsFixedChar() const
 			{
-				return _data && _sz == 0;
+				return _data && _sz != 0;
 			}
 
-			mutable const char* _data;
+			const char* _data;
 			Size _sz;
 			string& _ref = kDummy;
 		};
@@ -149,7 +159,6 @@ namespace common
 						return sizeof(val);
 					}
 				}
-
 			};
 
 		protected:
@@ -185,7 +194,7 @@ namespace common
 
 			static OutPacketPtr CreateDynamic(const NetOp net_op, const Size sz)
 			{ 
-				auto pkt = std::make_unique<Out>(sz + sizeof(net_op));
+				auto pkt = std::make_unique<Out>(sizeof(net_op) + sz);
 				pkt->Write(net_op);
 				return pkt;
 			}
@@ -193,16 +202,16 @@ namespace common
 			void Send(ENetPeer* peer, const enet_uint8 channel = 0) const;
 
 			template<typename T, typename ... Args>
-			void Write(const T& t, const Args & ...args)
+			void Write(const T & t, const Args & ...args)
 			{
 				_Write(t);
 				Write(std::forward<const Args>(args)...);
 			}
 
 			template<typename T, std::size_t N>
-			void Write(const std::array<T, N>& arr)
+			void Write(const std::array<T, N> & arr)
 			{
-				for (const auto& val : arr)
+				for (const auto & val : arr)
 					Write(val);
 			}
 
@@ -217,7 +226,7 @@ namespace common
 			void Write() {}
 
 			template<typename T, typename = enable_if_t<!is_pointer_v<T>>>
-			void _Write(const T& v)
+			void _Write(const T & v)
 			{
 				if constexpr (is_base_of_v<Serializable, T>)
 				{
@@ -246,14 +255,14 @@ namespace common
 			void Move(const Size sz) override;
 
 			template<typename T, typename ... Args>
-			void Read(T& t, Args & ...args)
+			void Read(T & t, Args & ...args)
 			{
 				_Read(t);
 				Read(args...);
 			}
 
 			template<typename T, std::size_t N>
-			void Read(std::array<T, N>& arr)
+			void Read(std::array<T, N> & arr)
 			{
 				for (auto& val : arr)
 					Read(val);
@@ -278,24 +287,10 @@ namespace common
 			void Read() {}
 
 			template<typename T, typename = enable_if_t<!is_pointer_v<T>>>
-			void _Read(T& v)
+			void _Read(T & v)
 			{
-				/*constexpr auto is_string = is_same_v<string, T>;
-				if constexpr (is_string || is_same_v<Serializable::String, T>)
-				{
-					if (HasOverflowed(sizeof(enet_uint16)))
-						return;
+				static_assert(!is_same_v<string, T> && !is_same_v<char*, T>, "Use SerializableString");
 
-					enet_uint16 sz;
-					_Read(sz);
-
-					if (HasOverflowed(sz))
-						return;
-					
-					v.resize(sz);
-					std::copy(GetPointer<char>(), GetPointer<char>() + sz, &v[0]);
-					Move(sz);
-				}*/
 				if constexpr (is_base_of_v<Serializable, T>)
 				{
 					v.Read(this);

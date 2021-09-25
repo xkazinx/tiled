@@ -32,6 +32,9 @@ using std::vector;
 #include <array>
 using std::array;
 
+#include <map>
+using std::map;
+
 #include <thread>
 namespace this_thread = std::this_thread;
 
@@ -48,12 +51,12 @@ using std::underlying_type_t;
 using std::is_base_of_v;
 using std::is_pointer_v;
 using std::forward;
+//using std::copy;
 
 #include <functional>
 
 #include <format>
 using std::format;
-
 #include <cassert>
 
 // common filter

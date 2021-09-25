@@ -1,5 +1,83 @@
 #pragma once
 
+class Sql;
+using SelectValue = my_ulonglong;
+
+class SelectItem
+{
+public:
+	SelectItem(const MYSQL_ROW & row, const vector<unsigned long> & length, const map<string, SelectValue>& fields)
+		: _row(row), _length(length), _fields(fields)
+	{
+		
+	}
+
+	template<typename T>
+	T Get(string field)
+	{
+		if (_fields.contains(field))
+		{
+			const auto idx = _fields.at(field);
+			string data(_row[idx], _length[idx]);
+
+			if constexpr (is_same_v<bool, T>)
+			{
+				return std::stoi(data) > 0;
+			}
+			else if constexpr (std::is_arithmetic_v<T>)
+			{
+				if constexpr (std::is_floating_point_v<T>)
+				{
+					return (T)std::strtof(data);
+				}
+				else
+				{
+					if constexpr (std::is_signed_v<T>)
+					{
+						return (T)std::stoll(data);
+					}
+					else if constexpr (std::is_unsigned_v<T>)
+					{
+						return (T)std::stoull(data);
+					}
+				}
+			}
+			else return data;
+		}
+
+		cout << "Error: Field not found for SelectItem::Pop: " << field << endl;
+		return string("");
+	}
+
+	const MYSQL_ROW & _row;
+	const vector<unsigned long>& _length;
+	const map<string, SelectValue> & _fields;
+};
+
+class SelectResult final
+{
+public:
+	SelectResult(Sql* sql);
+
+	~SelectResult();
+
+	MYSQL_RES* _ptr;
+	vector<MYSQL_ROW> _rows;
+	vector<MYSQL_FIELD*> _fields;
+	vector<vector<unsigned long>> _lengths;
+	map<string, SelectValue> _fields_indexes;
+	SelectValue _current_row_idx = 0;
+
+	unique_ptr<SelectItem> Pop()
+	{
+		const auto idx = _current_row_idx++;
+		if (idx >= _rows.size())
+			return nullptr;
+
+		return make_unique<SelectItem>(_rows[idx], _lengths[idx],_fields_indexes);
+	}
+};
+
 class Sql final
 {
 public:
@@ -15,9 +93,6 @@ public:
 
 	// #todo make class query
 	void Query(const string & query);
-
 	void Insert(const string & table, const vector<string> & columns, const vector<vector<string>> & rows);
-
-	template <typename T>
-	vector<T> && Select(const string& table, const vector<string>& columns, const string);
+	unique_ptr<SelectResult> Select(const string& table, const vector<string>& columns);
 };

@@ -6,7 +6,7 @@ namespace common::packet
 	string SerializableString::kDummy;
 
 	Base::Base(ENetPacket* packet, const Size sz)
-		: _ptr(reinterpret_cast<char*>(packet->data)), _size(sz),
+		: _ptr((char*)packet->data), _size(sz),
 		_enet_packet(packet), _overflow(false)
 	{
 
@@ -81,60 +81,83 @@ namespace common::packet
 
 	void SerializableString::Write(Out & out) const
 	{
+		Size sz;
 		if (IsString() || IsChar())
 		{
-			const Size sz = static_cast<Size>(IsString() ? _ref.size() : strlen(_data));
-			out.Write(sz);
-
-			if (out.HasOverflowed(sz))
-				return;
-
-			char* data = IsString() ? &_ref[0] : (char*)_data[0];
-			std::copy_n(data, sz, out.GetPointer<char>());
-			out.Move(sz);
+			sz = static_cast<Size>(IsString() ? _ref.size() : strlen(_data));
 		}
-		else if (IsFixedString() || IsFixedChar())
+		else //if (IsFixedString() || IsFixedChar())
 		{
-			if (out.HasOverflowed(_sz))
-				return;
-
-			std::copy_n(IsFixedString() ? &_ref[0] : (char*)_data[0], _sz, out.GetPointer<char>());
-			out.Move(_sz);
+			sz = _sz;
 		}
+
+		if (out.HasOverflowed(sz))
+			return;
+
+		//std::copy_n(IsString() || IsFixedString() ? _ref.data() : (char*)_data,
+			//sz, out.GetPointer<char>());
+
+		memcpy(out.GetPointer<char>(),
+			IsString() || IsFixedString() ? _ref.data() : (char*)_data, sz);
+
+		out.Move(sz);
 	}
 
 	void SerializableString::Read(In* in)
 	{
+		Size sz;
 		if (IsString() || IsChar())
 		{
-			Size sz;
 			in->Read(sz);
-
-			if (in->HasOverflowed(sz))
-				return;
-			
-			if (IsString())
-			{
-				_ref.resize(sz);
-			}
-			// #error checks
-
-			std::copy_n(in->GetPointer<char>(), sz, IsString() ? &_ref[0] : (char*)_data[0]);
-			in->Move(sz);
 		}
-		else if (IsFixedString() || IsFixedChar())
+		else //if (IsFixedString() || IsFixedChar())
 		{
-			// #packet auto resize string 
-			if (in->HasOverflowed(_sz))
-				return;
-
-			std::copy_n(in->GetPointer<char>(), _sz, IsString() ? &_ref[0] : (char*)_data[0]);
+			sz = _sz;
 		}
+
+		if (in->HasOverflowed(sz))
+			return;
+
+		if (IsString() || IsFixedString())
+		{
+			_ref.clear();
+
+			if (_ref.capacity() < sz)
+			{
+				cout << "Resized packet string from " << _ref.capacity();
+				_ref.reserve(sz);
+				cout << " to " << _ref.capacity() << endl;
+			}
+
+			_ref.assign(in->GetPointer<char>(), sz);
+		}
+		else
+		{
+			memcpy((char*)_data, in->GetPointer<char>(), sz);
+		}
+
+		in->Move(sz);
 	}
 
 	packet::Size SerializableString::GetPacketSize() const
 	{
-		return (IsString() || IsChar()) ? (sizeof(Size) + _sz) : _sz;
+		packet::Size sz = 0;
+		if (IsFixedString() || IsFixedChar())
+		{
+			sz = _sz;
+		}
+		else if (IsString())
+		{
+			sz = sizeof(Size) + _ref.size();
+		}
+		else if (IsChar())
+		{
+			// #net check if has to add +1 for null termination or something
+			sz = sizeof(Size) + strlen(_data);
+		}
+		
+		cout << "SerializableString::GetPacketSize(): " << sz << endl;
+		return sz;
 	}
 
 	SerializableString::~SerializableString() = default;

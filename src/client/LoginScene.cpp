@@ -52,9 +52,10 @@ void LoginScene::ProcessUI() const
 		
 		//g_sock->Send(CreateStatic(Op::Login, _username, _password));
 		//auto out = OutPkt::CreateDynamic(NetOp::Login,sizeof(_username) + sizeof(_password));
-		auto str1 = string("hola");
-		auto str2 = string("bro");
-		g_app->Send(MainOp::Login/*, packet::SerializableString(str1, 2), packet::SerializableString(str2)*/);
+		string str1 = "hola";
+		string str2 = "bro";
+		int algo = 3;
+		g_app->Send(MainOp::Login, algo, packet::SerializableString(str1, 2), packet::SerializableString(str2));
 
 		/*
 		 *auto out = OutPkt::CreateDynamic(NetOp::Main, sizeof(string("hola")) + sizeof(string("bro")));
@@ -62,7 +63,6 @@ void LoginScene::ProcessUI() const
 		out->Write(string("bro"));
 		g_sock->Send(out);
 		*/
-		
 	}
 
 	ImGui::End();

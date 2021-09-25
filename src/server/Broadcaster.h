@@ -30,7 +30,7 @@ public:
 	template <typename ... Args>
 	void Send(const Player* player, Op op, Args && ... args)
 	{
-		Global::Send(player, StaticPacket(this->_net_op, op, std::forward<Args>(args)...));
+		Global::Send(player, StaticPacket(op, std::forward<Args>(args)...));
 	}
 
 	/*template <typename ... Args>
