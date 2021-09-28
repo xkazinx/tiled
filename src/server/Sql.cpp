@@ -16,7 +16,7 @@ unique_ptr<Sql> Sql::Create()
 		"tileship", 3306, nullptr, 0) ||
 		sql->FetchError())
 	{
-		cout << "Error in mysql_real_connect" << endl;
+		Log::Err("Error in mysql_real_connect");
 		return nullptr;
 	}
 	
@@ -27,8 +27,8 @@ unsigned Sql::FetchError()
 {
 	const auto err = mysql_errno(Get());
 	if (err != 0)
-		cout << "Error in MySQL: " << err << endl;
-
+		Log::Err("Error in MySQL: {}", err);
+	// #todo get error string
 	return err;
 
 }
@@ -43,6 +43,7 @@ void Sql::Query(const string& query)
 
 void Sql::Insert(const string& table, const vector<string>& columns, const vector<vector<string>>& rows)
 {
+	// #debug #ifdef DEBUG_SQL
 	assert(columns.size() > 0);
 
 	if (rows.empty())
@@ -50,6 +51,8 @@ void Sql::Insert(const string& table, const vector<string>& columns, const vecto
 		cout << "Warning: Tried to run Sql::Insert without rows to insert" << endl;
 		return;
 	}
+
+	Log::Out("Sql::Insert called for {} table", table);
 	
 	auto values = "("s;
 	{

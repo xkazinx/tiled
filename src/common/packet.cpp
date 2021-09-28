@@ -41,7 +41,7 @@ namespace common::packet
 	{
 		if (!peer || GetLength() == 0 || _overflow)
 		{
-			cout << "Can't send packet: Peer unavailable, empty packet, or overflowed packet" << endl;
+			Log::Out("Can't send packet: Peer unavailable, empty packet, or overflowed packet");
 			return;
 		}
 
@@ -124,9 +124,7 @@ namespace common::packet
 
 			if (_ref.capacity() < sz)
 			{
-				cout << "Resized packet string from " << _ref.capacity();
 				_ref.reserve(sz);
-				cout << " to " << _ref.capacity() << endl;
 			}
 
 			_ref.assign(in->GetPointer<char>(), sz);

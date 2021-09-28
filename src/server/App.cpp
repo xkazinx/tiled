@@ -59,7 +59,7 @@ void App::OnPacket(ENetEvent& ev)
 	case NetOp::Main:	this->NetOperation(opt);	break;
 
 	default: // #todo
-		cout << "Error: Unknown NetOp" << to_underlying(op) << endl;
+		//Log::Err("Unknown NetOp: " << to_underlying(op) << endl;
 		break;
 	}
 }
@@ -123,40 +123,30 @@ void App::HandleSocket()
 
 void App::NetOp_Login()
 {
-	auto sql = Sql::Create();
+	const auto sql = Sql::Create();
 	if (!sql)
 		return;
 	
 	packet::SerializableString username(2);
 	packet::SerializableString password;
-
-	auto algo = GetPacket()->ReadAs<int>();
+	
 	GetPacket()->Read(username, password);
 
-	cout << "algo " << algo;
-	cout << "User: " << username << " | Password: " << password << endl;
+	Log::Out("Data from packet... Username: {} - Password: {}", username, password);
 
 	/*sql->Insert("players",
 		vector<string>{"username", "password" },
 		vector<vector<string>>{{ { username }, { password } }}
 	);*/
 
-	auto res = sql->Select("players", { "username", "password" });
-	while (auto it = res->Pop())
+	if (const auto res = sql->Select("players",
+		{ "username", "password" }))
 	{
-		cout << it->Get<string>("username") << endl;
-		cout << it->Get<string>("password") << endl;
-		cout << endl;
+		while (const auto it = res->Pop())
+		{
+			Log::Out("From database... Username: {} - Password: {}",
+				it->Get<string>("username"),
+				it->Get<string>("password"));
+		}
 	}
-
-	// auto player = GetPacketPlayer();
-	// auto username = GetPacket()->Pop<string>();
-	// auto password = GetPacket()->Pop<string>();
-
-	//auto hash = password; // TODO Hash
-
-	// Initializar base de datos
-	// Armar query
-	// Comparar y leer datos
-	// Enviar confirmacion al cliente y (si es necesario) a otros clientes
 }

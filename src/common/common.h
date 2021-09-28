@@ -63,6 +63,11 @@ using std::is_pointer_v;
 using std::forward;
 
 // common filter
+#include <magic_enum.h>
+using namespace magic_enum;
+
+#include <console/out.h>
+
 #include <netops.h>
 #include <random.h>
 #include <packet.h>
@@ -77,6 +82,17 @@ template <typename T>
 constexpr underlying_type_t<T> to_underlying(T value) noexcept
 {
 	return underlying_type_t<T>(value);
+}
+
+template<typename T>
+inline string Format(T & t)
+{
+	if constexpr (is_enum_v<T>)
+	{
+		return format("({}:{})", ToUnderlying(t), enum_name(t));
+	}
+
+	return to_string(t);
 }
 
 namespace tile

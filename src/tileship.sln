@@ -22,6 +22,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{8C0947
 		common\socket.h = common\socket.h
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "console", "console", "{82242433-46B9-48CA-B9B6-CA7B28272824}"
+	ProjectSection(SolutionItems) = preProject
+		common\console\out.cpp = common\console\out.cpp
+		common\console\out.h = common\console\out.h
+		common\console\rang.hpp = common\console\rang.hpp
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -49,6 +56,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{82242433-46B9-48CA-B9B6-CA7B28272824} = {8C0947C4-1BA3-49D3-BF16-EBBAD65BFD66}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {091E0047-7422-446E-8C82-B50D52C2C0A2}

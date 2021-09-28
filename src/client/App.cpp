@@ -23,7 +23,7 @@ App::~App()
 
 void App::NetOperationProcess()
 {
-	cout << "NetOperationProcess Op: " << to_underlying(GetOperation()) << endl;
+	cout << "NetOperationProcess Op: " << to_underlying(GetOperation()) << " " << enum_name(GetOperation()) << endl;
 	switch(GetOperation())
 	{
 	case MainOp::Login:
@@ -129,7 +129,6 @@ void App::HandleSocket()
 		switch (ev.type)
 		{
 		case ENET_EVENT_TYPE_CONNECT:
-			cout << "CONECTADO" << endl;
 			//OnConnect();
 			break;
 

@@ -670,10 +670,7 @@ namespace magic_enum {
 	// Otherwise, if T is not an enumeration type, there is no member type. Otherwise (T is an incomplete enumeration type), the program is ill-formed.
 	template <typename T>
 	struct underlying_type : detail::underlying_type<T> {};
-
-	template <typename T>
-	using underlying_type_t = typename underlying_type<T>::type;
-
+	
 	// Returns type name of enum.
 	template <typename E>
 	[[nodiscard]] constexpr auto enum_type_name() noexcept -> detail::enable_if_enum_t<E, string_view> {
