@@ -12,6 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{8C0947
 		common\broadcaster.h = common\broadcaster.h
 		common\common.cpp = common\common.cpp
 		common\common.h = common\common.h
+		common\magic_enum.h = common\magic_enum.h
 		common\netops.h = common\netops.h
 		common\packet.cpp = common\packet.cpp
 		common\packet.h = common\packet.h
