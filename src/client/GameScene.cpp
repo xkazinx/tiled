@@ -9,7 +9,7 @@ GameScene::GameScene()
 		//const string data = "10";
 		const string data = "3012012012";
 		vector<unique_ptr<Tile>> tiles;
-		tile::LineSize size = (u8)(data[0] - '0');
+		auto size = (tile::LineSize)(data[0] - '0');
 
 		for(szt i = 1; i < data.size(); ++i)
 		{

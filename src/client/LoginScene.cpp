@@ -16,28 +16,6 @@ LoginScene::~LoginScene()
 
 void LoginScene::Tick()
 {
-	/*if (ImGui::BeginMenu("Login"))
-	{
-		//ShowExampleMenuFile();
-		ImGui::EndMenu();
-	}*/
-	/*static bool HasLogged = false;
-	if (!HasLogged)
-	{
-		HasLogged = true;
-
-		string password;
-
-		cout << "Username: ";
-		cin >> _username;
-		cout << "Password: ";
-		cin >> password;
-	}*/
-
-
-	ImGui::Begin("Hello, world!");
-	ImGui::Button("Look at this pretty button");
-	ImGui::End();
 }
 
 void LoginScene::ProcessUI() const
@@ -48,21 +26,12 @@ void LoginScene::ProcessUI() const
 
 	if (ImGui::Button("Login"))
 	{
-		cout << "User: " << _username << " Pass: " << _password << endl;
+		Log::Out("Sent Login info: User: {} - Pass: {}", _username, _password);
 		
-		//g_sock->Send(CreateStatic(Op::Login, _username, _password));
-		//auto out = OutPkt::CreateDynamic(NetOp::Login,sizeof(_username) + sizeof(_password));
-		string str1 = "hola";
-		string str2 = "bro";
-		int algo = 3;
-		g_app->Send(MainOp::Login, algo, packet::SerializableString(str1, 2), packet::SerializableString(str2));
-
-		/*
-		 *auto out = OutPkt::CreateDynamic(NetOp::Main, sizeof(string("hola")) + sizeof(string("bro")));
-		out->Write(string("hola"));
-		out->Write(string("bro"));
-		g_sock->Send(out);
-		*/
+		g_app->Send(MainOp::Login, 
+			NetString(_username, player::kNameSize),
+			NetString(_password, player::kPasswordSize)
+		);
 	}
 
 	ImGui::End();

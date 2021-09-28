@@ -127,12 +127,12 @@ void App::NetOp_Login()
 	if (!sql)
 		return;
 	
-	packet::SerializableString username(2);
-	packet::SerializableString password;
+	NetString username(player::kNameSize);
+	NetString password(player::kPasswordSize);
 	
 	GetPacket()->Read(username, password);
-
-	Log::Out("Data from packet... Username: {} - Password: {}", username, password);
+	cout << "Data from packet... Username: Password: " << string(username) << password << endl;
+	cout << format("Data from packet... Username: {} Password: {}", username, password);
 
 	/*sql->Insert("players",
 		vector<string>{"username", "password" },

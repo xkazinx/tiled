@@ -53,6 +53,7 @@ bool Socket::Service(ENetEvent & ev) const
 			return true;
 
 		case ENET_EVENT_TYPE_RECEIVE:
+			Log::Out("Received packet of {} bytes", ev.packet->dataLength);
 			return true;
 
 		case ENET_EVENT_TYPE_DISCONNECT:

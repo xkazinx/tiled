@@ -193,7 +193,8 @@ namespace common
 			}
 
 			static OutPacketPtr CreateDynamic(const NetOp net_op, const Size sz)
-			{ 
+			{
+				cout << "CreateDynamic size: " << int(sizeof(net_op) + sz) << endl;
 				auto pkt = std::make_unique<Out>(sizeof(net_op) + sz);
 				pkt->Write(net_op);
 				return pkt;
@@ -289,7 +290,7 @@ namespace common
 			template<typename T, typename = enable_if_t<!is_pointer_v<T>>>
 			void _Read(T & v)
 			{
-				static_assert(!is_same_v<string, T> && !is_same_v<char*, T>, "Use SerializableString");
+				static_assert(!is_same_v<string, T> && !is_same_v<char*, T>, "Use NetString or packet::SerializableString");
 
 				if constexpr (is_base_of_v<Serializable, T>)
 				{
@@ -319,4 +320,5 @@ namespace common
 	using InPkt = packet::In;
 	using OutPkt = packet::Out;
 	using OutPktRef = packet::OutPacketPtr&;
+	using NetString = packet::SerializableString;
 }

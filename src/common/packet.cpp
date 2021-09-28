@@ -41,7 +41,7 @@ namespace common::packet
 	{
 		if (!peer || GetLength() == 0 || _overflow)
 		{
-			Log::Out("Can't send packet: Peer unavailable, empty packet, or overflowed packet");
+			Log::Err("Can't send packet: Peer unavailable, empty packet, or overflowed packet");
 			return;
 		}
 
@@ -81,26 +81,36 @@ namespace common::packet
 
 	void SerializableString::Write(Out & out) const
 	{
-		Size sz;
+		Size sz = 1;
 		if (IsString() || IsChar())
 		{
-			sz = static_cast<Size>(IsString() ? _ref.size() : strlen(_data));
+			sz += static_cast<Size>(IsString() ? _ref.size() : strlen(_data));
+			out.Write(sz);
 		}
 		else //if (IsFixedString() || IsFixedChar())
 		{
-			sz = _sz;
+			if (IsFixedString())
+			{
+				sz += (Size)_ref.size();
+			}
+			else //if (IsFixedChar())
+			{
+				sz += (Size)strlen(_data);
+			}
 		}
-
+		
 		if (out.HasOverflowed(sz))
 			return;
 
+		cout << "Wrote NetString of size " << sz << endl;
+		// #todo not optimum
+		memcpy(out.GetPointer<char>(), 
+			IsString() || IsFixedString() ? _ref.c_str() : string(_data).c_str(), sz);
+		
 		//std::copy_n(IsString() || IsFixedString() ? _ref.data() : (char*)_data,
 			//sz, out.GetPointer<char>());
 
-		memcpy(out.GetPointer<char>(),
-			IsString() || IsFixedString() ? _ref.data() : (char*)_data, sz);
-
-		out.Move(sz);
+		out.Move(IsFixedChar() || IsFixedString() ? _sz + 1 : sz);
 	}
 
 	void SerializableString::Read(In* in)
@@ -112,7 +122,7 @@ namespace common::packet
 		}
 		else //if (IsFixedString() || IsFixedChar())
 		{
-			sz = _sz;
+			sz = _sz + 1;
 		}
 
 		if (in->HasOverflowed(sz))
@@ -120,14 +130,16 @@ namespace common::packet
 
 		if (IsString() || IsFixedString())
 		{
-			_ref.clear();
-
 			if (_ref.capacity() < sz)
 			{
 				_ref.reserve(sz);
 			}
+			
+			_ref.clear();
 
-			_ref.assign(in->GetPointer<char>(), sz);
+			// #netstring #packet #todo If you send "hola\0chau" you only receive "hola" when reading with string,
+			// could add an argument to determine behaviour
+			_ref.assign(in->GetPointer<char>(), strlen(in->GetPointer<char>()));
 		}
 		else
 		{
@@ -142,20 +154,22 @@ namespace common::packet
 		packet::Size sz = 0;
 		if (IsFixedString() || IsFixedChar())
 		{
-			sz = _sz;
+			sz = _sz + 1;
 		}
 		else if (IsString())
 		{
-			sz = sizeof(Size) + _ref.size();
+			sz = sizeof(Size) + _ref.size() + 1;
 		}
 		else if (IsChar())
 		{
 			// #net check if has to add +1 for null termination or something
-			sz = sizeof(Size) + strlen(_data);
+			sz = sizeof(Size) + strlen(_data) + 1;
 		}
-		
-		cout << "SerializableString::GetPacketSize(): " << sz << endl;
+
+#ifdef DEBUG_PACKET
+		Log::Out("SerializableString::GetPacketSize(): {}", sz);
 		return sz;
+#endif
 	}
 
 	SerializableString::~SerializableString() = default;
