@@ -7,6 +7,7 @@ using std::endl;
 
 #include <string>
 using std::string;
+using std::to_string;
 using namespace std::string_literals;
 
 #include <type_traits>
@@ -85,14 +86,16 @@ constexpr underlying_type_t<T> to_underlying(T value) noexcept
 }
 
 template<typename T>
-inline string Format(T & t)
+inline string Format(const T & t)
 {
 	if constexpr (is_enum_v<T>)
 	{
-		return format("({}:{})", ToUnderlying(t), enum_name(t));
+		return format("({}:{})", to_underlying(t), enum_name(t));
 	}
-
-	return to_string(t);
+	else
+	{
+		return to_string(t);
+	}
 }
 
 namespace tile

@@ -138,7 +138,7 @@ namespace common::packet
 			_ref.clear();
 
 			// #netstring #packet #todo If you send "hola\0chau" you only receive "hola" when reading with string,
-			// could add an argument to determine behaviour
+			// could add an argument to determine behavior
 			_ref.assign(in->GetPointer<char>(), strlen(in->GetPointer<char>()));
 		}
 		else
@@ -151,19 +151,19 @@ namespace common::packet
 
 	packet::Size SerializableString::GetPacketSize() const
 	{
-		packet::Size sz = 0;
+		packet::Size sz = 1;
 		if (IsFixedString() || IsFixedChar())
 		{
-			sz = _sz + 1;
+			sz += _sz;
 		}
 		else if (IsString())
 		{
-			sz = sizeof(Size) + _ref.size() + 1;
+			sz += sizeof(Size) + _ref.size();
 		}
 		else if (IsChar())
 		{
 			// #net check if has to add +1 for null termination or something
-			sz = sizeof(Size) + strlen(_data) + 1;
+			sz += sizeof(Size) + strlen(_data);
 		}
 
 #ifdef DEBUG_PACKET

@@ -21,6 +21,8 @@ public:
 template<class Op>
 class Broadcaster : public broadcaster::Base<Op>
 {
+	InOperation _opt;
+
 public:
 	using Peer = ENetPeer;
 
@@ -51,7 +53,4 @@ public:
 	auto GetPlayer() const { return _opt.GetPlayer();	}
 	auto GetPacket() const { return _opt.GetPacket();	}
 	auto GetPeer()	  const { return _opt.GetPeer();		}
-
-private:
-	InOperation _opt;
 };

@@ -4,6 +4,7 @@
 
 void PlayerMgr::Add(unique_ptr<Player>&& player)
 {
+	// #todo
 	assert(!_array[1]);
 	_array[/*player->_peer_id*/1] = move(player);
 }
