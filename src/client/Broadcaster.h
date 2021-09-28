@@ -3,6 +3,8 @@
 template<class Op = broadcaster::DummyOp>
 class Broadcaster : public broadcaster::Base<Op>
 {
+	broadcaster::InOperationBase _opt;
+
 public:
 	using Peer = ENetPeer;
 
@@ -26,7 +28,4 @@ public:
 	virtual void NetOperationProcess() = 0;
 
 	auto GetPacket() const { return _opt.GetPacket(); }
-
-private:
-	broadcaster::InOperationBase _opt;
 };

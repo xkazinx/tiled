@@ -5,7 +5,7 @@
 void PlayerMgr::Add(unique_ptr<Player>&& player)
 {
 	assert(!_array[1]);
-	_array[/*player->_peer_id*/1] = std::move(player);
+	_array[/*player->_peer_id*/1] = move(player);
 }
 
 PlayerMgr::PlayerMgr()

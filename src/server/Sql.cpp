@@ -1,36 +1,33 @@
 #include "stdafx.h"
 #include "Sql.h"
 
-#include <ranges>
-
 Sql::Sql()
 {
 	mysql_init(Get()); // #Check if needs to be called for every connection
 }
 
-Sql::~Sql()
-{
-}
+Sql::~Sql() = default;
 
 unique_ptr<Sql> Sql::Create()
 {
 	auto sql = make_unique<Sql>();
 
-	if (!mysql_real_connect(sql->Get(), "localhost", "root", "root", "tileship", 3306, nullptr, 0) ||
+	if (!mysql_real_connect(sql->Get(), "localhost", "root", "root", 
+		"tileship", 3306, nullptr, 0) ||
 		sql->FetchError())
 	{
 		cout << "Error in mysql_real_connect" << endl;
-		sql.reset();
+		return nullptr;
 	}
 	
-	return std::move(sql);
+	return move(sql);
 }
 
 unsigned Sql::FetchError()
 {
 	const auto err = mysql_errno(Get());
 	if (err != 0)
-		cout << "Error in connecting error: " << err << endl;
+		cout << "Error in MySQL: " << err << endl;
 
 	return err;
 
@@ -38,65 +35,67 @@ unsigned Sql::FetchError()
 
 void Sql::Query(const string& query)
 {
-	mysql_real_query(Get(), query.data(), query.size());
+	if (mysql_real_query(Get(), query.data(), query.size()) != 0)
+	{
+		FetchError();
+	}
 }
 
 void Sql::Insert(const string& table, const vector<string>& columns, const vector<vector<string>>& rows)
 {
-	// #todo Make this function shared
-	auto scape = [&](auto& text, auto& scape)
-	{
-		return scape + text + scape;
-	};
+	assert(columns.size() > 0);
 
-	string values = "";
-
-	for(int i = 0; i < columns.size() - 1; i++)
+	if (rows.empty())
 	{
-		values += scape(columns[i], "`") + ",";
+		cout << "Warning: Tried to run Sql::Insert without rows to insert" << endl;
+		return;
 	}
-
-	values += scape(columns[columns.size() - 1], "`");
-
-	string data;
-
-	for (int i = 0; i <= rows.size() - 1; i++)
+	
+	auto values = "("s;
 	{
-		const auto & row = rows[i];
-
-		data += "(";
-
-		for (int j = 0; j < row.size() - 1; j++)
+		for (szt i = 0; i < columns.size() - 1; i++)
 		{
-			data += scape(row[j], "\"") + ",";
+			values += Scape(columns[i], "`", ",");
 		}
 
-		data += scape(row[row.size() - 1], "\"") + ")";
-
-		data += i == rows.size() - 1 ? ";" : ",";
+		values += Scape(columns[columns.size() - 1], "`)");
 	}
 
-	Query(std::format("INSERT INTO `{}` ({}) VALUES {}", table, values, data));
+	string data;
+	{
+		for (szt i = 0; i <= rows.size() - 1; i++)
+		{
+			const auto& row = rows[i];
+
+			data += "(";
+
+			// #todo Scape differently if not string
+			for (szt j = 0; j < row.size() - 1; j++)
+			{
+				data += Scape(row[j], "\"", ",");
+			}
+
+			data += Scape(row[row.size() - 1], "\"", ")");
+
+			data += i == rows.size() - 1 ? ";" : ",";
+		}
+	}
+
+	Query(format("INSERT INTO `{}` ({}) VALUES {}", table, values, data));
 }
 
 unique_ptr<SelectResult> Sql::Select(const string& table, const vector<string>& columns)
 {
-	// #todo Make this function shared
-	auto scape = [&](auto& text, auto& scape)
-	{
-		return scape + text + scape;
-	};
+	string select;
 
-	string select = "";
-
-	for (int i = 0; i < columns.size() - 1; i++)
+	for (szt i = 0; i < columns.size() - 1; i++)
 	{
-		select += scape(columns[i], "`") + ",";
+		select += Scape(columns[i], "`", ",");
 	}
 
-	select += scape(columns[columns.size() - 1], "`");
+	select += Scape(columns[columns.size() - 1], "`");
 
-	Query(std::format("SELECT {} FROM `{}`", select, table));
+	Query(format("SELECT {} FROM `{}`", select, table));
 
 	return make_unique<SelectResult>(this);
 }
@@ -106,7 +105,7 @@ SelectResult::SelectResult(Sql * sql)
 	_ptr = mysql_store_result(sql->Get());
 
 	{
-		auto total = mysql_num_rows(_ptr);
+		auto total = (SelectValue)mysql_num_rows(_ptr);
 		_rows.reserve(total);
 		_lengths.resize(total);
 		while (total-- > 0)
@@ -116,7 +115,6 @@ SelectResult::SelectResult(Sql * sql)
 			auto lengths = mysql_fetch_lengths(_ptr);
 			for(szt i = 0; i < _ptr->field_count; ++i)
 			{
-				// #todo storing length pointers directly
 				_lengths[_rows.size() - 1].emplace_back(lengths[i]);
 			}
 		}

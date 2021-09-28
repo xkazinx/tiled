@@ -29,13 +29,13 @@ namespace common::broadcaster
 		template<typename ... Args>
 		packet::OutPacketPtr&& StaticPacket(Op op, Args &&... args) const
 		{
-			return std::move(OutPkt::CreateStatic(_net_op, op, args...)); // #why not forward here?
+			return move(OutPkt::CreateStatic(_net_op, op, args...)); // #why not forward here?
 		}
 
 		template<typename ... Args>
 		packet::OutPacketPtr&& DynamicPacket(Op op, Args &&... args) const
 		{
-			return std::move(OutPkt::CreateDynamic(_net_op, op, std::forward<Args>(args)...));
+			return move(OutPkt::CreateDynamic(_net_op, op, std::forward<Args>(args)...));
 		}
 
 	protected:

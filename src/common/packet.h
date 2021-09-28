@@ -31,13 +31,13 @@ namespace common
 			static string kDummy;
 
 			SerializableString()
-				: _data(nullptr), _sz(0), _ref((string&)*this)
+				: _data(nullptr), _sz(0), _ref(static_cast<string&>(*this))
 			{}
 
 			~SerializableString() override;
 
 			SerializableString(Size sz)
-				: _data(nullptr), _sz(sz), _ref((string&)*this)
+				: _data(nullptr), _sz(sz), _ref(static_cast<string&>(*this))
 			{
 				
 			}

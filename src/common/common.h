@@ -7,6 +7,7 @@ using std::endl;
 
 #include <string>
 using std::string;
+using namespace std::string_literals;
 
 #include <type_traits>
 using i64 = std::int64_t;
@@ -41,6 +42,15 @@ namespace this_thread = std::this_thread;
 #include <chrono>
 namespace chrono = std::chrono;
 
+#include <format>
+using std::format;
+
+#include <functional>
+#include <cassert>
+
+//using std::copy;
+using std::move;
+
 using std::enable_if_t;
 using std::is_integral_v;
 using std::is_enum_v;
@@ -51,13 +61,6 @@ using std::underlying_type_t;
 using std::is_base_of_v;
 using std::is_pointer_v;
 using std::forward;
-//using std::copy;
-
-#include <functional>
-
-#include <format>
-using std::format;
-#include <cassert>
 
 // common filter
 #include <netops.h>
@@ -70,6 +73,12 @@ using std::format;
 
 namespace common
 {
+template <typename T>
+constexpr underlying_type_t<T> to_underlying(T value) noexcept
+{
+	return underlying_type_t<T>(value);
+}
+
 namespace tile
 {
 	enum class Type : u8

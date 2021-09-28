@@ -11,10 +11,10 @@ Tile::Tile(Type type, const sf::Vector2i& pos)
 	constexpr auto half = tile::kHalfSize;
 	constexpr auto origin = 300.f;
 
-	_vertex_array.append(sf::Vertex{ {origin + ((pos.x - pos.y) * half),			origin + ((pos.x + pos.y) * half) }, tile::kColors[(szt)type] });
-	_vertex_array.append(sf::Vertex{ {origin + ((pos.x - pos.y) * half) + half,	origin + ((pos.x + pos.y) * half) + half }, tile::kColors[(szt)type] });
-	_vertex_array.append(sf::Vertex{ {origin + ((pos.x - pos.y) * half),			origin + ((pos.x + pos.y) * half) + tile::kSize }, tile::kColors[(szt)type] });
-	_vertex_array.append(sf::Vertex{ {origin + ((pos.x - pos.y) * half) - half,	origin + ((pos.x + pos.y) * half) + half }, tile::kColors[(szt)type] });
+	_vertex_array.append(sf::Vertex{ {origin + ((pos.x - pos.y) * half),			origin + ((pos.x + pos.y) * half) }, tile::kColors[to_underlying(type)] });
+	_vertex_array.append(sf::Vertex{ {origin + ((pos.x - pos.y) * half) + half,	origin + ((pos.x + pos.y) * half) + half }, tile::kColors[to_underlying(type)] });
+	_vertex_array.append(sf::Vertex{ {origin + ((pos.x - pos.y) * half),			origin + ((pos.x + pos.y) * half) + tile::kSize }, tile::kColors[to_underlying(type)] });
+	_vertex_array.append(sf::Vertex{ {origin + ((pos.x - pos.y) * half) - half,	origin + ((pos.x + pos.y) * half) + half }, tile::kColors[to_underlying(type)] });
 
 	_vertex_buffer.update(&_vertex_array[0]);
 }

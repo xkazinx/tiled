@@ -1,7 +1,7 @@
 #pragma once
 
 class Sql;
-using SelectValue = my_ulonglong;
+using SelectValue = szt;
 
 class SelectItem
 {
@@ -74,7 +74,7 @@ public:
 		if (idx >= _rows.size())
 			return nullptr;
 
-		return make_unique<SelectItem>(_rows[idx], _lengths[idx],_fields_indexes);
+		return make_unique<SelectItem>(_rows[(szt)idx], _lengths[(szt)idx],_fields_indexes);
 	}
 };
 
@@ -85,9 +85,9 @@ public:
 	~Sql();
 
 	static unique_ptr<Sql> Create();
-	MYSQL _mysql;
+	MYSQL _ptr;
 
-	auto Get() { return &_mysql; }
+	auto Get() { return &_ptr; }
 
 	unsigned FetchError();
 
@@ -95,4 +95,9 @@ public:
 	void Query(const string & query);
 	void Insert(const string & table, const vector<string> & columns, const vector<vector<string>> & rows);
 	unique_ptr<SelectResult> Select(const string& table, const vector<string>& columns);
+
+	static string Scape(const string& str, const string& scape, const string& add = "")
+	{
+		return scape + str + scape + add;
+	}
 };

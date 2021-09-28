@@ -23,7 +23,7 @@ App::~App()
 
 void App::NetOperationProcess()
 {
-	cout << "NetOperationProcess Op: " << (int)GetOperation() << endl;
+	cout << "NetOperationProcess Op: " << to_underlying(GetOperation()) << endl;
 	switch(GetOperation())
 	{
 	case MainOp::Login:

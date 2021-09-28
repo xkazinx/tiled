@@ -17,7 +17,7 @@ App::~App()
 
 void App::NetOperationProcess()
 {
-	cout << "NetOperationProcess Op: " << (int)GetOperation() << endl;
+	cout << "NetOperationProcess Op: " << to_underlying(GetOperation()) << endl;
 	switch(GetOperation())
 	{
 	case MainOp::Login:	NetOp_Login(); break;
@@ -59,7 +59,7 @@ void App::OnPacket(ENetEvent& ev)
 	case NetOp::Main:	this->NetOperation(opt);	break;
 
 	default: // #todo
-		cout << "Error: Unknown NetOp" << (int)op << endl;
+		cout << "Error: Unknown NetOp" << to_underlying(op) << endl;
 		break;
 	}
 }
@@ -147,11 +147,6 @@ void App::NetOp_Login()
 		cout << it->Get<string>("username") << endl;
 		cout << it->Get<string>("password") << endl;
 		cout << endl;
-		/*auto u = it->Get<string>("username");
-		auto p = it->Get<string>("password");
-		cout << 
-			"username: " << u << " " <<
-			"password: " << p << endl;*/
 	}
 
 	// auto player = GetPacketPlayer();

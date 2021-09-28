@@ -3,7 +3,7 @@
 #include "Tile.h"
 
 Map::Map(vector<unique_ptr<Tile>>& tiles, tile::LineSize line_size)
-	: _line_size(line_size), _tiles(std::move(tiles))
+	: _line_size(line_size), _tiles(move(tiles))
 {
 	g_map = this;
 }
