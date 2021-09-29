@@ -189,14 +189,14 @@ namespace common
 			{
 				auto pkt = CreateDynamic(net_op, Sizer::Get(val, forward<const Args>(args)...));
 				pkt->Write(val, forward<const Args>(args)...);
-				return move(pkt);
+				return pkt;
 			}
 
 			static OutPacketPtr CreateDynamic(const NetOp net_op, const Size sz)
 			{
 				auto pkt = make_unique<Out>(sizeof(net_op) + sz);
 				pkt->Write(net_op);
-				return move(pkt);
+				return pkt;
 			}
 
 			void Send(ENetPeer* peer, const enet_uint8 channel = 0) const;

@@ -20,7 +20,7 @@ unique_ptr<Sql> Sql::Create()
 		return nullptr;
 	}
 	
-	return move(sql);
+	return sql;
 }
 
 unsigned Sql::FetchError()
