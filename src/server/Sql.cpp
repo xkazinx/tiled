@@ -16,7 +16,7 @@ unique_ptr<Sql> Sql::Create()
 		"tileship", 3306, nullptr, 0) ||
 		sql->FetchError())
 	{
-		Log::Error("Error in mysql_real_connect");
+		Log::Error("mysql_real_connect");
 		return nullptr;
 	}
 	
@@ -27,7 +27,7 @@ unsigned Sql::FetchError()
 {
 	const auto err = mysql_errno(Get());
 	if (err != 0)
-		Log::Error("Error in MySQL: {}", err);
+		Log::Error("MySQL: {}", err);
 	// #todo get error string
 	return err;
 

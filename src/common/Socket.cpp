@@ -47,8 +47,7 @@ bool Socket::Service(ENetEvent & ev) const
 		switch (ev.type)
 		{
 		case ENET_EVENT_TYPE_CONNECT:
-			Print("Client {}:{} connected", 
-				FetchIP(ev.peer), ev.peer->address.port);
+			Print("Client {} connected", Format(ev.peer));
 			ev.peer->data = nullptr;
 			return true;
 
@@ -59,8 +58,7 @@ bool Socket::Service(ENetEvent & ev) const
 		case ENET_EVENT_TYPE_DISCONNECT:
 			if (ev.peer->data)
 			{
-				Print("Client {}:{} disconnected", 
-					FetchIP(ev.peer), ev.peer->address.port);
+				Print("Client {} disconnected", Format(ev.peer));
 				ev.peer->data = nullptr;
 			}
 			return true;
@@ -97,7 +95,7 @@ string Socket::FetchIP(ENetPeer* peer)
 	char data[15]{};
 	if (enet_address_get_host_ip(&peer->address, data, sizeof(data)) < 0)
 	{
-		Log::Error("Error on enet_address_get_host_ip");
+		Log::Error("enet_address_get_host_ip");
 	}
 
 	return data;

@@ -170,7 +170,7 @@ namespace common::packet
 		}
 
 #ifdef DEBUG_PACKET
-		Print("SerializableString::GetPacketSize(): {}", sz);
+		Log::Debug("SerializableString::GetPacketSize(): {}", sz);
 		return sz;
 #endif
 	}

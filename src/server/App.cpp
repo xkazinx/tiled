@@ -6,6 +6,7 @@
 App::App()
 	: Broadcaster<MainOp>(NetOp::Main)
 {
+	// #todo #param or whatever name it has for client and server
 	g_app = this;
 	Global::Initialize();
 }
