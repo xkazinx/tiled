@@ -89,16 +89,39 @@ constexpr underlying_type_t<T> to_underlying(T value) noexcept
 	return underlying_type_t<T>(value);
 }
 
+enum class FormatType : u8
+{
+	None,
+	bool_Switch,	  // On, Off
+	bool_State,		  // true, false
+	bool_Status,	  // Enabled, Disabled
+	bool_Result,	  // Success, Failure
+	bool_Affirmation, // Yes, No
+};
+
 template<typename T>
-inline string Format(const T & t)
+inline string Format(const T & v, FormatType type = FormatType::None)
 {
 	if constexpr (is_enum_v<T>)
 	{
-		return format("({}:{})", to_underlying(t), enum_name(t));
+		return format("({}:{})", to_underlying(v), enum_name(v));
+	}
+	else if constexpr(is_same_v<bool, T>)
+	{
+		using enum FormatType;
+		switch(type)
+		{
+		case bool_Switch:		return format("{}", v ? "On" : "Off");			
+		case bool_State:		return format("{}", v ? "True" : "False");		
+		case bool_Status:		return format("{}", v ? "Enabled" : "Disabled");
+		case bool_Result:		return format("{}", v ? "Success" : "Failure");	
+		case bool_Affirmation:	return format("{}", v ? "Yes" : "No");			
+		default:				return format("{}", v);
+		}
 	}
 	else
 	{
-		return to_string(t);
+		return to_string(v);
 	}
 }
 

@@ -48,7 +48,7 @@ void Sql::Insert(const string& table, const vector<string>& columns, const vecto
 
 	if (rows.empty())
 	{
-		cout << "Warning: Tried to run Sql::Insert without rows to insert" << endl;
+		Log::Error("Warning: Tried to run Sql::Insert without rows to insert");
 		return;
 	}
 

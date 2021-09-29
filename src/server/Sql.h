@@ -45,7 +45,7 @@ public:
 			else return data;
 		}
 
-		cout << "Error: Field not found for SelectItem::Pop: " << field << endl;
+		Log::Error("Field not found for SelectItem::Pop: {}", field);
 		return string("");
 	}
 

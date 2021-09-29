@@ -194,7 +194,6 @@ namespace common
 
 			static OutPacketPtr CreateDynamic(const NetOp net_op, const Size sz)
 			{
-				cout << "CreateDynamic size: " << int(sizeof(net_op) + sz) << endl;
 				auto pkt = make_unique<Out>(sizeof(net_op) + sz);
 				pkt->Write(net_op);
 				return move(pkt);
@@ -309,7 +308,7 @@ namespace common
 					// #todo std
 					if constexpr (is_same_v<NetOp, T>)
 					{
-						cout << "Reading NetOp: " << (int)v << endl;
+						Print("Reading NetOp{}", Format(v));
 					}
 #endif
 				}

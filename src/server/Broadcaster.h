@@ -4,7 +4,6 @@ class Player;
 
 class InOperation : public broadcaster::InOperationBase
 {
-private:
 	Player* _player;
 	ENetPeer* _peer;
 
@@ -32,6 +31,7 @@ public:
 	template <typename ... Args>
 	void Send(const Player* player, Op op, Args && ... args)
 	{
+		// #todo #packet make it so you can send the argument directly
 		auto out = broadcaster::Base<Op>::StaticPacket(op, forward<Args>(args)...);
 		Global::Send(player, out);
 	}

@@ -4,13 +4,12 @@ namespace common::broadcaster
 {
 	class InOperationBase
 	{
+		InPkt* _pkt = nullptr;
+
 	public:
 		InOperationBase() = default;
 		explicit InOperationBase(InPkt & pkt) : _pkt(&pkt) {}
 		auto GetPacket() const { return _pkt; }
-
-	private:
-		InPkt * _pkt = nullptr;
 	};
 
 	enum class DummyOp { None };

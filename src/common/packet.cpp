@@ -33,7 +33,6 @@ namespace common::packet
 	{
 		if (_enet_packet->referenceCount == 0)
 		{
-			Log::Debug("enet_packet_destroy");
 			enet_packet_destroy(_enet_packet);
 		}
 	}
@@ -44,7 +43,8 @@ namespace common::packet
 		{
 			// #format add Format #todo option to do like... Format(const bool&, u8 format_type)... where you can do like True/False, or On/Off, etc.
 			Log::Error("Can't send packet: Peer unavailable? ({}), EmptyPacket? (Length: {}), Overflow ({})", 
-				peer != nullptr, GetLength(), _overflow);
+				Format(peer != nullptr, FormatType::bool_Affirmation), GetLength(),
+				Format(_overflow, FormatType::bool_Affirmation));
 
 			return;
 		}
@@ -106,8 +106,7 @@ namespace common::packet
 		if (out.HasOverflowed(sz))
 			return;
 
-		cout << "Wrote NetString of size " << sz << endl;
-		// #todo not optimum
+		// #todo #packet not optimum
 		memcpy(out.GetPointer<char>(), 
 			IsString() || IsFixedString() ? _ref.c_str() : string(_data).c_str(), sz);
 		
