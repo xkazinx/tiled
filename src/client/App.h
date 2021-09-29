@@ -21,4 +21,8 @@ public:
 private:
 	void InitializeWindow();
 	void AdjustViewport(const GLsizei& x, const GLsizei& y);
+
+	void OnConnect(ENetEvent& ev);
+	void OnPacket(ENetEvent& ev);
+	void OnDisconnect(ENetEvent& ev);
 };

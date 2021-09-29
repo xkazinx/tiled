@@ -5,11 +5,12 @@
 template<LogType T>
 ConsoleOut<T>::~ConsoleOut()
 {
-	// #todo
+	// #todo #thread
 #ifndef CLIENT
 	unique_mutex lock(_mutex);
 #endif
 
+	// #todo #log Log into files what's printed for release mode if enabled for debugging
 	switch (T)
 	{
 	case Type::Debug:	std::cout << rang::fg::cyan;	break;

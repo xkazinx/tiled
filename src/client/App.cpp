@@ -23,21 +23,23 @@ App::~App()
 
 void App::NetOperationProcess()
 {
-	cout << "NetOperationProcess Op: " << to_underlying(GetOperation()) << " " << enum_name(GetOperation()) << endl;
+	Log::Debug("NetOperationProcess MainOp{}", Format(GetOperation()));
+
 	switch(GetOperation())
 	{
 	case MainOp::Login:
-		cout << "Login response" << endl;
+		Log::Debug("Login response: {}", GetPacket()->ReadAs<bool>());
 		break;
 
 	default:
-		// #todo
+		Log::Error("Unknown MainOp{}", Format(GetOperation()));
 		break;
 	}
 }
 
 void App::InitializeWindow()
 {
+	// OpenGL settings
 	ContextSettings settings;
 	{
 		settings.depthBits = 24;
@@ -58,7 +60,6 @@ void App::InitializeWindow()
 
 void App::AdjustViewport(const GLsizei & x, const GLsizei & y)
 {
-	// Configure the viewport (the same size as the window)
 	glViewport(0, 0, x, y);
 }
 
@@ -69,22 +70,32 @@ int App::Tick()
 
 	while (_window.isOpen())
 	{
-		if (!HandleEvents())
-			break;
-		
-		HandleSocket();
+		// Events
+		{	
+			if (!HandleEvents())
+				break;
+		}
+
+		// Network
+		{	
+			HandleSocket();
+		}
 
 		// Update
-		g_scene->Tick();
-		ImGui::SFML::Update(_window, delta_clock.restart());
-
-		_window.clear(sf::Color::Black);
+		{	
+			g_scene->Tick();
+			ImGui::SFML::Update(_window, delta_clock.restart());
+		}
 
 		// Render
-		g_scene->Render(_window, states);
-		ImGui::SFML::Render(_window);
-
-		_window.display();
+		{	
+			_window.clear(sf::Color::Black);
+			{
+				g_scene->Render(_window, states);
+				ImGui::SFML::Render(_window);
+			}
+			_window.display();
+		}
 
 		this_thread::sleep_for(chrono::milliseconds(1));
 	}
@@ -102,11 +113,10 @@ bool App::HandleEvents()
 
 		if (ev.type == sf::Event::Closed)
 		{
-			//_window.close();
+			_window.close();
 			return false;
 		}
-
-		// Adjust the viewport when the window is resized
+		
 		if (ev.type == sf::Event::Resized)
 		{
 			//auto _ = WindowGuard();
@@ -121,6 +131,32 @@ bool App::HandleEvents()
 	return true;
 }
 
+void App::OnConnect([[maybe_unused]] ENetEvent& ev)
+{
+	Log::Debug("OnConnect()");
+}
+
+void App::OnDisconnect([[maybe_unused]] ENetEvent& ev)
+{
+	Log::Debug("OnDisconnect()");
+}
+
+void App::OnPacket([[maybe_unused]] ENetEvent& ev)
+{
+	Log::Debug("OnPacket()");
+
+	InPkt in(ev.packet);
+	switch (const auto op = in.ReadAs<NetOp>();
+		op)
+	{
+	case NetOp::Main:	this->NetOperation(in);	break;
+
+	default: // #todo
+		Log::Error("Unknown NetOp{}", Format(op));
+		break;
+	}
+}
+
 void App::HandleSocket()
 {
 	ENetEvent ev;
@@ -129,16 +165,15 @@ void App::HandleSocket()
 		switch (ev.type)
 		{
 		case ENET_EVENT_TYPE_CONNECT:
-			//OnConnect();
+			OnConnect(ev);
 			break;
 
 		case ENET_EVENT_TYPE_RECEIVE:
-			//OnPacket(ev.packet);
-			enet_packet_destroy(ev.packet);
+			OnPacket(ev);
 			break;
 
 		case ENET_EVENT_TYPE_DISCONNECT:
-			//OnDisconnect();
+			OnDisconnect(ev);
 			break;
 		}
 	}

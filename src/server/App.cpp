@@ -151,4 +151,7 @@ void App::NetOp_Login()
 				it->Get<string>("password"));
 		}
 	}
+
+	Send(GetPlayer(), MainOp::Login, bool(true));
+	Send(GetPlayer(), MainOp::Login, bool(false));
 }

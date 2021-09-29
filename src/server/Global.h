@@ -15,5 +15,5 @@ namespace Global
 	extern void Initialize();
 	extern void Deinitialize();
 
-	extern void Send(const Player* player, OutPktRef&& out, enet_uint8 channel = 0);
+	extern void Send(const Player* player, OutPktRef& out, enet_uint8 channel = 0);
 }

@@ -9,7 +9,7 @@ namespace common
 		class Out;
 		class In;
 
-		using OutPacketPtr = std::unique_ptr<Out>;
+		using OutPacketPtr = unique_ptr<Out>;
 		using Size = enet_uint32;
 
 		class Serializable
@@ -184,20 +184,20 @@ namespace common
 			bool HasOverflowed(const Size sz) override;
 
 			// #todo packet::CreateStatic // packet::CreateDynamic
-			template<typename T, typename = enable_if_t<!std::is_pointer_v<T>>, typename ... Args>
+			template<typename T, typename = enable_if_t<!is_pointer_v<T>>, typename ... Args>
 			static OutPacketPtr CreateStatic(const NetOp net_op, const T& val, const Args & ... args)
 			{
-				auto pkt = CreateDynamic(net_op, Sizer::Get(val, std::forward<const Args>(args)...));
-				pkt->Write(val, std::forward<const Args>(args)...);
-				return pkt;
+				auto pkt = CreateDynamic(net_op, Sizer::Get(val, forward<const Args>(args)...));
+				pkt->Write(val, forward<const Args>(args)...);
+				return move(pkt);
 			}
 
 			static OutPacketPtr CreateDynamic(const NetOp net_op, const Size sz)
 			{
 				cout << "CreateDynamic size: " << int(sizeof(net_op) + sz) << endl;
-				auto pkt = std::make_unique<Out>(sizeof(net_op) + sz);
+				auto pkt = make_unique<Out>(sizeof(net_op) + sz);
 				pkt->Write(net_op);
-				return pkt;
+				return move(pkt);
 			}
 
 			void Send(ENetPeer* peer, const enet_uint8 channel = 0) const;
@@ -206,11 +206,11 @@ namespace common
 			void Write(const T & t, const Args & ...args)
 			{
 				_Write(t);
-				Write(std::forward<const Args>(args)...);
+				Write(forward<const Args>(args)...);
 			}
 
 			template<typename T, std::size_t N>
-			void Write(const std::array<T, N> & arr)
+			void Write(const array<T, N> & arr)
 			{
 				for (const auto & val : arr)
 					Write(val);
@@ -262,14 +262,14 @@ namespace common
 				Read(args...);
 			}
 
-			template<typename T, std::size_t N>
+			template<typename T, size_t N>
 			void Read(std::array<T, N> & arr)
 			{
 				for (auto& val : arr)
 					Read(val);
 			}
 
-			template<typename T, std::size_t N>
+			template<typename T, size_t N>
 			void Read(T(&arr)[N])
 			{
 				for (std::size_t i = 0; i < N; i++)

@@ -33,6 +33,7 @@ namespace common::packet
 	{
 		if (_enet_packet->referenceCount == 0)
 		{
+			Log::Debug("enet_packet_destroy");
 			enet_packet_destroy(_enet_packet);
 		}
 	}

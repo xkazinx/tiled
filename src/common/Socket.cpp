@@ -72,6 +72,8 @@ bool Socket::Service(ENetEvent & ev) const
 
 bool Socket::Connect(const string& ip, u16 port)
 {
+	Log::Debug("Socket::Connect({}, {})", ip, port);
+
 	ENetAddress address;
 	
 	enet_address_set_host(&address, ip.c_str());

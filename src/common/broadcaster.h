@@ -27,13 +27,13 @@ namespace common::broadcaster
 		auto GetOperation() const { return _op; }
 
 		template<typename ... Args>
-		packet::OutPacketPtr&& StaticPacket(Op op, Args &&... args) const
+		packet::OutPacketPtr StaticPacket(Op op, Args &&... args) const
 		{
 			return move(OutPkt::CreateStatic(_net_op, op, args...)); // #why not forward here?
 		}
 
 		template<typename ... Args>
-		packet::OutPacketPtr&& DynamicPacket(Op op, Args &&... args) const
+		packet::OutPacketPtr DynamicPacket(Op op, Args &&... args) const
 		{
 			return move(OutPkt::CreateDynamic(_net_op, op, std::forward<Args>(args)...));
 		}

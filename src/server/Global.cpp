@@ -21,7 +21,7 @@ namespace Global
 
 	}
 
-	void Send(const Player* player, OutPktRef&& out, enet_uint8 channel)
+	void Send(const Player* player, OutPktRef& out, enet_uint8 channel)
 	{
 		g_sock->Send(player->_peer, out, channel);
 	}

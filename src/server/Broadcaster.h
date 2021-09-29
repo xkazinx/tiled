@@ -32,7 +32,8 @@ public:
 	template <typename ... Args>
 	void Send(const Player* player, Op op, Args && ... args)
 	{
-		Global::Send(player, StaticPacket(op, std::forward<Args>(args)...));
+		auto out = broadcaster::Base<Op>::StaticPacket(op, forward<Args>(args)...);
+		Global::Send(player, out);
 	}
 
 	/*template <typename ... Args>
