@@ -12,6 +12,6 @@ namespace common
 	enum class MainOp : u8
 	{
 		Login,
-
+		CreateAccount,
 	};
 }

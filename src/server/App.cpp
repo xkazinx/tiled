@@ -22,7 +22,8 @@ void App::NetOperationProcess()
 
 	switch(GetOperation())
 	{
-	case MainOp::Login:	NetOp_Login(); break;
+	case MainOp::Login:			NetOp_Login();			break;
+	case MainOp::CreateAccount:	NetOp_CreateAccount();	break;
 	default:
 		Log::Error("Unknown MainOp{}", Format(GetOperation()));
 		break;
@@ -135,6 +136,8 @@ void App::NetOp_Login()
 	
 	GetPacket()->Read(username, password);
 
+	// #todo #check if invalid auth format
+
 	Print("Data from packet... Username: {} Password: {}", username, password);
 
 	/*sql->Insert("players",
@@ -155,4 +158,37 @@ void App::NetOp_Login()
 
 	Send(GetPlayer(), MainOp::Login, bool(true));
 	Send(GetPlayer(), MainOp::Login, bool(false));
+}
+
+void App::NetOp_CreateAccount()
+{
+	const auto sql = Sql::Create();
+	if (!sql)
+		return;
+	
+	NetString username(player::kNameSize);
+	NetString password(player::kPasswordSize);
+
+	GetPacket()->Read(username, password);
+	
+	// #todo #check if invalid auth format
+
+	const auto res = sql->Select("players",
+		{ "uid" }, format(" WHERE username = '{}' LIMIT 1", username));
+
+	const auto not_found = !res->Pop();
+	Send(GetPlayer(), MainOp::CreateAccount, not_found);
+	if (not_found)
+	{
+		sql->Insert("players",
+			vector<string>{"username", "password" },
+			vector<vector<string>>{ { { username }, { password } }}
+		);
+
+		Print("Create account success: username({})", username);
+	}
+	else
+	{	
+		Print("Create account failure: username({}) already in use", username);
+	}
 }

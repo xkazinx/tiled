@@ -19,5 +19,6 @@ public:
 
 private:
 	void NetOp_Login();
+	void NetOp_CreateAccount();
 };
 

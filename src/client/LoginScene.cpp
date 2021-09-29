@@ -36,6 +36,16 @@ void LoginScene::ProcessUI() const
 			NetString(_password, player::kPasswordSize)
 		);
 	}
+	
+	if (ImGui::Button("Create Account"))
+	{
+		Log::Debug("Sent Create Account info: User: {} - Pass: {}", _username, _password);
+
+		g_app->Send(MainOp::CreateAccount,
+			NetString(_username, player::kNameSize),
+			NetString(_password, player::kPasswordSize)
+		);
+	}
 
 	ImGui::End();
 }

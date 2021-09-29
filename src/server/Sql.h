@@ -94,7 +94,7 @@ public:
 	// #todo make class query
 	void Query(const string & query);
 	void Insert(const string & table, const vector<string> & columns, const vector<vector<string>> & rows);
-	unique_ptr<SelectResult> Select(const string& table, const vector<string>& columns);
+	unique_ptr<SelectResult> Select(const string& table, const vector<string>& columns, const string& extra = "");
 
 	static string Scape(const string& str, const string& scape, const string& add = "")
 	{

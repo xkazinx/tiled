@@ -35,6 +35,7 @@ unsigned Sql::FetchError()
 
 void Sql::Query(const string& query)
 {
+	Log::Debug("Query: {}", query);
 	if (mysql_real_query(Get(), query.data(), query.size()) != 0)
 	{
 		FetchError();
@@ -61,7 +62,7 @@ void Sql::Insert(const string& table, const vector<string>& columns, const vecto
 			values += Scape(columns[i], "`", ",");
 		}
 
-		values += Scape(columns[columns.size() - 1], "`)");
+		values += Scape(columns[columns.size() - 1], "`", ")");
 	}
 
 	string data;
@@ -84,10 +85,10 @@ void Sql::Insert(const string& table, const vector<string>& columns, const vecto
 		}
 	}
 
-	Query(format("INSERT INTO `{}` ({}) VALUES {}", table, values, data));
+	Query(format("INSERT INTO `{}` {} VALUES {}", table, values, data));
 }
 
-unique_ptr<SelectResult> Sql::Select(const string& table, const vector<string>& columns)
+unique_ptr<SelectResult> Sql::Select(const string& table, const vector<string>& columns, const string& extra)
 {
 	string select;
 
@@ -98,7 +99,7 @@ unique_ptr<SelectResult> Sql::Select(const string& table, const vector<string>& 
 
 	select += Scape(columns[columns.size() - 1], "`");
 
-	Query(format("SELECT {} FROM `{}`", select, table));
+	Query(format("SELECT {} FROM `{}`{}", select, table, extra));
 
 	return make_unique<SelectResult>(this);
 }
