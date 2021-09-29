@@ -230,7 +230,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\common.cpp" />
-    <ClCompile Include="..\common\console\out.cpp" />
+    <ClCompile Include="..\common\console\log.cpp" />
     <ClCompile Include="..\common\packet.cpp" />
     <ClCompile Include="..\common\random.cpp" />
     <ClCompile Include="..\common\socket.cpp" />

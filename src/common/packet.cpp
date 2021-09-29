@@ -41,7 +41,10 @@ namespace common::packet
 	{
 		if (!peer || GetLength() == 0 || _overflow)
 		{
-			Log::Err("Can't send packet: Peer unavailable, empty packet, or overflowed packet");
+			// #format add Format #todo option to do like... Format(const bool&, u8 format_type)... where you can do like True/False, or On/Off, etc.
+			Log::Error("Can't send packet: Peer unavailable? ({}), EmptyPacket? (Length: {}), Overflow ({})", 
+				peer != nullptr, GetLength(), _overflow);
+
 			return;
 		}
 
@@ -167,7 +170,7 @@ namespace common::packet
 		}
 
 #ifdef DEBUG_PACKET
-		Log::Out("SerializableString::GetPacketSize(): {}", sz);
+		Print("SerializableString::GetPacketSize(): {}", sz);
 		return sz;
 #endif
 	}

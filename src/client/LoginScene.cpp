@@ -26,7 +26,9 @@ void LoginScene::ProcessUI() const
 
 	if (ImGui::Button("Login"))
 	{
-		Log::Out("Sent Login info: User: {} - Pass: {}", _username, _password);
+		Log::Debug("Sent Login info: User: {} - Pass: {}", _username, _password);
+		Log::Error("Sent Login info: User: {} - Pass: {}", _username, _password);
+		Print("Sent Login info: User: {} - Pass: {}", _username, _password);
 
 		// #test sending and reading with size 32 but written < 32 with char and string
 		// #test sending and reading with size 32 and written 32 with char and string

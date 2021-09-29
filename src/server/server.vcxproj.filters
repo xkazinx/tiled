@@ -83,7 +83,7 @@
     <ClCompile Include="..\common\packet.cpp">
       <Filter>common</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\console\out.cpp">
+    <ClCompile Include="..\common\console\log.cpp">
       <Filter>common</Filter>
     </ClCompile>
   </ItemGroup>

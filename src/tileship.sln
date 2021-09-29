@@ -24,8 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{8C0947
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "console", "console", "{82242433-46B9-48CA-B9B6-CA7B28272824}"
 	ProjectSection(SolutionItems) = preProject
-		common\console\out.cpp = common\console\out.cpp
-		common\console\out.h = common\console\out.h
+		common\console\log.cpp = common\console\log.cpp
+		common\console\log.h = common\console\log.h
 		common\console\rang.hpp = common\console\rang.hpp
 	EndProjectSection
 EndProject

@@ -23,7 +23,7 @@ Socket::Socket(Type type, szt peers)
 	
 	if (!_host)
 	{
-		Log::Err("enet_host_create failure");
+		Log::Error("enet_host_create failure");
 	}
 }
 
@@ -47,19 +47,19 @@ bool Socket::Service(ENetEvent & ev) const
 		switch (ev.type)
 		{
 		case ENET_EVENT_TYPE_CONNECT:
-			Log::Out("Client {}:{} connected", 
+			Print("Client {}:{} connected", 
 				FetchIP(ev.peer), ev.peer->address.port);
 			ev.peer->data = nullptr;
 			return true;
 
 		case ENET_EVENT_TYPE_RECEIVE:
-			Log::Out("Received packet of {} bytes", ev.packet->dataLength);
+			Print("Received packet of {} bytes", ev.packet->dataLength);
 			return true;
 
 		case ENET_EVENT_TYPE_DISCONNECT:
 			if (ev.peer->data)
 			{
-				Log::Out("Client {}:{} disconnected", 
+				Print("Client {}:{} disconnected", 
 					FetchIP(ev.peer), ev.peer->address.port);
 				ev.peer->data = nullptr;
 			}
@@ -95,7 +95,7 @@ string Socket::FetchIP(ENetPeer* peer)
 	char data[15]{};
 	if (enet_address_get_host_ip(&peer->address, data, sizeof(data)) < 0)
 	{
-		Log::Err("Error on enet_address_get_host_ip");
+		Log::Error("Error on enet_address_get_host_ip");
 	}
 
 	return data;

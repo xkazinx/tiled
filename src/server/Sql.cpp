@@ -16,7 +16,7 @@ unique_ptr<Sql> Sql::Create()
 		"tileship", 3306, nullptr, 0) ||
 		sql->FetchError())
 	{
-		Log::Err("Error in mysql_real_connect");
+		Log::Error("Error in mysql_real_connect");
 		return nullptr;
 	}
 	
@@ -27,7 +27,7 @@ unsigned Sql::FetchError()
 {
 	const auto err = mysql_errno(Get());
 	if (err != 0)
-		Log::Err("Error in MySQL: {}", err);
+		Log::Error("Error in MySQL: {}", err);
 	// #todo get error string
 	return err;
 
@@ -52,7 +52,7 @@ void Sql::Insert(const string& table, const vector<string>& columns, const vecto
 		return;
 	}
 
-	Log::Out("Sql::Insert called for {} table", table);
+	Print("Sql::Insert called for {} table", table);
 	
 	auto values = "("s;
 	{

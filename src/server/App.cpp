@@ -17,13 +17,13 @@ App::~App()
 
 void App::NetOperationProcess()
 {
-	Log::Out("NetOperationProcess: MainOp{}", Format(GetOperation()));
+	Print("NetOperationProcess: MainOp{}", Format(GetOperation()));
 
 	switch(GetOperation())
 	{
 	case MainOp::Login:	NetOp_Login(); break;
 	default:
-		Log::Err("Unknown MainOp{}", Format(GetOperation()));
+		Log::Error("Unknown MainOp{}", Format(GetOperation()));
 		break;
 	}
 }
@@ -49,7 +49,7 @@ void App::OnPacket(ENetEvent& ev)
 	auto* p = OnAuth(ev);
 	if (!p)
 	{
-		Log::Err("App::OnPacket::!p");
+		Log::Error("App::OnPacket::!p");
 		return;
 	}
 	
@@ -61,7 +61,7 @@ void App::OnPacket(ENetEvent& ev)
 	case NetOp::Main:	this->NetOperation(opt);	break;
 
 	default: // #todo
-		Log::Err("Unknown NetOp{}", Format(op));
+		Log::Error("Unknown NetOp{}", Format(op));
 		break;
 	}
 }
@@ -88,7 +88,7 @@ Player* App::OnAuth(const ENetEvent& ev) const
 				player_idx = new PlayerIdx(i);
 				player = p.get();
 				g_player_mgr->_list.push_back(p.get());
-				Log::Out("OnAuth: PlayerIdx {}", i);
+				Print("OnAuth: PlayerIdx {}", i);
 				break;
 			}
 		}
@@ -134,7 +134,7 @@ void App::NetOp_Login()
 	
 	GetPacket()->Read(username, password);
 
-	Log::Out("Data from packet... Username: {} Password: {}", username, password);
+	Print("Data from packet... Username: {} Password: {}", username, password);
 
 	/*sql->Insert("players",
 		vector<string>{"username", "password" },
@@ -146,7 +146,7 @@ void App::NetOp_Login()
 	{
 		while (const auto it = res->Pop())
 		{
-			Log::Out("From database... Username: {} - Password: {}",
+			Print("From database... Username: {} - Password: {}",
 				it->Get<string>("username"),
 				it->Get<string>("password"));
 		}

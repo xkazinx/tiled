@@ -40,6 +40,10 @@ using std::map;
 #include <thread>
 namespace this_thread = std::this_thread;
 
+#include <mutex>
+using std::mutex;
+using unique_mutex = std::unique_lock<mutex>;
+
 #include <chrono>
 namespace chrono = std::chrono;
 
@@ -67,7 +71,7 @@ using std::forward;
 #include <magic_enum.h>
 using namespace magic_enum;
 
-#include <console/out.h>
+#include <console/log.h>
 
 #include <netops.h>
 #include <random.h>
