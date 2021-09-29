@@ -11,15 +11,14 @@ ConsoleOut<T>::~ConsoleOut()
 #endif
 
 	// #todo #log Log into files what's printed for release mode if enabled for debugging
-
-	using enum Type;
+	
 	using enum rang::fg;
 
 	switch (T)
 	{
-	case Debug:	cout << cyan;	break;
-	case Error:	cout << red;	break;
-	case Info:	cout << green;	break;
+	case Type::Debug:	cout << cyan;	break;
+	case Type::Error:	cout << red;	break;
+	case Type::Info:	cout << green;	break;
 	}
 
 	cout << (const char*)(_ptr ? _ptr : _str.c_str()) << "\n";
