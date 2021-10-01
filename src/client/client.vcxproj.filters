@@ -155,5 +155,8 @@
     <ClCompile Include="..\common\console\log.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="..\common\auth.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

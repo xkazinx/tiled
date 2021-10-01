@@ -16,7 +16,7 @@ ConsoleOut<T>::~ConsoleOut()
 
 	switch (T)
 	{
-	case Type::Debug:	cout << cyan;				break;
+	case Type::Debug:	cout << cyan << "Debug: ";	break;
 	case Type::Error:	cout << red << "Error: ";	break;
 	case Type::Info:	cout << green;				break;
 	}

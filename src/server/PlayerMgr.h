@@ -10,8 +10,5 @@ public:
 
 	PlayerMgr();
 	~PlayerMgr();
-
-	int Tick();
-	void HandleSocket();
 };
 

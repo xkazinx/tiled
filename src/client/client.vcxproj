@@ -229,6 +229,7 @@
     <ClInclude Include="Tile.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\common\auth.cpp" />
     <ClCompile Include="..\common\common.cpp" />
     <ClCompile Include="..\common\console\log.cpp" />
     <ClCompile Include="..\common\packet.cpp" />

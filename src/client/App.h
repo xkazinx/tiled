@@ -4,6 +4,8 @@
 class App final : public Broadcaster<MainOp>
 {
 public:
+	using Op = MainOp;
+
 	App();
 	~App();
 
@@ -16,8 +18,6 @@ public:
 
 	RenderWindow _window;
 
-	void HandleSocket();
-
 private:
 	void InitializeWindow();
 	void AdjustViewport(const GLsizei& x, const GLsizei& y);
@@ -25,4 +25,7 @@ private:
 	void OnConnect(ENetEvent& ev);
 	void OnPacket(ENetEvent& ev);
 	void OnDisconnect(ENetEvent& ev);
+
+	void NetOp_Login();
+	void NetOp_CreateAccount();
 };

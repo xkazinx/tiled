@@ -15,7 +15,6 @@ namespace Global
 		// unordered
 		g_rand = make_unique<Random>();
 		g_scene = make_unique<SceneMgr>();
-		g_sock = make_unique<Socket>(Socket::Type::Client);
 
 		// ordered
 	}

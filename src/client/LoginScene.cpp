@@ -6,6 +6,9 @@ LoginScene::LoginScene() :
 	_circle(50.f, 50)
 {
 	_circle.setFillColor(sf::Color::Red);
+
+	_auth._user.reserve(player::kNameSize);
+	_auth._pass.reserve(player::kPasswordSize);
 }
 
 
@@ -21,30 +24,22 @@ void LoginScene::Tick()
 void LoginScene::ProcessUI() const
 {
 	ImGui::Begin("Hello, world!");
-	ImGui::InputText("Username", (char*)_username, sizeof(_username));
-	ImGui::InputText("Password", (char*)_password, sizeof(_password), ImGuiInputTextFlags_Password);
+	ImGui::InputText("Username", (char*)_auth._user.data(), player::kNameSize + 1);
+	ImGui::InputText("Password", (char*)_auth._pass.data(), player::kPasswordSize + 1, ImGuiInputTextFlags_Password);
 
 	if (ImGui::Button("Login"))
 	{
-		Log::Debug("Sent Login info: User: {} - Pass: {}", _username, _password);
+		Log::Debug("Sent Login Auth{}", Format(_auth));
+		g_app->Send(MainOp::Login, _auth);
 
 		// #test sending and reading with size 32 but written < 32 with char and string
 		// #test sending and reading with size 32 and written 32 with char and string
-
-		g_app->Send(MainOp::Login, 
-			NetString(_username, player::kNameSize),
-			NetString(_password, player::kPasswordSize)
-		);
 	}
 	
 	if (ImGui::Button("Create Account"))
 	{
-		Log::Debug("Sent Create Account info: User: {} - Pass: {}", _username, _password);
-
-		g_app->Send(MainOp::CreateAccount,
-			NetString(_username, player::kNameSize),
-			NetString(_password, player::kPasswordSize)
-		);
+		Log::Debug("Sent Create Account Auth{}", Format(_auth));
+		g_app->Send(MainOp::CreateAccount, _auth);
 	}
 
 	ImGui::End();

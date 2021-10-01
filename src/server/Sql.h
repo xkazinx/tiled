@@ -76,6 +76,9 @@ public:
 
 		return make_unique<SelectItem>(_rows[(szt)idx], _lengths[(szt)idx],_fields_indexes);
 	}
+
+	auto GetCount() const { return _rows.size(); }
+	auto IsEmpty() const { return _rows.empty(); }
 };
 
 class Sql final

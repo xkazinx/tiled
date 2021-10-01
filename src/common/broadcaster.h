@@ -4,7 +4,7 @@ namespace common::broadcaster
 {
 	class InOperationBase
 	{
-		InPkt* _pkt = nullptr;
+		InPkt * _pkt = nullptr;
 
 	public:
 		InOperationBase() = default;
@@ -12,7 +12,7 @@ namespace common::broadcaster
 		auto GetPacket() const { return _pkt; }
 	};
 
-	enum class DummyOp { None };
+	enum class DummyOp { };
 
 	template<class Op>
 	class Base
@@ -26,13 +26,13 @@ namespace common::broadcaster
 		auto GetOperation() const { return _op; }
 
 		template<typename ... Args>
-		packet::OutPacketPtr StaticPacket(Op op, Args &&... args) const
+		packet::OutPacketPtr StaticPacket(Op op, Args && ... args) const
 		{
 			return OutPkt::CreateStatic(_net_op, op, args...); // #why not forward here?
 		}
 
 		template<typename ... Args>
-		packet::OutPacketPtr DynamicPacket(Op op, Args &&... args) const
+		packet::OutPacketPtr DynamicPacket(Op op, Args && ... args) const
 		{
 			return OutPkt::CreateDynamic(_net_op, op, std::forward<Args>(args)...);
 		}
@@ -43,3 +43,4 @@ namespace common::broadcaster
 	};
 }
 
+#define OP(op) case Op::op: NetOp_##op(); break;

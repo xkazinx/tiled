@@ -18,8 +18,8 @@ namespace common
 			Serializable() = default;
 			virtual ~Serializable() = default;
 
-			virtual void Write(Out & out) const = 0;
-			virtual void Read(In* in) = 0;
+			virtual void Write(Out& out) const = 0;
+			virtual void Read([[maybe_unused]] In* in) {} // To allow using Read in constructor
 
 			virtual Size GetPacketSize() const = 0;
 		};

@@ -4,11 +4,17 @@
 #include "PlayerMgr.h"
 
 App::App()
-	: Broadcaster<MainOp>(NetOp::Main)
+	: Broadcaster<Op>(NetOp::Main)
 {
 	// #todo #param or whatever name it has for client and server
 	g_app = this;
 	Global::Initialize();
+	using namespace std;
+	g_sock = make_unique<Socket>(Socket::Type::Server, 
+		bind(&App::OnConnect,	 this,	placeholders::_1), 
+		bind(&App::OnPacket,	 this,	placeholders::_1),
+		bind(&App::OnDisconnect, this,	placeholders::_1),
+		256);
 }
 
 App::~App()
@@ -22,8 +28,9 @@ void App::NetOperationProcess()
 
 	switch(GetOperation())
 	{
-	case MainOp::Login:			NetOp_Login();			break;
-	case MainOp::CreateAccount:	NetOp_CreateAccount();	break;
+		OP(Login);
+		OP(CreateAccount);
+
 	default:
 		Log::Error("Unknown MainOp{}", Format(GetOperation()));
 		break;
@@ -34,7 +41,7 @@ int App::Tick()
 {
 	while (true)
 	{
-		HandleSocket();
+		g_sock->Tick();
 
 		this_thread::sleep_for(chrono::milliseconds(1));
 	}
@@ -55,12 +62,14 @@ void App::OnPacket(ENetEvent& ev)
 		return;
 	}
 	
+	using enum NetOp;
 	InPkt in(ev.packet);
 	const InOperation opt(in, p, ev.peer);
+
 	switch (const auto op = in.ReadAs<NetOp>();
 		op)
 	{
-	case NetOp::Main:	this->NetOperation(opt);	break;
+	case Main:	this->NetOperation(opt);	break;
 
 	default: // #todo
 		Log::Error("Unknown NetOp{}", Format(op));
@@ -71,7 +80,7 @@ void App::OnPacket(ENetEvent& ev)
 void App::OnDisconnect([[maybe_unused]] ENetEvent& ev)
 {
 	//g_player_mgr->_list.push_back(p.get());
-	// g_player_mgr->_array[*player_idx].get();
+	//g_player_mgr->_array[*player_idx].get();
 }
 
 Player* App::OnAuth(const ENetEvent& ev) const
@@ -103,61 +112,38 @@ Player* App::OnAuth(const ENetEvent& ev) const
 	return player;
 }
 
-void App::HandleSocket()
-{
-	ENetEvent ev;
-	while (g_sock->Service(ev))
-	{
-		switch (ev.type)
-		{
-		case ENET_EVENT_TYPE_CONNECT:
-			OnConnect(ev);
-			break;
-
-		case ENET_EVENT_TYPE_RECEIVE:
-			OnPacket(ev);
-			break;
-
-		case ENET_EVENT_TYPE_DISCONNECT:
-			OnDisconnect(ev);
-			break;
-		}
-	}
-}
-
 void App::NetOp_Login()
 {
+	const Auth auth(GetPacket());
+	if (!auth.IsValid())
+	{
+		Log::Error("NetOp_Login: Invalid Auth{}", Format(auth));
+		return;
+	}
+	
+	Print("NetOp_Login: Incoming Auth{}", Format(auth));
+
 	const auto sql = Sql::Create();
 	if (!sql)
 		return;
-	
-	NetString username(player::kNameSize);
-	NetString password(player::kPasswordSize);
-	
-	GetPacket()->Read(username, password);
-
-	// #todo #check if invalid auth format
-
-	Print("Data from packet... Username: {} Password: {}", username, password);
-
-	/*sql->Insert("players",
-		vector<string>{"username", "password" },
-		vector<vector<string>>{{ { username }, { password } }}
-	);*/
 
 	if (const auto res = sql->Select("players",
-		{ "username", "password" }))
+		{ "username", "password" }, 
+		format(" WHERE `username` = '{}' LIMIT 1", auth._user)))
 	{
-		while (const auto it = res->Pop())
+		if (const auto it = res->Pop())
 		{
-			Print("From database... Username: {} - Password: {}",
-				it->Get<string>("username"),
-				it->Get<string>("password"));
+			if (auth._pass == it->Get<string>("password"))
+			{
+				Print("Login success for Auth{}", Format(auth));
+				Send(GetPlayer(), MainOp::Login, true);
+				return;
+			}
 		}
 	}
-
-	Send(GetPlayer(), MainOp::Login, bool(true));
-	Send(GetPlayer(), MainOp::Login, bool(false));
+	
+	Send(GetPlayer(), MainOp::Login, false);
+	Print("Login failure for Auth{}", Format(auth));
 }
 
 void App::NetOp_CreateAccount()
@@ -165,30 +151,30 @@ void App::NetOp_CreateAccount()
 	const auto sql = Sql::Create();
 	if (!sql)
 		return;
-	
-	NetString username(player::kNameSize);
-	NetString password(player::kPasswordSize);
 
-	GetPacket()->Read(username, password);
-	
-	// #todo #check if invalid auth format
+	const Auth auth(GetPacket());
+	if (!auth.IsValid())
+	{
+		Log::Error("NetOp_CreateAccount: Invalid Auth{}", Format(auth));
+		return;
+	}
 
 	const auto res = sql->Select("players",
-		{ "uid" }, format(" WHERE username = '{}' LIMIT 1", username));
+		{ "uid" }, format(" WHERE username = '{}' LIMIT 1", auth._user));
+	
+	Send(GetPlayer(), MainOp::CreateAccount, res->IsEmpty());
 
-	const auto not_found = !res->Pop();
-	Send(GetPlayer(), MainOp::CreateAccount, not_found);
-	if (not_found)
+	if (res->IsEmpty())
 	{
 		sql->Insert("players",
 			vector<string>{"username", "password" },
-			vector<vector<string>>{ { { username }, { password } }}
+			vector<vector<string>>{ { { auth._user }, { auth._pass } }}
 		);
 
-		Print("Create account success: username({})", username);
+		Print("Create account success: username({})", auth._user);
 	}
 	else
 	{	
-		Print("Create account failure: username({}) already in use", username);
+		Print("Create account failure: username({}) already in use", auth._user);
 	}
 }

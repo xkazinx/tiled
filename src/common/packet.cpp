@@ -106,9 +106,12 @@ namespace common::packet
 		if (out.HasOverflowed(sz))
 			return;
 
+		copy_n(IsString() || IsFixedString() ? _ref.c_str() : string(_data).c_str(), 
+			sz, out.GetPointer<char>());
+
 		// #todo #packet not optimum
-		memcpy(out.GetPointer<char>(), 
-			IsString() || IsFixedString() ? _ref.c_str() : string(_data).c_str(), sz);
+		//memcpy(out.GetPointer<char>(), 
+			//IsString() || IsFixedString() ? _ref.c_str() : string(_data).c_str(), sz);
 		
 		//std::copy_n(IsString() || IsFixedString() ? _ref.data() : (char*)_data,
 			//sz, out.GetPointer<char>());
@@ -146,7 +149,8 @@ namespace common::packet
 		}
 		else
 		{
-			memcpy((char*)_data, in->GetPointer<char>(), sz);
+			copy_n(in->GetPointer<char>(), sz, (char*)_data);
+			//memcpy((char*)_data, in->GetPointer<char>(), sz);
 		}
 
 		in->Move(sz);

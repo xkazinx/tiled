@@ -5,11 +5,12 @@ class Player;
 class App final : Broadcaster<MainOp>
 {
 public:
+	using Op = MainOp;
+
 	App();
 	~App();
 
 	int Tick();
-	void HandleSocket();
 	void OnConnect(ENetEvent & ev);
 	void OnPacket(ENetEvent & ev);
 	void OnDisconnect(ENetEvent & ev);

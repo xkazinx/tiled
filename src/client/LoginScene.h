@@ -17,5 +17,5 @@ public:
 
 	sf::CircleShape _circle;
 
-	char _username[player::kNameSize]{}, _password[player::kPasswordSize]{};
+	Auth _auth;
 };

@@ -11,7 +11,6 @@ namespace Global
 
 	void Initialize() {
 		// unordered
-		g_sock = make_unique<Socket>(Socket::Type::Server, 256);
 		g_player_mgr = make_unique<PlayerMgr>();
 
 		// ordered

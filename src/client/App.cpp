@@ -3,7 +3,7 @@
 #include "SceneMgr.h"
 
 App::App()
-	: Broadcaster<MainOp>(NetOp::Main)
+	: Broadcaster<Op>(NetOp::Main)
 {
 	g_app = this;
 	Global::Initialize();
@@ -12,7 +12,12 @@ App::App()
 
 	ImGui::SFML::Init(_window);
 
-	g_sock->Connect("localhost", 321);
+	using namespace std;
+	(g_sock = make_unique<Socket>(Socket::Type::Client,
+		bind(&App::OnConnect, this, placeholders::_1),
+		bind(&App::OnPacket, this, placeholders::_1),
+		bind(&App::OnDisconnect, this, placeholders::_1))
+	)->Connect(kHost, kPort);
 }
 
 App::~App()
@@ -24,12 +29,11 @@ App::~App()
 void App::NetOperationProcess()
 {
 	Log::Debug("NetOperationProcess MainOp{}", Format(GetOperation()));
-
+	
 	switch(GetOperation())
 	{
-	case MainOp::Login:
-		Log::Debug("Login response: {}", GetPacket()->ReadAs<bool>());
-		break;
+		OP(Login);
+		OP(CreateAccount);
 
 	default:
 		Log::Error("Unknown MainOp{}", Format(GetOperation()));
@@ -78,7 +82,7 @@ int App::Tick()
 
 		// Network
 		{	
-			HandleSocket();
+			g_sock->Tick();
 		}
 
 		// Update
@@ -146,35 +150,23 @@ void App::OnPacket([[maybe_unused]] ENetEvent& ev)
 	Log::Debug("OnPacket()");
 
 	InPkt in(ev.packet);
+	using enum NetOp;
 	switch (const auto op = in.ReadAs<NetOp>();
 		op)
 	{
-	case NetOp::Main:	this->NetOperation(in);	break;
-
-	default: // #todo
+	case Main:	this->NetOperation(in);	break;
+	default:
 		Log::Error("Unknown NetOp{}", Format(op));
 		break;
 	}
 }
 
-void App::HandleSocket()
+void App::NetOp_Login()
 {
-	ENetEvent ev;
-	while(g_sock->Service(ev))
-	{
-		switch (ev.type)
-		{
-		case ENET_EVENT_TYPE_CONNECT:
-			OnConnect(ev);
-			break;
+	
+}
 
-		case ENET_EVENT_TYPE_RECEIVE:
-			OnPacket(ev);
-			break;
-
-		case ENET_EVENT_TYPE_DISCONNECT:
-			OnDisconnect(ev);
-			break;
-		}
-	}
+void App::NetOp_CreateAccount()
+{
+	
 }

@@ -5,8 +5,8 @@ namespace common
 {
 u8 Socket::Count = 0;
 
-Socket::Socket(Type type, szt peers)
-	: _type(type)
+Socket::Socket(Type type, Fnc on_connect, Fnc on_packet, Fnc on_disconnect, szt peers)
+	: _type(type), _on_connect(on_connect), _on_packet(on_packet), _on_disconnect(on_disconnect)
 {
 	if (Count++ == 0)
 	{
@@ -16,7 +16,7 @@ Socket::Socket(Type type, szt peers)
 	// For server only
 	ENetAddress address;
 	address.host = ENET_HOST_ANY;
-	address.port = 321;
+	address.port = kPort;
 	
 	_host = enet_host_create(IsClient() ? nullptr : &address, 
 		IsClient() ? 1 : peers, 1, 0, 0);
@@ -38,8 +38,22 @@ Socket::~Socket()
 	{
 		enet_deinitialize();
 	}
-
 }
+
+void Socket::Tick() const
+{
+	ENetEvent ev;
+	while (g_sock->Service(ev))
+	{
+		switch (ev.type)
+		{
+		case ENET_EVENT_TYPE_CONNECT:		_on_connect(ev);		break;
+		case ENET_EVENT_TYPE_RECEIVE:		_on_packet(ev);		break;
+		case ENET_EVENT_TYPE_DISCONNECT:	_on_disconnect(ev);	break;
+		}
+	}
+}
+
 bool Socket::Service(ENetEvent & ev) const
 {
 	if (enet_host_service(_host, &ev, 0) != 0)
