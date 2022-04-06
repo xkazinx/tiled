@@ -11,10 +11,11 @@ GameScene::GameScene()
 		vector<unique_ptr<Tile>> tiles;
 		auto size = (tile::LineSize)(data[0] - '0');
 
-		for(szt i = 1; i < data.size(); ++i)
+		for(int i = 1; i < (int)data.size(); ++i)
 		{
+			int sep = ((i % 2) == 0) ? 0 : 3;
 			tiles.emplace_back(make_unique<Tile>((tile::Type)(data[i] - '0'),
-				sf::Vector2i{ ((i - 1) % size), (int)floor((i - 1) / size) }));
+				sf::Vector2i{ ((i - 1) % size) + (int)sep, (int)floor((i - 1) / size) + (int)sep}));
 		}
 
 		_map = make_unique<Map>(tiles, size);

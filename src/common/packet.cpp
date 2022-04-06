@@ -95,7 +95,7 @@ namespace common::packet
 		{
 			if (IsFixedString())
 			{
-				sz += (Size)_ref.size();
+				sz += (Size)strlen(_ref.c_str());
 			}
 			else //if (IsFixedChar())
 			{

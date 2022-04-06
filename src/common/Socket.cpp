@@ -43,31 +43,20 @@ Socket::~Socket()
 void Socket::Tick() const
 {
 	ENetEvent ev;
-	while (g_sock->Service(ev))
-	{
-		switch (ev.type)
-		{
-		case ENET_EVENT_TYPE_CONNECT:		_on_connect(ev);		break;
-		case ENET_EVENT_TYPE_RECEIVE:		_on_packet(ev);		break;
-		case ENET_EVENT_TYPE_DISCONNECT:	_on_disconnect(ev);	break;
-		}
-	}
-}
-
-bool Socket::Service(ENetEvent & ev) const
-{
-	if (enet_host_service(_host, &ev, 0) != 0)
+	while(enet_host_service(_host, &ev, 0) != 0)
 	{
 		switch (ev.type)
 		{
 		case ENET_EVENT_TYPE_CONNECT:
 			Print("Client {} connected", Format(ev.peer));
 			ev.peer->data = nullptr;
-			return true;
+			_on_connect(ev);
+			break;
 
 		case ENET_EVENT_TYPE_RECEIVE:
 			Print("Received packet of {} bytes", ev.packet->dataLength);
-			return true;
+			_on_packet(ev);
+			break;
 
 		case ENET_EVENT_TYPE_DISCONNECT:
 			if (ev.peer->data)
@@ -75,11 +64,10 @@ bool Socket::Service(ENetEvent & ev) const
 				Print("Client {} disconnected", Format(ev.peer));
 				ev.peer->data = nullptr;
 			}
-			return true;
+			_on_disconnect(ev);
+			break;
 		}
 	}
-
-	return false;
 }
 
 bool Socket::Connect(const string& ip, u16 port)

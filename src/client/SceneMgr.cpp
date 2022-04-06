@@ -5,7 +5,7 @@
 
 SceneMgr::SceneMgr()
 {
-	Set(ID::Login);
+	Set(ID::Game);
 }
 
 SceneMgr::~SceneMgr()

@@ -7,8 +7,8 @@ LoginScene::LoginScene() :
 {
 	_circle.setFillColor(sf::Color::Red);
 
-	_auth._user.reserve(player::kNameSize);
-	_auth._pass.reserve(player::kPasswordSize);
+	_auth._user.resize(player::kNameSize);
+	_auth._pass.resize(player::kPasswordSize);
 }
 
 
