@@ -53,7 +53,7 @@ void App::InitializeWindow()
 		settings.minorVersion = 2;
 	}
 
-	_window.create(VideoMode(g_res_x, g_res_y), kAppName, sf::Style::Default, settings);
+	_window.create(VideoMode(_res.x, _res.y), kAppName, sf::Style::Default, settings);
 
 	// https://www.sfml-dev.org/tutorials/2.5/window-opengl.php
 	_window.setActive(true);

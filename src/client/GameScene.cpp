@@ -5,23 +5,8 @@
 
 GameScene::GameScene()
 {
-	{
-		//const string data = "10";
-		const string data = "3012012012";
-		vector<unique_ptr<Tile>> tiles;
-		auto size = (tile::LineSize)(data[0] - '0');
-
-		for(int i = 1; i < (int)data.size(); ++i)
-		{
-			int sep = ((i % 2) == 0) ? 0 : 3;
-			tiles.emplace_back(make_unique<Tile>((tile::Type)(data[i] - '0'),
-				sf::Vector2i{ ((i - 1) % size) + (int)sep, (int)floor((i - 1) / size) + (int)sep}));
-		}
-
-		_map = make_unique<Map>(tiles, size);
-	}
+	_map = make_unique<Map>();
 }
-
 
 GameScene::~GameScene()
 {

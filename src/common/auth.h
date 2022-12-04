@@ -19,7 +19,7 @@ public:
 	}
 
 	packet::Size GetPacketSize() const override {
-		return _user.GetPacketSize() + _pass.GetPacketSize();
+		return packet::Base::Sizer::Get(_user, _pass);
 	}
 
 	// #todo #auth

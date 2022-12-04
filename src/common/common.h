@@ -96,26 +96,30 @@ constexpr underlying_type_t<T> to_underlying(T value) noexcept
 	return underlying_type_t<T>(value);
 }
 
+using RenderPointValue = i16;
+using TilePointValue = u16;
+using WorldPointValue = u16;
+
+#ifdef CLIENT
+using RenderPoint = sf::Vector2<RenderPointValue>;
+using TilePoint = sf::Vector2<TilePointValue>;
+using WorldPoint = sf::Vector2<WorldPointValue>;
+using MovePoint = sf::Vector2f;
+#endif
+
 namespace tile
 {
 	enum class Type : u8
 	{
-		Grass,
-		Water,
-		Rock,
+		Movable,
+		Blocked, // Can't move
+		Water, 
 		Max
 	};
 
-	using LineSize = u8;
-	static constexpr float
-		kSize = 32.f,
-		kHalfSize = kSize / 2.f;
-
-#ifdef CLIENT
-	using ColorArray = const array<sf::Color, (szt)Type::Max>;
-	extern ColorArray kColors;
-#endif
-
+	static constexpr i16
+		kSize = 32,
+		kHalfSize = kSize / 2;
 }
 
 namespace player
