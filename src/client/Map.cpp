@@ -91,12 +91,14 @@ void Map::Render(sf::RenderTarget& tgt, const sf::RenderStates& states)
 	// for East and South
 	constexpr auto extra_tile_sz = tile::kSize + tile::kHalfSize;
 
+	/*
 	Print("---");
 	Print("_visible_tile_offset = {} {}", _visible_tile_offset.x, _visible_tile_offset.y);
 	Print("g_app->_res = {} {}", g_app->_res.x, g_app->_res.y);
 	Print("_world_offset = {} {}", _world_offset.x, _world_offset.y);
 	Print("_world_offset_adjust = {} {}", _world_offset_adjust.x, _world_offset_adjust.y);
 	Print("_world_offset_movement = {} {}", _world_offset_movement.x, _world_offset_movement.y);
+	*/
 
 	sf::Vector2<i16> index;
 	for(i = 0,

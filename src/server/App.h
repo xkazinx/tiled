@@ -2,7 +2,7 @@
 
 class Player;
 
-class App final : Broadcaster<MainOp>
+class App final : public kazin::app::Base, public Broadcaster<MainOp>
 {
 public:
 	using Op = MainOp;
@@ -14,12 +14,13 @@ public:
 	void OnConnect(ENetEvent & ev);
 	void OnPacket(ENetEvent & ev);
 	void OnDisconnect(ENetEvent & ev);
-	[[nodiscard]] Player* OnAuth(const ENetEvent & ev) const;
+	[[nodiscard]] Player * OnAuth(const ENetEvent & ev) const;
 
 	void NetOperationProcess() override;
 
 private:
 	void NetOp_Login();
 	void NetOp_CreateAccount();
+	void NetOp_EnterGame();
 };
 

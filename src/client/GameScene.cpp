@@ -2,15 +2,17 @@
 #include "GameScene.h"
 #include "Map.h"
 #include "Tile.h"
+#include "App.h"
 
 GameScene::GameScene()
 {
+	g_game = this;
 	_map = make_unique<Map>();
 }
 
 GameScene::~GameScene()
 {
-
+	g_game = nullptr;
 }
 
 void GameScene::Tick()

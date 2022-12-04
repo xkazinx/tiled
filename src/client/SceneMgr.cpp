@@ -5,7 +5,7 @@
 
 SceneMgr::SceneMgr()
 {
-	Set(ID::Game);
+	Set(ID::Login);
 }
 
 SceneMgr::~SceneMgr()
@@ -19,10 +19,10 @@ void SceneMgr::Set(ID id)
 	switch(id)
 	{
 	case Login:	_ptr = make_unique<LoginScene>();	break;
-	case Main:										break;
-	case Lobby:										break;
-	case Game:	_ptr = make_unique<GameScene>();	break;
-	case Result:									break;
+	case Main:													break;
+	case Lobby:													break;
+	case Game:	_ptr = make_unique<GameScene>();		break;
+	case Result:											break;
 	default: 
 		break;
 	}

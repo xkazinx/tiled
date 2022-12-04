@@ -4,15 +4,16 @@
 #include "PlayerMgr.h"
 
 App::App()
-	: Broadcaster<Op>(NetOp::Main)
+	: kazin::app::Base("Tiled Server"), Broadcaster<Op>(NetOp::Main)
 {
 	// #todo #param or whatever name it has for client and server
 	g_app = this;
 	Global::Initialize();
+
 	using namespace std;
 	g_sock = make_unique<Socket>(Socket::Type::Server, 
 		bind(&App::OnConnect,	 this,	placeholders::_1), 
-		bind(&App::OnPacket,	 this,	placeholders::_1),
+		bind(&App::OnPacket,		 this,	placeholders::_1),
 		bind(&App::OnDisconnect, this,	placeholders::_1),
 		256);
 }
@@ -30,9 +31,10 @@ void App::NetOperationProcess()
 	{
 		OP(Login);
 		OP(CreateAccount);
+		OP(EnterGame);
 
 	default:
-		Log::Error("Unknown MainOp{}", Format(GetOperation()));
+		PrintError("Unknown MainOp{}", Format(GetOperation()));
 		break;
 	}
 }
@@ -51,6 +53,7 @@ int App::Tick()
 
 void App::OnConnect([[maybe_unused]] ENetEvent& ev)
 {
+
 }
 
 void App::OnPacket(ENetEvent& ev)
@@ -58,12 +61,12 @@ void App::OnPacket(ENetEvent& ev)
 	auto* p = OnAuth(ev);
 	if (!p)
 	{
-		Log::Error("App::OnPacket::!p");
+		PrintError("App::OnPacket::!p");
 		return;
 	}
 	
 	using enum NetOp;
-	InPkt in(ev.packet);
+	InPacket in(ev.packet);
 	const InOperation opt(in, p, ev.peer);
 
 	switch (const auto op = in.ReadAs<NetOp>();
@@ -72,7 +75,7 @@ void App::OnPacket(ENetEvent& ev)
 	case Main:	this->NetOperation(opt);	break;
 
 	default: // #todo
-		Log::Error("Unknown NetOp{}", Format(op));
+		PrintError("Unknown NetOp{}", Format(op));
 		break;
 	}
 }
@@ -117,7 +120,7 @@ void App::NetOp_Login()
 	const Auth auth(GetPacket());
 	if (!auth.IsValid())
 	{
-		Log::Error("NetOp_Login: Invalid Auth{}", Format(auth));
+		PrintError("NetOp_Login: Invalid Auth{}", Format(auth));
 		return;
 	}
 	
@@ -153,9 +156,10 @@ void App::NetOp_CreateAccount()
 		return;
 
 	const Auth auth(GetPacket());
+	Print("Received auth: {} {}", auth._user, auth._pass);
 	if (!auth.IsValid())
 	{
-		Log::Error("NetOp_CreateAccount: Invalid Auth{}", Format(auth));
+		PrintError("NetOp_CreateAccount: Invalid Auth{}", Format(auth));
 		return;
 	}
 
@@ -177,4 +181,11 @@ void App::NetOp_CreateAccount()
 	{	
 		Print("Create account failure: username({}) already in use", auth._user);
 	}
+}
+
+void App::NetOp_EnterGame()
+{
+	Print("NetOp_EnterGame!!!");
+
+
 }

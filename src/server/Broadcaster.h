@@ -2,9 +2,9 @@
 
 class Player;
 
-class InOperation : public broadcaster::InOperationBase
+class InOperation : public kazin::broadcaster::InOperationBase
 {
-	Player* _player;
+	Player * _player;
 	ENetPeer* _peer;
 
 public:
@@ -12,27 +12,27 @@ public:
 	auto GetPeer() const { return _peer; }
 
 	InOperation() : _player(nullptr), _peer(nullptr){}
-	InOperation(packet::In & pkt, Player * player, ENetPeer * peer)
+	InOperation(kazin::packet::In & pkt, Player * player, ENetPeer * peer)
 		: InOperationBase(pkt), _player(player), _peer(peer){}
 	InOperation(const InOperation& opt) : _player(opt.GetPlayer()), _peer(opt.GetPeer()){}
 };
 
 template<class Op>
-class Broadcaster : public broadcaster::Base<Op>
+class Broadcaster : public kazin::broadcaster::Base<Op>
 {
 	InOperation _opt;
 
 public:
 	using Peer = ENetPeer;
 
-	explicit Broadcaster(const NetOp net_op) : broadcaster::Base<Op>(net_op){}
+	explicit Broadcaster(const NetOp net_op) : kazin::broadcaster::Base<Op>(net_op){}
 	~Broadcaster() override = default;
 
 	template <typename ... Args>
 	void Send(const Player* player, Op op, Args && ... args)
 	{
 		// #todo #packet make it so you can send the argument directly
-		auto out = broadcaster::Base<Op>::StaticPacket(op, forward<Args>(args)...);
+		auto out = kazin::broadcaster::Base<Op>::StaticPacket(op, forward<Args>(args)...);
 		Global::Send(player, out);
 	}
 

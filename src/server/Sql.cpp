@@ -13,10 +13,10 @@ unique_ptr<Sql> Sql::Create()
 	auto sql = make_unique<Sql>();
 
 	if (!mysql_real_connect(sql->Get(), "localhost", "root", "root", 
-		"tileship", 3306, nullptr, 0) ||
+		"tiled", 3307, nullptr, 0) ||
 		sql->FetchError())
 	{
-		Log::Error("mysql_real_connect");
+		PrintError("mysql_real_connect");
 		return nullptr;
 	}
 	
@@ -27,7 +27,7 @@ unsigned Sql::FetchError()
 {
 	const auto err = mysql_errno(Get());
 	if (err != 0)
-		Log::Error("MySQL: {}", err);
+		PrintError("MySQL: {}", err);
 	// #todo get error string
 	return err;
 
@@ -35,7 +35,7 @@ unsigned Sql::FetchError()
 
 void Sql::Query(const string& query)
 {
-	Log::Debug("Query: {}", query);
+	PrintDebug("Query: {}", query);
 	if (mysql_real_query(Get(), query.data(), query.size()) != 0)
 	{
 		FetchError();
@@ -49,7 +49,7 @@ void Sql::Insert(const string& table, const vector<string>& columns, const vecto
 
 	if (rows.empty())
 	{
-		Log::Error("Tried to run Sql::Insert without rows to insert");
+		PrintError("Tried to run Sql::Insert without rows to insert");
 		return;
 	}
 

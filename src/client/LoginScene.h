@@ -17,5 +17,5 @@ public:
 
 	sf::CircleShape _circle;
 
-	Auth _auth;
+	kazin::Auth _auth;
 };

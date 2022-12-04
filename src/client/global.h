@@ -3,6 +3,7 @@
 class App;
 class SceneMgr;
 class Map;
+class GameScene;
 
 #define DEBUG_MODE
 
@@ -11,15 +12,15 @@ namespace Global
 	constexpr char kAppName[] = "Tileship";
 
 	extern App* g_app;
-	extern unique_ptr<Random> g_rand;
 	extern unique_ptr<SceneMgr> g_scene;
 	extern unique_ptr<Socket> g_sock;
-	extern Map* g_map;
+	extern Map * g_map;
+	extern GameScene * g_game;
 
 	extern void Initialize();
 	extern void Deinitialize();
 
-	extern void Send(const OutPktRef out, enet_uint8 channel = 0);
+	extern void Send(const kazin::OutPktRef out, enet_uint8 channel = 0);
 
 	class Guard
 	{

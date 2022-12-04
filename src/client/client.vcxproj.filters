@@ -10,9 +10,6 @@
     <Filter Include="scene">
       <UniqueIdentifier>{783ef24e-6021-4844-a61c-f03287a1a544}</UniqueIdentifier>
     </Filter>
-    <Filter Include="common">
-      <UniqueIdentifier>{16eecd43-90ab-41a3-aa8d-dc30bce59ccb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="scene\ui">
       <UniqueIdentifier>{9de2342f-b339-443b-8819-8492688b0b98}</UniqueIdentifier>
     </Filter>
@@ -24,6 +21,18 @@
     </Filter>
     <Filter Include="scene\login">
       <UniqueIdentifier>{2065043a-04f5-492b-8c30-e7844f924648}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dep">
+      <UniqueIdentifier>{14db8afb-fe26-484e-9068-f5a80763289c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dep\common">
+      <UniqueIdentifier>{16eecd43-90ab-41a3-aa8d-dc30bce59ccb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dep\kazin">
+      <UniqueIdentifier>{8fc7353f-ec85-4082-9548-209397be26c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scene\game">
+      <UniqueIdentifier>{d5b24155-914f-4061-aabb-e51b0f847482}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -38,12 +47,6 @@
     </ClInclude>
     <ClInclude Include="Global.h">
       <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>scene</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneMgr.h">
-      <Filter>scene</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imconfig.h">
       <Filter>scene\ui\imgui</Filter>
@@ -72,20 +75,26 @@
     <ClInclude Include="imgui\imgui-SFML_export.h">
       <Filter>scene\ui\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="GameScene.h">
-      <Filter>scene\lobby</Filter>
-    </ClInclude>
-    <ClInclude Include="Map.h">
-      <Filter>scene\lobby</Filter>
-    </ClInclude>
-    <ClInclude Include="Tile.h">
-      <Filter>scene\lobby</Filter>
-    </ClInclude>
     <ClInclude Include="LobbyScene.h">
       <Filter>scene\lobby</Filter>
     </ClInclude>
     <ClInclude Include="LoginScene.h">
       <Filter>scene\login</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>scene\game</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>scene\game</Filter>
+    </ClInclude>
+    <ClInclude Include="Tile.h">
+      <Filter>scene\game</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneMgr.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -101,17 +110,8 @@
     <ClCompile Include="Global.cpp">
       <Filter>app</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>scene</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneMgr.cpp">
-      <Filter>scene</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\socket.cpp">
-      <Filter>common</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\common.cpp">
-      <Filter>common</Filter>
+      <Filter>dep\common</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui.cpp">
       <Filter>scene\ui\imgui</Filter>
@@ -131,32 +131,68 @@
     <ClCompile Include="imgui\imgui-SFML.cpp">
       <Filter>scene\ui\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="GameScene.cpp">
-      <Filter>scene\lobby</Filter>
-    </ClCompile>
-    <ClCompile Include="Map.cpp">
-      <Filter>scene\lobby</Filter>
-    </ClCompile>
-    <ClCompile Include="Tile.cpp">
-      <Filter>scene\lobby</Filter>
-    </ClCompile>
     <ClCompile Include="LobbyScene.cpp">
       <Filter>scene\lobby</Filter>
     </ClCompile>
     <ClCompile Include="LoginScene.cpp">
       <Filter>scene\login</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\random.cpp">
-      <Filter>common</Filter>
+    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\arg_parser.cpp">
+      <Filter>dep\kazin</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\packet.cpp">
-      <Filter>common</Filter>
+    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\auth.cpp">
+      <Filter>dep\kazin</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\console\log.cpp">
-      <Filter>common</Filter>
+    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\container.cpp">
+      <Filter>dep\kazin</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\auth.cpp">
-      <Filter>common</Filter>
+    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\file.cpp">
+      <Filter>dep\kazin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\kazin.cpp">
+      <Filter>dep\kazin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\log.cpp">
+      <Filter>dep\kazin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\net.cpp">
+      <Filter>dep\kazin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\os.cpp">
+      <Filter>dep\kazin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\packet.cpp">
+      <Filter>dep\kazin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\process.cpp">
+      <Filter>dep\kazin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\random.cpp">
+      <Filter>dep\kazin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\scenes.cpp">
+      <Filter>dep\kazin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\socket.cpp">
+      <Filter>dep\kazin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\time.cpp">
+      <Filter>dep\kazin</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>scene\game</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>scene\game</Filter>
+    </ClCompile>
+    <ClCompile Include="Tile.cpp">
+      <Filter>scene\game</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneMgr.cpp">
+      <Filter>scene</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

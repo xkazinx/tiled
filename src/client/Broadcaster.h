@@ -1,27 +1,27 @@
 #pragma once
 
-template<class Op = broadcaster::DummyOp>
-class Broadcaster : public broadcaster::Base<Op>
+template<class Op = kazin::broadcaster::DummyOp>
+class Broadcaster : public kazin::broadcaster::Base<Op>
 {
-	broadcaster::InOperationBase _opt;
+	kazin::broadcaster::InOperationBase _opt;
 
 public:
 	using Peer = ENetPeer;
 
-	explicit Broadcaster(const NetOp net_op) : broadcaster::Base<Op>(net_op){}
+	explicit Broadcaster(const NetOp net_op) : kazin::broadcaster::Base<Op>(net_op){}
 	~Broadcaster() override {}
 
 	template <typename ... Args>
 	void Send(Op op, const Args&...args) const
 	{
-		auto out = packet::Out::CreateStatic(this->_net_op, op, std::forward<const Args>(args)...);
+		auto out = kazin::packet::Out::CreateStatic(this->_net_op, op, std::forward<const Args>(args)...);
 		Global::Send(out);
 	}
 
-	void NetOperation(packet::In & pkt)
+	void NetOperation(kazin::packet::In & pkt)
 	{
 		pkt.Read(this->_op);
-		_opt = broadcaster::InOperationBase(pkt);
+		_opt = kazin::broadcaster::InOperationBase(pkt);
 		NetOperationProcess();
 	}
 

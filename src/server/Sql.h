@@ -45,7 +45,7 @@ public:
 			else return data;
 		}
 
-		Log::Error("Field not found for SelectItem::Pop: {}", field);
+		PrintError("Field not found for SelectItem::Pop: {}", field);
 		return string("");
 	}
 

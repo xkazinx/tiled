@@ -3,32 +3,43 @@
 #include "SceneMgr.h"
 
 App::App()
-	: Broadcaster<Op>(NetOp::Main)
+	: kazin::app::Base("Tiled", [&](auto & wnd)
+		{
+			ContextSettings settings;
+			{
+				settings.depthBits = 24;
+				settings.stencilBits = 8;
+				settings.antialiasingLevel = 0;
+				settings.majorVersion = 3;
+				settings.minorVersion = 2;
+			}
+
+			_res_x = decltype(_res_x)(stoi(_args.Get("-resx")));
+			_res_y = decltype(_res_y)(stoi(_args.Get("-resy")));
+
+			wnd.create(VideoMode(_res_x, _res_y), kAppName, sf::Style::Default, settings);
+		}), 
+		Broadcaster<Op>(NetOp::Main)
 {
 	g_app = this;
 	Global::Initialize();
 
-	InitializeWindow();
-
-	ImGui::SFML::Init(_window);
-
 	using namespace std;
 	(g_sock = make_unique<Socket>(Socket::Type::Client,
-		bind(&App::OnConnect, this, placeholders::_1),
-		bind(&App::OnPacket, this, placeholders::_1),
+		bind(&App::OnConnect,	 this, placeholders::_1),
+		bind(&App::OnPacket,		 this, placeholders::_1),
 		bind(&App::OnDisconnect, this, placeholders::_1))
 	)->Connect(kHost, kPort);
 }
 
 App::~App()
 {
-	ImGui::SFML::Shutdown(); 
 	Global::Deinitialize();
 }
 
 void App::NetOperationProcess()
 {
-	Log::Debug("NetOperationProcess MainOp{}", Format(GetOperation()));
+	PrintDebug("NetOperationProcess MainOp{}", Format(GetOperation()));
 	
 	switch(GetOperation())
 	{
@@ -36,35 +47,13 @@ void App::NetOperationProcess()
 		OP(CreateAccount);
 
 	default:
-		Log::Error("Unknown MainOp{}", Format(GetOperation()));
+		PrintError("Unknown MainOp{}", Format(GetOperation()));
 		break;
 	}
 }
 
 void App::InitializeWindow()
 {
-	// OpenGL settings
-	ContextSettings settings;
-	{
-		settings.depthBits = 24;
-		settings.stencilBits = 8;
-		settings.antialiasingLevel = 0;
-		settings.majorVersion = 3;
-		settings.minorVersion = 2;
-	}
-
-	_window.create(VideoMode(_res.x, _res.y), kAppName, sf::Style::Default, settings);
-
-	// https://www.sfml-dev.org/tutorials/2.5/window-opengl.php
-	_window.setActive(true);
-	_window.setVerticalSyncEnabled(true);
-
-	AdjustViewport(_window.getSize().x, _window.getSize().y);
-}
-
-void App::AdjustViewport(const GLsizei & x, const GLsizei & y)
-{
-	glViewport(0, 0, x, y);
 }
 
 int App::Tick() 
@@ -137,36 +126,40 @@ bool App::HandleEvents()
 
 void App::OnConnect([[maybe_unused]] ENetEvent& ev)
 {
-	Log::Debug("OnConnect()");
+	PrintDebug("OnConnect()");
+	if(g_game)
+	{
+		//g_app->Send(MainOp::EnterGame);
+	}
 }
 
 void App::OnDisconnect([[maybe_unused]] ENetEvent& ev)
 {
-	Log::Debug("OnDisconnect()");
+	PrintDebug("OnDisconnect()");
 }
 
 void App::OnPacket([[maybe_unused]] ENetEvent& ev)
 {
-	Log::Debug("OnPacket()");
+	PrintDebug("OnPacket()");
 
-	InPkt in(ev.packet);
+	kazin::InPacket in(ev.packet);
 	using enum NetOp;
 	switch (const auto op = in.ReadAs<NetOp>();
 		op)
 	{
 	case Main:	this->NetOperation(in);	break;
 	default:
-		Log::Error("Unknown NetOp{}", Format(op));
+		PrintError("Unknown NetOp{}", Format(op));
 		break;
 	}
 }
 
 void App::NetOp_Login()
 {
-	
+	g_scene->Set(SceneID::Game);
 }
 
 void App::NetOp_CreateAccount()
 {
-	
+
 }

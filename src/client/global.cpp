@@ -1,19 +1,19 @@
 #include "stdafx.h"
 #include "Global.h"
 #include "SceneMgr.h"
+#include "GameScene.h"
 
 namespace Global
 {
 	App * g_app;
-	unique_ptr<Random>	g_rand;
 	unique_ptr<SceneMgr> g_scene;
-	unique_ptr<Socket>	g_sock;
+	unique_ptr<kazin::Socket>	g_sock;
 	Map * g_map;
+	GameScene * g_game = nullptr;
 
 	void Initialize()
 	{
 		// unordered
-		g_rand	= make_unique<Random>();
 		g_scene	= make_unique<SceneMgr>();
 
 		// ordered
@@ -24,7 +24,7 @@ namespace Global
 
 	}
 
-	void Send(const OutPktRef out, enet_uint8 channel)
+	void Send(const kazin::OutPktRef out, enet_uint8 channel)
 {
 		g_sock->Send(out, channel);
 	}

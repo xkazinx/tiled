@@ -7,7 +7,7 @@ LoginScene::LoginScene() :
 {
 	_circle.setFillColor(sf::Color::Red);
 
-	_auth._user.resize(player::kNameSize);
+	_auth._user.resize(player::kUsernameSize);
 	_auth._pass.resize(player::kPasswordSize);
 }
 
@@ -23,13 +23,13 @@ void LoginScene::Tick()
 
 void LoginScene::ProcessUI() const
 {
-	ImGui::Begin("Hello, world!");
-	ImGui::InputText("Username", (char*)_auth._user.data(), player::kNameSize + 1);
+	ImGui::Begin("Authentication");
+	ImGui::InputText("Username", (char*)_auth._user.data(), player::kUsernameSize + 1);
 	ImGui::InputText("Password", (char*)_auth._pass.data(), player::kPasswordSize + 1, ImGuiInputTextFlags_Password);
 
 	if (ImGui::Button("Login"))
 	{
-		Log::Debug("Sent Login Auth{}", Format(_auth));
+		PrintDebug("Sent Login Auth{}", Format(_auth));
 		g_app->Send(MainOp::Login, _auth);
 
 		// #test sending and reading with size 32 but written < 32 with char and string
@@ -38,7 +38,7 @@ void LoginScene::ProcessUI() const
 	
 	if (ImGui::Button("Create Account"))
 	{
-		Log::Debug("Sent Create Account Auth{}", Format(_auth));
+		PrintDebug("Sent Create Account Auth{}", Format(_auth));
 		g_app->Send(MainOp::CreateAccount, _auth);
 	}
 
