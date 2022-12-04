@@ -15,14 +15,8 @@ class ConsoleOut
 public:
 	using Type = LogType;
 
-	ConsoleOut(string & str) 
-		: _str(str), _ptr(nullptr)
-	{
-
-	}
-
 	ConsoleOut(const char * str)
-		: _str(kDummy), _ptr(str)
+		: _ptr(str)
 	{
 
 	}
@@ -32,7 +26,6 @@ public:
 #ifndef CLIENT
 	mutex _mutex;
 #endif
-	string & _str;
 	const char * _ptr;
 };
 
@@ -41,20 +34,23 @@ namespace Log
 	using Type = LogType;	
 
 	template <typename ... Args>
-	void Debug(Args && ... args) 
+	void Debug(std::_Fmt_string<Args...> fmt, Args &&... args)
 	{
-		ConsoleOut<Type::Debug>(format(forward<Args>(args)...).c_str());
+		auto str = std::vformat(fmt._Str, std::make_format_args(args...));
+		ConsoleOut<Type::Debug>(str.c_str());
 	}
 
-	template <typename ... Args>
-	void Error(Args && ... args)
+	template <typename ...Args>
+	void Error(std::_Fmt_string<Args...> fmt, Args &&... args)
 	{
-		ConsoleOut<Type::Error>(format(forward<Args>(args)...).c_str());
+		auto str = std::vformat(fmt._Str, std::make_format_args(args...));
+		ConsoleOut<Type::Error>(str.c_str());
 	}
 }
 
-template <typename ... Args>
-void Print(Args && ... args)
+template <typename ...Args>
+void Print(std::_Fmt_string<Args...> fmt, Args &&... args)
 {
-	ConsoleOut<LogType::Info>(format(forward<Args>(args)...).c_str());
+	auto str = std::vformat(fmt._Str, std::make_format_args(args...));
+	ConsoleOut<LogType::Info>(str.c_str());
 }

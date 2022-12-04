@@ -18,10 +18,10 @@ ConsoleOut<T>::~ConsoleOut()
 	{
 	case Type::Debug:	cout << cyan << "Debug: ";	break;
 	case Type::Error:	cout << red << "Error: ";	break;
-	case Type::Info:	cout << green;				break;
+	case Type::Info:	cout << green;					break;
 	}
 
-	cout << (const char*)(_ptr ? _ptr : _str.c_str()) << "\n";
+	cout << _ptr << "\n";
 }
 
 template ConsoleOut<LogType::Debug>::~ConsoleOut<LogType::Debug>();
