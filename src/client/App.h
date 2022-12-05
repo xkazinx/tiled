@@ -17,7 +17,6 @@ public:
 	bool HandleEvents();
 	
 	// #todo make dynamic resolution and scale, make it readable from config file, and changeable in game
-	sf::Vector2<i16> _res;
 
 private:
 	void InitializeWindow();

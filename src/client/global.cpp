@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "SceneMgr.h"
 #include "GameScene.h"
+#include "Player.h"
 
 namespace Global
 {
@@ -10,6 +11,7 @@ namespace Global
 	unique_ptr<kazin::Socket>	g_sock;
 	Map * g_map;
 	GameScene * g_game = nullptr;
+	unique_ptr<Player> g_player;
 
 	void Initialize()
 	{

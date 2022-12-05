@@ -13,9 +13,9 @@ Map::Map()
 	}
 
 	{
-		auto tile_cnt = szt(((g_app->_res.x + 4 * tile::kSize) / tile::kSize) 
-			* ((g_app->_res.y + 4 * tile::kSize) / tile::kSize)
-			+ (ceil(g_app->_res.x / tile::kSize) + ceil(g_app->_res.y / tile::kSize) + 1));
+		auto tile_cnt = szt(((g_app->_res_x + 4 * tile::kSize) / tile::kSize) 
+			* ((g_app->_res_y + 4 * tile::kSize) / tile::kSize)
+			+ (ceil(g_app->_res_x / tile::kSize) + ceil(g_app->_res_y / tile::kSize) + 1));
 	
 		_grid.create(tile_cnt * 8);
 		_grid.setPrimitiveType(sf::PrimitiveType::Lines);
@@ -25,12 +25,12 @@ Map::Map()
 
 	{
 		_visible_tiles = { 
-			(g_app->_res.x / tile::kSize) + 2,
-			(g_app->_res.y / tile::kSize) + 2
+			(g_app->_res_x / tile::kSize) + 2,
+			(g_app->_res_y / tile::kSize) + 2
 		};
 
 		_visible_tiles_range.x = _visible_tiles.x / 2;
-		_visible_tiles_range.y = _visible_tiles.x / 2;
+		_visible_tiles_range.y = _visible_tiles.y / 2;
 
 		if((_visible_tiles.x % 2) == 0)
 			_half_tile_offset.x = -tile::kHalfSize;
@@ -91,25 +91,25 @@ void Map::Render(sf::RenderTarget& tgt, const sf::RenderStates& states)
 	// for East and South
 	constexpr auto extra_tile_sz = tile::kSize + tile::kHalfSize;
 
-	/*
+	
 	Print("---");
 	Print("_visible_tile_offset = {} {}", _visible_tile_offset.x, _visible_tile_offset.y);
-	Print("g_app->_res = {} {}", g_app->_res.x, g_app->_res.y);
+	Print("g_app->_res = {} {}", g_app->_res_x, g_app->_res_y);
 	Print("_world_offset = {} {}", _world_offset.x, _world_offset.y);
 	Print("_world_offset_adjust = {} {}", _world_offset_adjust.x, _world_offset_adjust.y);
 	Print("_world_offset_movement = {} {}", _world_offset_movement.x, _world_offset_movement.y);
-	*/
+	
 
 	sf::Vector2<i16> index;
 	for(i = 0,
 		index.y = _visible_tile_offset.y,
 		pt.y = -tile::kSize + (_world_offset_adjust.y - _world_offset.y) + _world_offset_movement.y;
-		pt.y <= g_app->_res.y + extra_tile_sz;
+		pt.y <= g_app->_res_y + extra_tile_sz;
 		pt.y += tile::kSize, ++index.y)
 	{
 		for(index.x = _visible_tile_offset.x,
 			pt.x = -tile::kSize + (_world_offset_adjust.x - _world_offset.x) + _world_offset_movement.x;
-			 pt.x <= g_app->_res.x + extra_tile_sz;
+			 pt.x <= g_app->_res_x + extra_tile_sz;
 			 pt.x += tile::kSize, ++index.x, ++i)
 		{
 			if(_grid_visible)

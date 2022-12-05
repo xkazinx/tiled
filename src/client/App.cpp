@@ -1,10 +1,16 @@
 #include "stdafx.h"
 #include "App.h"
 #include "SceneMgr.h"
+#include "LoginScene.h"
+#include "Player.h"
+#include "GameScene.h"
 
 App::App()
 	: kazin::app::Base("Tiled", [&](auto & wnd)
 		{
+			g_app = this;
+			Global::Initialize();
+
 			ContextSettings settings;
 			{
 				settings.depthBits = 24;
@@ -20,10 +26,7 @@ App::App()
 			wnd.create(VideoMode(_res_x, _res_y), kAppName, sf::Style::Default, settings);
 		}), 
 		Broadcaster<Op>(NetOp::Main)
-{
-	g_app = this;
-	Global::Initialize();
-
+		{
 	using namespace std;
 	(g_sock = make_unique<Socket>(Socket::Type::Client,
 		bind(&App::OnConnect,	 this, placeholders::_1),
@@ -156,6 +159,7 @@ void App::OnPacket([[maybe_unused]] ENetEvent& ev)
 
 void App::NetOp_Login()
 {
+	g_player = make_unique<Player>(g_scene->Get<LoginScene>()->_auth._user);
 	g_scene->Set(SceneID::Game);
 }
 

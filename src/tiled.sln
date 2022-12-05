@@ -1,0 +1,84 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "client", "client\client.vcxproj", "{EC94C57D-76DD-43AF-B774-4163CC02B7B9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "server", "server\server.vcxproj", "{3B73D4A5-6BFC-4959-BEB1-45DCA13834B6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{8C0947C4-1BA3-49D3-BF16-EBBAD65BFD66}"
+	ProjectSection(SolutionItems) = preProject
+		common\common.cpp = common\common.cpp
+		common\common.h = common\common.h
+		common\netops.h = common\netops.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "kazin", "kazin", "{E562CDA6-3BBA-4C61-8DB9-B54B31BA60EE}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\LIBPATH\kazin\include\kazin\arg_parser.cpp = ..\..\..\LIBPATH\kazin\include\kazin\arg_parser.cpp
+		..\..\..\LIBPATH\kazin\include\kazin\arg_parser.h = ..\..\..\LIBPATH\kazin\include\kazin\arg_parser.h
+		..\..\..\LIBPATH\kazin\include\kazin\auth.cpp = ..\..\..\LIBPATH\kazin\include\kazin\auth.cpp
+		..\..\..\LIBPATH\kazin\include\kazin\auth.h = ..\..\..\LIBPATH\kazin\include\kazin\auth.h
+		..\..\..\LIBPATH\kazin\include\kazin\broadcaster.h = ..\..\..\LIBPATH\kazin\include\kazin\broadcaster.h
+		..\..\..\LIBPATH\kazin\include\kazin\container.cpp = ..\..\..\LIBPATH\kazin\include\kazin\container.cpp
+		..\..\..\LIBPATH\kazin\include\kazin\container.h = ..\..\..\LIBPATH\kazin\include\kazin\container.h
+		..\..\..\LIBPATH\kazin\include\kazin\file.cpp = ..\..\..\LIBPATH\kazin\include\kazin\file.cpp
+		..\..\..\LIBPATH\kazin\include\kazin\file.h = ..\..\..\LIBPATH\kazin\include\kazin\file.h
+		..\..\..\LIBPATH\kazin\include\kazin\kazin.cpp = ..\..\..\LIBPATH\kazin\include\kazin\kazin.cpp
+		..\..\..\LIBPATH\kazin\include\kazin\kazin.h = ..\..\..\LIBPATH\kazin\include\kazin\kazin.h
+		..\..\..\LIBPATH\kazin\include\kazin\log.cpp = ..\..\..\LIBPATH\kazin\include\kazin\log.cpp
+		..\..\..\LIBPATH\kazin\include\kazin\log.h = ..\..\..\LIBPATH\kazin\include\kazin\log.h
+		..\..\..\LIBPATH\kazin\include\kazin\magic_enum.h = ..\..\..\LIBPATH\kazin\include\kazin\magic_enum.h
+		..\..\..\LIBPATH\kazin\include\kazin\net.cpp = ..\..\..\LIBPATH\kazin\include\kazin\net.cpp
+		..\..\..\LIBPATH\kazin\include\kazin\net.h = ..\..\..\LIBPATH\kazin\include\kazin\net.h
+		..\..\..\LIBPATH\kazin\include\kazin\os.cpp = ..\..\..\LIBPATH\kazin\include\kazin\os.cpp
+		..\..\..\LIBPATH\kazin\include\kazin\os.h = ..\..\..\LIBPATH\kazin\include\kazin\os.h
+		..\..\..\LIBPATH\kazin\include\kazin\packet.cpp = ..\..\..\LIBPATH\kazin\include\kazin\packet.cpp
+		..\..\..\LIBPATH\kazin\include\kazin\packet.h = ..\..\..\LIBPATH\kazin\include\kazin\packet.h
+		..\..\..\LIBPATH\kazin\include\kazin\process.cpp = ..\..\..\LIBPATH\kazin\include\kazin\process.cpp
+		..\..\..\LIBPATH\kazin\include\kazin\process.h = ..\..\..\LIBPATH\kazin\include\kazin\process.h
+		..\..\..\LIBPATH\kazin\include\kazin\random.cpp = ..\..\..\LIBPATH\kazin\include\kazin\random.cpp
+		..\..\..\LIBPATH\kazin\include\kazin\random.h = ..\..\..\LIBPATH\kazin\include\kazin\random.h
+		..\..\..\LIBPATH\kazin\include\kazin\rang.hpp = ..\..\..\LIBPATH\kazin\include\kazin\rang.hpp
+		..\..\..\LIBPATH\kazin\include\kazin\scenes.cpp = ..\..\..\LIBPATH\kazin\include\kazin\scenes.cpp
+		..\..\..\LIBPATH\kazin\include\kazin\scenes.h = ..\..\..\LIBPATH\kazin\include\kazin\scenes.h
+		..\..\..\LIBPATH\kazin\include\kazin\socket.cpp = ..\..\..\LIBPATH\kazin\include\kazin\socket.cpp
+		..\..\..\LIBPATH\kazin\include\kazin\socket.h = ..\..\..\LIBPATH\kazin\include\kazin\socket.h
+		..\..\..\LIBPATH\kazin\include\kazin\time.cpp = ..\..\..\LIBPATH\kazin\include\kazin\time.cpp
+		..\..\..\LIBPATH\kazin\include\kazin\time.h = ..\..\..\LIBPATH\kazin\include\kazin\time.h
+		..\..\..\LIBPATH\kazin\include\kazin\types.h = ..\..\..\LIBPATH\kazin\include\kazin\types.h
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EC94C57D-76DD-43AF-B774-4163CC02B7B9}.Debug|x64.ActiveCfg = Debug|x64
+		{EC94C57D-76DD-43AF-B774-4163CC02B7B9}.Debug|x64.Build.0 = Debug|x64
+		{EC94C57D-76DD-43AF-B774-4163CC02B7B9}.Debug|x86.ActiveCfg = Debug|Win32
+		{EC94C57D-76DD-43AF-B774-4163CC02B7B9}.Debug|x86.Build.0 = Debug|Win32
+		{EC94C57D-76DD-43AF-B774-4163CC02B7B9}.Release|x64.ActiveCfg = Release|x64
+		{EC94C57D-76DD-43AF-B774-4163CC02B7B9}.Release|x64.Build.0 = Release|x64
+		{EC94C57D-76DD-43AF-B774-4163CC02B7B9}.Release|x86.ActiveCfg = Release|Win32
+		{EC94C57D-76DD-43AF-B774-4163CC02B7B9}.Release|x86.Build.0 = Release|Win32
+		{3B73D4A5-6BFC-4959-BEB1-45DCA13834B6}.Debug|x64.ActiveCfg = Debug|x64
+		{3B73D4A5-6BFC-4959-BEB1-45DCA13834B6}.Debug|x64.Build.0 = Debug|x64
+		{3B73D4A5-6BFC-4959-BEB1-45DCA13834B6}.Debug|x86.ActiveCfg = Debug|Win32
+		{3B73D4A5-6BFC-4959-BEB1-45DCA13834B6}.Debug|x86.Build.0 = Debug|Win32
+		{3B73D4A5-6BFC-4959-BEB1-45DCA13834B6}.Release|x64.ActiveCfg = Release|x64
+		{3B73D4A5-6BFC-4959-BEB1-45DCA13834B6}.Release|x64.Build.0 = Release|x64
+		{3B73D4A5-6BFC-4959-BEB1-45DCA13834B6}.Release|x86.ActiveCfg = Release|Win32
+		{3B73D4A5-6BFC-4959-BEB1-45DCA13834B6}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {091E0047-7422-446E-8C82-B50D52C2C0A2}
+	EndGlobalSection
+EndGlobal

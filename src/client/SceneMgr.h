@@ -16,4 +16,10 @@ public:
 	void Render(sf::RenderTarget& tgt, const sf::RenderStates& states) const;
 	void Tick();
 	bool HandleEvent(const sf::Event& ev);
+
+	template<typename T>
+	T * Get()
+	{
+		return (T*)_ptr.get();
+	}
 };

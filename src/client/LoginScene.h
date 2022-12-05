@@ -15,7 +15,5 @@ public:
 	void HandleEvents(const sf::Event& ev) override;
 	void ProcessUI() const override;
 
-	sf::CircleShape _circle;
-
 	kazin::Auth _auth;
 };

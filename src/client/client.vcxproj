@@ -222,6 +222,7 @@
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="LoginScene.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneMgr.h" />
     <ClInclude Include="stdafx.h" />
@@ -257,6 +258,7 @@
     <ClCompile Include="LoginScene.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneMgr.cpp" />
     <ClCompile Include="stdafx.cpp">

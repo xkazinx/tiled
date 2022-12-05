@@ -4,18 +4,20 @@ class App;
 class SceneMgr;
 class Map;
 class GameScene;
+class Player;
 
 #define DEBUG_MODE
 
 namespace Global
 {
-	constexpr char kAppName[] = "Tileship";
+	constexpr char kAppName[] = "Tiled";
 
 	extern App* g_app;
 	extern unique_ptr<SceneMgr> g_scene;
 	extern unique_ptr<Socket> g_sock;
 	extern Map * g_map;
 	extern GameScene * g_game;
+	extern unique_ptr<Player> g_player;
 
 	extern void Initialize();
 	extern void Deinitialize();

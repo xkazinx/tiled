@@ -6,7 +6,7 @@ class Player;
 
 namespace Global
 {
-	constexpr char kAppName[] = "Tileship Server";
+	constexpr char kAppName[] = "Tiled Server";
 
 	extern App * g_app;
 	extern unique_ptr<kazin::Socket> g_sock;

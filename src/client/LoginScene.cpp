@@ -2,11 +2,8 @@
 #include "LoginScene.h"
 #include "App.h"
 
-LoginScene::LoginScene() : 
-	_circle(50.f, 50)
+LoginScene::LoginScene()
 {
-	_circle.setFillColor(sf::Color::Red);
-
 	_auth._user.resize(player::kUsernameSize);
 	_auth._pass.resize(player::kPasswordSize);
 }
@@ -47,7 +44,7 @@ void LoginScene::ProcessUI() const
 
 void LoginScene::Render(sf::RenderTarget& tgt, const sf::RenderStates& states) const
 {
-	tgt.draw(_circle, states);
+
 }
 
 void LoginScene::HandleEvents([[maybe_unused]] const sf::Event& ev)
