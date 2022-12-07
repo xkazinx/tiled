@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Client
+{
 class App;
 class SceneMgr;
 class Map;
@@ -15,7 +17,7 @@ namespace Global
 	extern App* g_app;
 	extern unique_ptr<SceneMgr> g_scene;
 	extern unique_ptr<Socket> g_sock;
-	extern Map * g_map;
+	extern unique_ptr<Map> g_map;
 	extern GameScene * g_game;
 	extern unique_ptr<Player> g_player;
 
@@ -106,3 +108,4 @@ namespace font {
 }
 
 using SceneID = Global::scene::ID;
+}

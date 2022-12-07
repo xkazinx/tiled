@@ -1,22 +1,25 @@
 #pragma once
 
+namespace Client
+{
 class Tile;
+class Unit;
 
-class Map
+class Map : public map::Base<Tile>
 {
 public:
+	Map(InPacket * pkt);
+
 	Map();
 	~Map();
 
 	void Render(sf::RenderTarget& tgt, const sf::RenderStates& states);
-
-	vector<unique_ptr<Tile>> _tiles;
 	
 	mutable sf::RenderTexture _grid_texture;
 	mutable vector<sf::Vertex> _grid_vertex;
 	mutable sf::VertexBuffer _grid;
 
-	sf::Vector2<i16> _visible_tiles, _visible_tiles_range, _visible_tile_offset,
+	Point<i16> _visible_tiles, _visible_tiles_range, _visible_tile_offset,
 		_world_offset, _world_offset_adjust, _world_offset_movement, _half_tile_offset;
 
 	bool _grid_visible = true;
@@ -24,4 +27,19 @@ public:
 	void UpdateCamera();
 
 	RenderPoint GetRenderPoint(const TilePoint& tile_pt, const TilePoint& offset);
+
+	void SetUnit(Unit * unit);
+	void UnsetUnit(Unit * unit);
+	void Tick();
+	void RenderObjects(sf::RenderTarget& tgt, const sf::RenderStates& states);
+
+	bool IsInSight(WorldPoint wpt);
+	vector<unique_ptr<Unit>> _units_storage;
+	vector<Unit*> _units;
+
+	WorldPoint GetWorldPoint(TilePoint pt)
+	{
+		return pt * tile::kSize;
+	}
 };
+}

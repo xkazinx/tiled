@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Client
+{
 template<class Op = kazin::broadcaster::DummyOp>
 class Broadcaster : public kazin::broadcaster::Base<Op>
 {
@@ -29,3 +31,4 @@ public:
 
 	auto GetPacket() const { return _opt.GetPacket(); }
 };
+}

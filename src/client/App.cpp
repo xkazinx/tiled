@@ -4,7 +4,11 @@
 #include "LoginScene.h"
 #include "Player.h"
 #include "GameScene.h"
+#include "Map.h"
+#include "Tile.h"
 
+namespace Client
+{
 App::App()
 	: kazin::app::Base("Tiled", [&](auto & wnd)
 		{
@@ -20,8 +24,8 @@ App::App()
 				settings.minorVersion = 2;
 			}
 
-			_res_x = decltype(_res_x)(stoi(_args.Get("-resx")));
-			_res_y = decltype(_res_y)(stoi(_args.Get("-resy")));
+			_res_x = decltype(_res_x)(stoi(_args.Get("-resx", "1024")));
+			_res_y = decltype(_res_y)(stoi(_args.Get("-resy", "768")));
 
 			wnd.create(VideoMode(_res_x, _res_y), kAppName, sf::Style::Default, settings);
 		}), 
@@ -48,6 +52,7 @@ void App::NetOperationProcess()
 	{
 		OP(Login);
 		OP(CreateAccount);
+		OP(EnterGame);
 
 	default:
 		PrintError("Unknown MainOp{}", Format(GetOperation()));
@@ -166,4 +171,18 @@ void App::NetOp_Login()
 void App::NetOp_CreateAccount()
 {
 
+}
+
+void App::NetOp_EnterGame()
+{
+	TilePoint pt;
+	GetPacket()->Read(g_player->_idx, g_player->_pt);
+
+	g_map = make_unique<Map>(GetPacket());
+	PrintDebug("NetOp_EnterGame()");
+	// #todo Temporarily reading map data until passing it into files or something
+	//GetPacket()->
+
+	g_map->SetUnit(g_player.get());
+}
 }

@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Sql.h"
 
+namespace Server
+{
 Sql::Sql()
 {
 	mysql_init(Get()); // #Check if needs to be called for every connection
@@ -139,4 +141,5 @@ SelectResult::SelectResult(Sql * sql)
 SelectResult::~SelectResult()
 {
 	mysql_free_result(_ptr);
+}
 }

@@ -3,6 +3,8 @@
 #include "Player.h"
 #include "PlayerMgr.h"
 
+namespace Server
+{
 App::App()
 	: kazin::app::Base("Tiled Server"), Broadcaster<Op>(NetOp::Main)
 {
@@ -80,13 +82,13 @@ void App::OnPacket(ENetEvent& ev)
 	}
 }
 
-void App::OnDisconnect([[maybe_unused]] ENetEvent& ev)
+void App::OnDisconnect([[maybe_unused]] ENetEvent & ev)
 {
 	//g_player_mgr->_list.push_back(p.get());
 	//g_player_mgr->_array[*player_idx].get();
 }
 
-Player* App::OnAuth(const ENetEvent& ev) const
+Player* App::OnAuth(const ENetEvent & ev) const
 {
 	Player* player = nullptr;
 
@@ -95,13 +97,13 @@ Player* App::OnAuth(const ENetEvent& ev) const
 	{
 		for (PlayerIdx i = 1; i < player::kMax; i++)
 		{
-			auto& p = g_player_mgr->_array[i];
+			auto& p = g_players->_array[i];
 			if (!p)
 			{
 				p = make_unique<Player>(i, ev.peer);
 				player_idx = new PlayerIdx(i);
 				player = p.get();
-				g_player_mgr->_list.push_back(p.get());
+				g_players->_list.push_back(p.get());
 				Print("OnAuth: PlayerIdx {}", i);
 				break;
 			}
@@ -109,7 +111,7 @@ Player* App::OnAuth(const ENetEvent& ev) const
 	}
 	else
 	{
-		player = g_player_mgr->_array[*player_idx].get();
+		player = g_players->_array[*player_idx].get();
 	}
 
 	return player;
@@ -140,6 +142,7 @@ void App::NetOp_Login()
 			{
 				Print("Login success for Auth{}", Format(auth));
 				Send(GetPlayer(), MainOp::Login, true);
+				GetPlayer()->OnEnterGame(auth);
 				return;
 			}
 		}
@@ -188,4 +191,5 @@ void App::NetOp_EnterGame()
 	Print("NetOp_EnterGame!!!");
 
 
+}
 }

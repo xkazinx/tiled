@@ -1,12 +1,14 @@
 #pragma once
 
+namespace Server
+{
 class Sql;
 using SelectValue = szt;
 
 class SelectItem
 {
 public:
-	SelectItem(const MYSQL_ROW & row, const vector<unsigned long> & length, const map<string, SelectValue>& fields)
+	SelectItem(const MYSQL_ROW & row, const vector<unsigned long> & length, const std::map<string, SelectValue>& fields)
 		: _row(row), _length(length), _fields(fields)
 	{
 		
@@ -51,7 +53,7 @@ public:
 
 	const MYSQL_ROW & _row;
 	const vector<unsigned long>& _length;
-	const map<string, SelectValue> & _fields;
+	const std::map<string, SelectValue> & _fields;
 };
 
 class SelectResult final
@@ -65,7 +67,7 @@ public:
 	vector<MYSQL_ROW> _rows;
 	vector<MYSQL_FIELD*> _fields;
 	vector<vector<unsigned long>> _lengths;
-	map<string, SelectValue> _fields_indexes;
+	std::map<string, SelectValue> _fields_indexes;
 	SelectValue _current_row_idx = 0;
 
 	unique_ptr<SelectItem> Pop()
@@ -104,3 +106,4 @@ public:
 		return scape + str + scape + add;
 	}
 };
+}

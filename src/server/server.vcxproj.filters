@@ -63,6 +63,10 @@
     <ClInclude Include="Tile.h">
       <Filter>map</Filter>
     </ClInclude>
+    <ClInclude Include="MapMgr.h">
+      <Filter>map</Filter>
+    </ClInclude>
+    <ClInclude Include="Unit.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp">
@@ -137,5 +141,9 @@
     <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\time.cpp">
       <Filter>deps\kazin</Filter>
     </ClCompile>
+    <ClCompile Include="MapMgr.cpp">
+      <Filter>map</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit.cpp" />
   </ItemGroup>
 </Project>

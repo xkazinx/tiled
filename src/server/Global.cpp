@@ -2,17 +2,18 @@
 #include "Global.h"
 #include "PlayerMgr.h"
 #include "Player.h"
+#include "MapMgr.h"
 
-namespace Global
+namespace Server::Global
 {
 	App* g_app;
 	unique_ptr<kazin::Socket> g_sock;
-	unique_ptr<PlayerMgr> g_player_mgr;
-
+	unique_ptr<PlayerMgr> g_players;
+	unique_ptr<MapMgr> g_maps;
 	void Initialize() {
 		// unordered
-		g_player_mgr = make_unique<PlayerMgr>();
-
+		g_players = make_unique<PlayerMgr>();
+		g_maps = make_unique<MapMgr>();
 		// ordered
 	}
 
@@ -25,3 +26,5 @@ namespace Global
 		g_sock->Send(player->_peer, out, channel);
 	}
 }
+
+using namespace Server;

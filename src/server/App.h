@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Server
+{
 class Player;
 
 class App final : public kazin::app::Base, public Broadcaster<MainOp>
@@ -23,4 +25,4 @@ private:
 	void NetOp_CreateAccount();
 	void NetOp_EnterGame();
 };
-
+}

@@ -1,13 +1,19 @@
 #pragma once
+#include "Unit.h"
 
-class Player
+namespace Server
+{
+class Map;
+class Player : public Unit
 {
 public:
 	Player(PlayerIdx idx, ENetPeer* peer);
 	~Player();
 	
-	PlayerIdx _idx;
 	ENetPeer* _peer;
 	string _ip;
-};
 
+	bool _in_game = false;
+	void OnEnterGame(const Auth & auth);
+};
+}

@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Client
+{
 class Scene;
 
 class SceneMgr
@@ -23,3 +25,4 @@ public:
 		return (T*)_ptr.get();
 	}
 };
+}

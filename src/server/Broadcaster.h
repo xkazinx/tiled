@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Server
+{
 class Player;
 
 class InOperation : public kazin::broadcaster::InOperationBase
@@ -55,3 +57,4 @@ public:
 	auto GetPacket() const { return _opt.GetPacket();	}
 	auto GetPeer()	  const { return _opt.GetPeer();		}
 };
+}

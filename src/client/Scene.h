@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Client
+{
 class Scene
 {
 public:
@@ -11,3 +13,4 @@ public:
 	virtual void HandleEvents(const sf::Event& ev) = 0;
 	virtual void ProcessUI() const {}
 };
+}

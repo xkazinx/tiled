@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Server
+{
 class Player;
 
 class PlayerMgr
@@ -11,4 +13,4 @@ public:
 	PlayerMgr();
 	~PlayerMgr();
 };
-
+}

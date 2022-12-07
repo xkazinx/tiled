@@ -1,6 +1,8 @@
 #pragma once
 #include "Broadcaster.h" // #why do I need to include this?
 
+namespace Client
+{
 class App final : public kazin::app::Base, public Broadcaster<MainOp>
 {
 public:
@@ -27,4 +29,6 @@ private:
 
 	void NetOp_Login();
 	void NetOp_CreateAccount();
+	void NetOp_EnterGame();
 };
+}

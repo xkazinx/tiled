@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{8C0947
 		common\netops.h = common\netops.h
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "kazin", "kazin", "{E562CDA6-3BBA-4C61-8DB9-B54B31BA60EE}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{E562CDA6-3BBA-4C61-8DB9-B54B31BA60EE}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\..\LIBPATH\kazin\include\kazin\arg_parser.cpp = ..\..\..\LIBPATH\kazin\include\kazin\arg_parser.cpp
 		..\..\..\LIBPATH\kazin\include\kazin\arg_parser.h = ..\..\..\LIBPATH\kazin\include\kazin\arg_parser.h

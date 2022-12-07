@@ -3,13 +3,16 @@
 #include "SceneMgr.h"
 #include "GameScene.h"
 #include "Player.h"
+#include "Map.h"
 
+namespace Client
+{
 namespace Global
 {
 	App * g_app;
 	unique_ptr<SceneMgr> g_scene;
 	unique_ptr<kazin::Socket>	g_sock;
-	Map * g_map;
+	unique_ptr<Map> g_map;
 	GameScene * g_game = nullptr;
 	unique_ptr<Player> g_player;
 
@@ -38,4 +41,5 @@ namespace font
 	{
 		"arial.ttf",
 	};
+}
 }

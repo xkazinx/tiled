@@ -2,6 +2,8 @@
 #include "LoginScene.h"
 #include "App.h"
 
+namespace Client
+{
 LoginScene::LoginScene()
 {
 	_auth._user.resize(player::kUsernameSize);
@@ -42,7 +44,7 @@ void LoginScene::ProcessUI() const
 	ImGui::End();
 }
 
-void LoginScene::Render(sf::RenderTarget& tgt, const sf::RenderStates& states) const
+void LoginScene::Render([[maybe_unused]] sf::RenderTarget& tgt, [[maybe_unused]] const sf::RenderStates& states) const
 {
 
 }
@@ -51,4 +53,4 @@ void LoginScene::HandleEvents([[maybe_unused]] const sf::Event& ev)
 {
 
 }
-
+}

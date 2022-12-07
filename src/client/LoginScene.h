@@ -1,6 +1,8 @@
 #pragma once
 #include "Scene.h"
 
+namespace Client
+{
 class LoginScene : public Scene
 {
 public:
@@ -17,3 +19,4 @@ public:
 
 	kazin::Auth _auth;
 };
+}

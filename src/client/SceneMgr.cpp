@@ -3,6 +3,8 @@
 #include "LoginScene.h"
 #include "GameScene.h"
 
+namespace Client
+{
 SceneMgr::SceneMgr()
 {
 	Set(ID::Login);
@@ -42,4 +44,5 @@ void SceneMgr::Tick()
 bool SceneMgr::HandleEvent([[maybe_unused]] const sf::Event& ev)
 {
 	return false;
+}
 }

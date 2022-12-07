@@ -1,6 +1,8 @@
 #pragma once
 #include "Scene.h"
 
+namespace Client
+{
 class Map;
 class Tile;
 
@@ -15,6 +17,5 @@ public:
 	void Tick() override;
 	void Render(sf::RenderTarget& tgt, const sf::RenderStates& states) const override;
 	void HandleEvents(const sf::Event& ev) override;
-	
-	unique_ptr<Map> _map;
 };
+}
