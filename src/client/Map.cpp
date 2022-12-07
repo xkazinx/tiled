@@ -80,12 +80,10 @@ void Map::UpdateCamera()
 		_world_offset_movement.x -= RenderPointValue(mvpt.x - rpt.x);
 		_world_offset_movement.y -= RenderPointValue(mvpt.y - rpt.y);
 
-		auto player_is_moving = false; // #todo g_player->_is_moving
-		if (player_is_moving)
+		if (g_player->_is_moving)
 		{
-			MovePoint mvpt_decrease = {0, 0}; // todo g_player->_mvpt_decrease
-			_world_offset_movement.x -= (RenderPointValue)round(mvpt_decrease.x);
-			_world_offset_movement.y -= (RenderPointValue)round(mvpt_decrease.y);
+			_world_offset_movement.x -= (RenderPointValue)round(g_player->_mvpt_decrease.x);
+			_world_offset_movement.y -= (RenderPointValue)round(g_player->_mvpt_decrease.y);
 		}
 	}
 }

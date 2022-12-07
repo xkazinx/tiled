@@ -95,7 +95,6 @@ void Unit::Render([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] cons
 
 	if ((Unit*)g_player.get() == this)
 	{
-		PrintDebug("Updated camera");
 		g_map->UpdateCamera();
 	}
 	auto dst = RenderPoint(
@@ -115,8 +114,10 @@ void Unit::Render([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] cons
 		+ (tile::kHalfSize) - (sz / 2.f)
 	);
 
+	/*
 	Print("RENDERING! {} | g_map->_world_offset: {} | g_map->_half_tile_offset: {} | PlayerPos: {}", 
 		Format(dst), Format(g_map->_world_offset), Format(g_map->_half_tile_offset), Format(_pt));
+		*/
 	tgt.draw(shape);
 }
 }

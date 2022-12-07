@@ -49,8 +49,8 @@ void LoginScene::Render([[maybe_unused]] sf::RenderTarget& tgt, [[maybe_unused]]
 
 }
 
-void LoginScene::HandleEvents([[maybe_unused]] const sf::Event& ev)
+bool LoginScene::HandleEvents([[maybe_unused]] const sf::Event& ev)
 {
-
+	return false;
 }
 }

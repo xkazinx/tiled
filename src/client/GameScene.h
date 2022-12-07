@@ -16,6 +16,8 @@ public:
 
 	void Tick() override;
 	void Render(sf::RenderTarget& tgt, const sf::RenderStates& states) const override;
-	void HandleEvents(const sf::Event& ev) override;
+	bool HandleEvents(const sf::Event & ev) override;
+
+	sf::View _game_view;
 };
 }
