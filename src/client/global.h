@@ -100,11 +100,20 @@ namespace Global
 namespace font {
 	enum class ID : u8 {
 		Arial,
-		Max,
 	};
 
 	using FontNames = const vector<string>;
 	extern FontNames kNames;
+	
+	extern sf::Text Text;
+
+	extern vector<sf::Font> List;
+
+	extern void Internal(RenderPoint pt, const char * str, sf::Color color = sf::Color::White);
+	extern void wrapText(string & str, unsigned width, const sf::Font & font, unsigned charicterSize, bool bold = false);
+	extern void InternalWrap(const RECT & rect, const char * str, sf::Color color);
+	extern void Fixed(const RenderPoint & pt, string str, sf::Color color);
+	extern void Aligned(RenderPoint pt, RenderPointValue wdt, string str, sf::Color color);
 }
 
 using SceneID = Global::scene::ID;
