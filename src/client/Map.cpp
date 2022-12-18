@@ -73,9 +73,9 @@ void Map::UpdateCamera()
 		rpt.y -= tile::kHalfSize - 1;
 
 		rpt.x += (player_pt.x * tile::kSize) - rpt.x;
-		rpt.y += (player_pt.x * tile::kSize) - rpt.x;
+		rpt.y += (player_pt.y * tile::kSize) - rpt.y;
 
-		MovePoint mvpt = { (float)rpt.x, (float)rpt.y}; // #todo g_player->_mvpt
+		MovePoint mvpt = g_player->_mvpt;
 		_world_offset_movement = { 0, 0 };
 		_world_offset_movement.x -= RenderPointValue(mvpt.x - rpt.x);
 		_world_offset_movement.y -= RenderPointValue(mvpt.y - rpt.y);
@@ -185,6 +185,30 @@ void Map::SetUnit(Unit * base)
 
 	tile->_unit = base;
 
+	switch (base->_action)
+	{
+	case unit::Action::Move:
+	{
+		//auto last_last_pt = base._last_pt;
+
+		base->_last_pt = base->_pt;
+		
+		/*Log::Info("XMap::SetUnit: base._last_pt({} {}) changed to ({} {})",
+			last_last_pt.x, last_last_pt.y, base._last_pt.x, base._last_pt.y);
+			*/
+		base->_dir.Move(base->_pt);
+		break;
+	}
+
+	case unit::Action::Stop:
+		//base->_last_pt = base->_pt;
+		break;
+
+	default:
+
+		break;
+	}
+
 	if (auto it = find_if(_units, [&](auto * u)
 	{
 		return u->_idx == base->_idx;
@@ -233,7 +257,7 @@ void Map::SetUnit(Unit * base)
 
 		if (g_player->_idx == base->_idx)
 		{
-			new_unit->_last_pt = new_unit->_pt;
+			g_player->_next_pt = new_unit->_last_pt = new_unit->_pt;
 
 			new_unit->_wpt = GetWorldPoint(new_unit->_pt);
 
@@ -304,18 +328,17 @@ void Map::Tick()
 			}
 			else
 			{
-				/*Direction dir = _g->GetNextMoveDir(
-					unit->GetPoint(), unit->_next_pt,
-					_g->_illusion_mov && !_g->IsAction(Action::DamageMove)
+				auto dir = g_player->GetNextDir(
+					unit->_pt, unit->_next_pt
 				);
 
-				if (!dir.IsValid())
+				if (dir == Direction::None)
 					return;
 
 				unit->_dir = dir;
 				unit->_action = unit::Action::Move;
 
-				SetUnit(g_player.get());*/
+				SetUnit(g_player.get());
 			}
 		}
 	}

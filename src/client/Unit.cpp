@@ -20,10 +20,10 @@ void Unit::Render([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] cons
 
 		auto dst_wpt = _wpt - (dir.GetContrary().GetDelta().As<decltype(_wpt.x)>() * tile::kHalfSize);
 
-		const auto velocity = 0.2f;
+		const auto velocity = 32.0f;
 
 		//auto delta = Clock.delta();
-		float delta_clock = 0.5f;
+		float delta_clock = time::DeltaFloat();
 
 		auto new_mvpt = _mvpt.Project(
 			dst_wpt.As<float>(), velocity * delta_clock

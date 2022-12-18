@@ -48,7 +48,7 @@ void Player::OnEnterGame(const Auth & auth)
 	_map = map;
 	map->_players.push_back(this);
 
-	_pt = { 50u + (TilePointValue)g_players->_list.size(), 50u };
+	_pt = { 50 + (TilePointValue)g_players->_list.size(), 50 };
 
 	map->SetUnit(this);
 

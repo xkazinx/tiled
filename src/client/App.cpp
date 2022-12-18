@@ -71,6 +71,8 @@ int App::Tick()
 
 	while (_window.isOpen())
 	{
+		time::Tick();
+
 		// Events
 		{	
 			if (!HandleEvents())

@@ -9,8 +9,10 @@ Direction Player::GetNextDir(TilePoint src, TilePoint dst)
 	Direction dir, tmp_dir;
 	if (src == dst) 
 		return Direction::None;
-	
+
 	dir.SetNext(src, dst);
+
+	PrintDebug("Deduced dir: {} - {} - {}", enum_name(dir._id), Format(src), Format(dst));
 
 	auto get = [&](const auto & i)
 	{
@@ -43,7 +45,7 @@ Direction Player::GetNextDir(TilePoint src, TilePoint dst)
 		int _player_turn = 0;
 		while (1)
 		{
-			if (dir.SetNext(pos, next_pt) != Direction::None)
+			if (dir.SetNext(pos, next_pt) == Direction::None)
 				break;
 
 			dir.Move(pos);
@@ -58,7 +60,7 @@ Direction Player::GetNextDir(TilePoint src, TilePoint dst)
 		_player_turn = 1;
 		while (1) 
 		{
-			if (dir.SetNext(pos, next_pt) != Direction::None)
+			if (dir.SetNext(pos, next_pt) == Direction::None)
 				break;
 
 			dir.Move(pos);
@@ -68,7 +70,7 @@ Direction Player::GetNextDir(TilePoint src, TilePoint dst)
 				break;
 		}
 
-		if (cnt1 > cnt2)
+		if (cnt1 >= cnt2)
 			_player_turn = 0;
 		else _player_turn = 1;
 
@@ -100,6 +102,7 @@ Direction Player::GetNextDir(TilePoint src, TilePoint dst)
 		}
 	}
 	
+	PrintDebug("Player::GetNextDir returned latest Direction::None");
 	return { Direction::None };
 }
 }

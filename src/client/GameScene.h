@@ -15,8 +15,9 @@ public:
 	static constexpr auto kID = SceneID::Game;
 
 	void Tick() override;
-	void Render(sf::RenderTarget& tgt, const sf::RenderStates& states) const override;
+	void Render(sf::RenderTarget& tgt, const sf::RenderStates& states) override;
 	bool HandleEvents(const sf::Event & ev) override;
+	TilePoint GetMouseTile();
 
 	sf::View _game_view;
 };

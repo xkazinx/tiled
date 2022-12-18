@@ -13,7 +13,7 @@ public:
 
 	void Tick() override;
 	
-	void Render(sf::RenderTarget& tgt, const sf::RenderStates& states) const override;
+	void Render(sf::RenderTarget& tgt, const sf::RenderStates& states) override;
 	bool HandleEvents(const sf::Event& ev) override;
 	void ProcessUI() const override;
 

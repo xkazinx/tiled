@@ -45,6 +45,8 @@ int App::Tick()
 {
 	while (true)
 	{
+		time::Tick();
+
 		g_sock->Tick();
 
 		this_thread::sleep_for(chrono::milliseconds(1));

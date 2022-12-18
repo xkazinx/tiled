@@ -44,8 +44,7 @@ void LoginScene::ProcessUI() const
 	ImGui::End();
 }
 
-void LoginScene::Render([[maybe_unused]] sf::RenderTarget& tgt, [[maybe_unused]] const sf::RenderStates& states) const
-{
+void LoginScene::Render([[maybe_unused]] sf::RenderTarget& tgt, [[maybe_unused]] const sf::RenderStates& states){
 
 }
 

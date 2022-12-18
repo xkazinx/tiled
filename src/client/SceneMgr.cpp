@@ -38,7 +38,7 @@ void SceneMgr::Render(sf::RenderTarget& tgt, const sf::RenderStates& states) con
 
 void SceneMgr::Tick()
 {
-	
+	_ptr->Tick();
 }
 
 bool SceneMgr::HandleEvent([[maybe_unused]] const sf::Event& ev)

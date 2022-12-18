@@ -23,8 +23,8 @@ constexpr underlying_type_t<T> to_underlying(T value) noexcept
 }
 
 using RenderPointValue = i16;
-using TilePointValue = u16;
-using WorldPointValue = u16;
+using TilePointValue = i16;
+using WorldPointValue = i16;
 
 /*
 #ifdef CLIENT
