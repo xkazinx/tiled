@@ -245,6 +245,19 @@ using PlayerIdx = player::Idx;
 
 namespace map
 {
+	static constexpr RenderPoint 
+		Resolution =
+	{
+		1024, 768
+	},
+		VisibleTiles = 
+	{
+		Resolution / tile::kSize
+	}, VisibleTilesRange = 
+	{
+		VisibleTiles / 2	
+	};
+
 	enum ID : u8
 	{
 		Battlefield,
@@ -269,11 +282,17 @@ namespace map
 
 		bool IsValidPoint(TilePoint pt) const
 		{
-			return (szt)pt.Area() < _tiles.size();
+			return pt.x > 0 && pt.y > 0 && pt.x < _size.x && pt.y < _size.y;
 		}
 
 		bool IsMovable([[maybe_unused]] TilePoint pt) const
 		{
+			if(pt.x < VisibleTilesRange.x || pt.y < VisibleTilesRange.y ||
+				pt.x + VisibleTilesRange.x >= _size.x || pt.y + VisibleTilesRange.y >= _size.y)
+			{
+				return false;
+			}
+
 			// #todo read from tile
 			return true;
 		}

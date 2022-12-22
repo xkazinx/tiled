@@ -224,11 +224,12 @@
     <ClInclude Include="Map.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="SceneMgr.h" />
+    <ClInclude Include="Scenes.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="Unit.h" />
+    <ClInclude Include="Units.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\arg_parser.cpp" />
@@ -261,7 +262,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="SceneMgr.cpp" />
+    <ClCompile Include="Scenes.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -270,6 +271,7 @@
     </ClCompile>
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="Unit.cpp" />
+    <ClCompile Include="Units.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

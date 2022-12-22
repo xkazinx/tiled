@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "App.h"
 #include "Player.h"
-#include "PlayerMgr.h"
+#include "Units.h"
+#include "Map.h"
+#include "Maps.h"
 
 namespace Server
 {
@@ -48,6 +50,7 @@ int App::Tick()
 		time::Tick();
 
 		g_sock->Tick();
+		g_maps->Tick();
 
 		this_thread::sleep_for(chrono::milliseconds(1));
 	}
@@ -76,7 +79,9 @@ void App::OnPacket(ENetEvent& ev)
 	switch (const auto op = in.ReadAs<NetOp>();
 		op)
 	{
-	case Main:	this->NetOperation(opt);	break;
+	case Main:	this->NetOperation(opt);					break;
+	case Game:	if(GetPlayer()->_map) GetPlayer()->_map->NetOperation(opt);  break;
+	case Unit:	g_units->NetOperation(opt);				break;
 
 	default: // #todo
 		PrintError("Unknown NetOp{}", Format(op));
@@ -99,13 +104,13 @@ Player* App::OnAuth(const ENetEvent & ev) const
 	{
 		for (PlayerIdx i = 1; i < player::kMax; i++)
 		{
-			auto& p = g_players->_array[i];
+			auto& p = g_units->_array[i];
 			if (!p)
 			{
 				p = make_unique<Player>(i, ev.peer);
 				player_idx = new PlayerIdx(i);
 				player = p.get();
-				g_players->_list.push_back(p.get());
+				g_units->_list.push_back(p.get());
 				Print("OnAuth: PlayerIdx {}", i);
 				break;
 			}
@@ -113,7 +118,7 @@ Player* App::OnAuth(const ENetEvent & ev) const
 	}
 	else
 	{
-		player = g_players->_array[*player_idx].get();
+		player = g_units->_array[*player_idx].get();
 	}
 
 	return player;

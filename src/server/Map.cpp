@@ -8,7 +8,7 @@ namespace Server
 	// #todo make uuid sync with DB for unique games
 	u64 Map::sUUID = 0;
 
-	Map::Map(MapID id)
+	Map::Map(MapID id) : Broadcaster<GameOp>(NetOp::Game)
 	{
 		_id = id;
 
@@ -32,7 +32,7 @@ namespace Server
 	}
 
 	Map::Map(Map * map)
-		: _uuid(++sUUID)
+		: _uuid(++sUUID), Broadcaster<GameOp>(NetOp::Game)
 	{
 		_id = map->_id;
 
@@ -44,7 +44,12 @@ namespace Server
 		}
 	}
 
-	bool Map::SetUnit(Unit * unit)
+	void Map::Tick()
+	{
+
+	}
+
+	bool Map::SetUnit(Unit* unit)
 	{
 		auto tile = GetTile(unit->_pt);
 		if(!tile)
@@ -100,13 +105,30 @@ namespace Server
 
 	void Map::Write_EnterGame([[maybe_unused]] OutPktRef pkt)
 	{
-		PrintDebug("_tiles.size(): {}", _tiles.size());
-		pkt->Write((u32)_tiles.size());
+		PrintDebug("Map::Write_EnterGame: Sending {} tiles", Format(_size));
 
-		for (auto& tile : _tiles)
+		pkt->Write(_size);
+
+		TilePoint pt;
+		for(pt.y = 0; pt.y < _size.y; ++pt.y)
 		{
-			pkt->Write(tile->_type);
+			for(pt.x = 0; pt.x < _size.x; ++pt.x)
+			{
+				pkt->Write(GetTile(pt)->_type);
+			}
 		}
 	}
 
+	void Map::NetOperationProcess()
+	{
+		PrintDebug("NetOperationProcess GameOp{}", Format(GetOperation()));
+
+		switch (GetOperation())
+		{
+
+		default:
+			PrintError("Unknown GamenOp{}", Format(GetOperation()));
+			break;
+		}
+	}
 }

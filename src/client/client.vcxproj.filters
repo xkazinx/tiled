@@ -90,7 +90,7 @@
     <ClInclude Include="Tile.h">
       <Filter>scene\game</Filter>
     </ClInclude>
-    <ClInclude Include="SceneMgr.h">
+    <ClInclude Include="Scenes.h">
       <Filter>scene</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
@@ -98,6 +98,7 @@
     </ClInclude>
     <ClInclude Include="Player.h" />
     <ClInclude Include="Unit.h" />
+    <ClInclude Include="Units.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp">
@@ -193,10 +194,11 @@
     <ClCompile Include="Scene.cpp">
       <Filter>scene</Filter>
     </ClCompile>
-    <ClCompile Include="SceneMgr.cpp">
+    <ClCompile Include="Scenes.cpp">
       <Filter>scene</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Unit.cpp" />
+    <ClCompile Include="Units.cpp" />
   </ItemGroup>
 </Project>

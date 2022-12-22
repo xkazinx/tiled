@@ -1,17 +1,26 @@
 #include "stdafx.h"
-#include "MapMgr.h"
+#include "Maps.h"
 #include "Map.h"
 #include "Tile.h"
 
 namespace Server
 {
-	MapMgr::MapMgr()
+	Maps::Maps()
 	{
 		for(auto id : enum_values<MapID>())
 			_tpl.push_back(make_unique<Map>(id));
 	}
 
-	MapMgr::~MapMgr()
+	Maps::~Maps()
 	{
 	}
+
+	void Maps::Tick()
+	{
+		for(auto & map : _list)
+		{
+			map->Tick();
+		}
+	}
+
 }

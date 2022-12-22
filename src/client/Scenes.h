@@ -4,13 +4,13 @@ namespace Client
 {
 class Scene;
 
-class SceneMgr
+class Scenes
 {
 public:
 	using ID = SceneID;
 
-	SceneMgr();
-	~SceneMgr();
+	Scenes();
+	~Scenes();
 	
 	unique_ptr<Scene> _ptr;
 

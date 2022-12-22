@@ -51,7 +51,7 @@
     <ClInclude Include="Player.h">
       <Filter>player</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerMgr.h">
+    <ClInclude Include="Units.h">
       <Filter>player</Filter>
     </ClInclude>
     <ClInclude Include="Sql.h">
@@ -63,7 +63,7 @@
     <ClInclude Include="Tile.h">
       <Filter>map</Filter>
     </ClInclude>
-    <ClInclude Include="MapMgr.h">
+    <ClInclude Include="Maps.h">
       <Filter>map</Filter>
     </ClInclude>
     <ClInclude Include="Unit.h" />
@@ -87,7 +87,7 @@
     <ClCompile Include="Player.cpp">
       <Filter>player</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerMgr.cpp">
+    <ClCompile Include="Units.cpp">
       <Filter>player</Filter>
     </ClCompile>
     <ClCompile Include="Sql.cpp">
@@ -141,7 +141,7 @@
     <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\time.cpp">
       <Filter>deps\kazin</Filter>
     </ClCompile>
-    <ClCompile Include="MapMgr.cpp">
+    <ClCompile Include="Maps.cpp">
       <Filter>map</Filter>
     </ClCompile>
     <ClCompile Include="Unit.cpp" />

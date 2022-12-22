@@ -4,11 +4,13 @@
 #include "Tile.h"
 #include "App.h"
 #include "Player.h"
+#include "Units.h"
 
 namespace Client
 {
 GameScene::GameScene() 
-	: _game_view({ 0.f, 0.f, (float)g_app->_res_x, (float)g_app->_res_y })
+	: _game_view({ 0.f, 0.f, (float)g_app->_res_x, (float)g_app->_res_y }),
+	Broadcaster<Op>(NetOp::Game)
 {
 	g_game = this;
 
@@ -20,42 +22,55 @@ GameScene::~GameScene()
 	g_game = nullptr;
 }
 
+void GameScene::NetOperationProcess()
+{
+	PrintDebug("NetOperationProcess GameOp{}", Format(GetOperation()));
+
+	switch (GetOperation())
+	{
+		OP(Action); // #todo move to PlayerMgr(Server) / Player(Client)?
+
+	default:
+		PrintError("Unknown GameOp{}", Format(GetOperation()));
+		break;
+	}
+}
+
 void GameScene::Tick()
 {
 	TilePoint tile_dst = GetMouseTile();
 
 	if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	{
-		PrintDebug("if(sf::Mouse::isButtonPressed(sf::Mouse::Left))");
 		if (g_player->_pt == tile_dst)
 			return;
 
-		if (g_player->_is_moving)
+		if(g_player->_is_moving)
+		{
+			if(g_player->_stop_dir != Direction::None)
+			{
+				g_player->_stop_dir = Direction::None;
+			}
+
+			g_player->_next_pt = tile_dst;
 			return;
+		}
 
 		auto dir = g_player->GetNextDir(
 			g_player->_pt, tile_dst
 		);
 
 		if (dir == Direction::None)
-		{
-			PrintError("Game::HandleClicks: return: next direction is invalid with pos' {} against {}",
-				Format(g_player->_pt), Format(tile_dst));
 			return;
-		}
-
-		PrintDebug("Left Click {} {}", tile_dst.x, tile_dst.y);
 
 		g_player->_next_pt = tile_dst;
-
 		g_player->_dir = dir;
 
 		g_player->_action = unit::Action::Move;
 
 		g_map->SetUnit(g_player.get());
 
-		//SendMotion(GetAction(), dir);
-		//_p->UpdateUnit(GetAction());
+		g_units->Send(UnitOp::Action, g_player->_action, g_player->_pt, g_player->_dir);
 	}
 	else if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
 	{
@@ -75,6 +90,8 @@ void GameScene::Tick()
 		g_player->_action = unit::Action::Stop;
 
 		g_map->SetUnit(g_player.get());
+
+		g_units->Send(UnitOp::Action, g_player->_action, g_player->_pt, g_player->_dir);
 	}
 
 	g_map->Tick();
@@ -178,5 +195,10 @@ TilePoint GameScene::GetMouseTile()
 	}
 
 	return tile + g_map->_visible_tile_offset.As<TilePointValue>();
+}
+
+void GameScene::NetOp_Action()
+{
+
 }
 }

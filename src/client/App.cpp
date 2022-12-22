@@ -1,11 +1,12 @@
 #include "stdafx.h"
 #include "App.h"
-#include "SceneMgr.h"
+#include "Scenes.h"
 #include "LoginScene.h"
 #include "Player.h"
 #include "GameScene.h"
 #include "Map.h"
 #include "Tile.h"
+#include "Units.h"
 
 namespace Client
 {
@@ -157,7 +158,8 @@ void App::OnPacket([[maybe_unused]] ENetEvent& ev)
 	switch (const auto op = in.ReadAs<NetOp>();
 		op)
 	{
-	case Main:	this->NetOperation(in);	break;
+	case Main:	this->NetOperation(in);		break;
+	case Unit:	g_units->NetOperation(in);	break;
 	default:
 		PrintError("Unknown NetOp{}", Format(op));
 		break;

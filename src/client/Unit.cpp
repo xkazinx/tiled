@@ -4,6 +4,12 @@
 
 namespace Client
 {
+
+Unit::Unit()
+{
+
+}
+
 void Unit::Render([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] const sf::RenderStates & states)
 {
 	constexpr auto sz = 16.f;
@@ -20,10 +26,10 @@ void Unit::Render([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] cons
 
 		auto dst_wpt = _wpt - (dir.GetContrary().GetDelta().As<decltype(_wpt.x)>() * tile::kHalfSize);
 
-		const auto velocity = 32.0f;
+		const auto velocity = 64.0f;
 
 		//auto delta = Clock.delta();
-		float delta_clock = time::DeltaFloat();
+		auto delta_clock = time::DeltaFloat();
 
 		auto new_mvpt = _mvpt.Project(
 			dst_wpt.As<float>(), velocity * delta_clock

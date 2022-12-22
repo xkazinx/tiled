@@ -4,11 +4,13 @@ namespace Server
 {
 class Tile;
 class Unit;
-class Players;
+class Units;
 
-class Map : public map::Base<Tile>
+class Map : public map::Base<Tile>, public Broadcaster<GameOp>
 {
 public:
+	using Op = GameOp;
+
 	static u64 sUUID;
 
 	// Initialize tpl
@@ -17,10 +19,16 @@ public:
 
 	u64 _uuid = 0;
 
+	void Tick();
+
 	bool SetUnit(Unit * unit);
 	bool UnsetUnit(Unit * unit);
 
 	vector<Player*> _players;
 	void Write_EnterGame(OutPktRef pkt);
+
+	// #todo can this method be private?
+	void NetOperationProcess() override;
+
 };
 }

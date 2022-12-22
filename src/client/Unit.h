@@ -5,6 +5,8 @@ namespace Client
 class Unit : public unit::Base
 {
 public:
+	Unit();
+
 	void Render(sf::RenderTarget & tgt, const sf::RenderStates & states);
 
 	WorldPoint _wpt;

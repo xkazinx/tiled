@@ -20,7 +20,8 @@ public:
 	mutable sf::VertexBuffer _grid;
 
 	Point<i16> _visible_tiles, _visible_tiles_range, _visible_tile_offset,
-		_world_offset, _world_offset_adjust, _world_offset_movement, _half_tile_offset;
+		_world_offset, _world_offset_adjust, _world_offset_movement, 
+		_half_tile_offset, _bounds_offset;
 
 	bool _grid_visible = true;
 

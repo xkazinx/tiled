@@ -3,7 +3,8 @@
 namespace Client
 {
 class App;
-class SceneMgr;
+class Scenes;
+class Units;
 class Map;
 class GameScene;
 class Player;
@@ -15,11 +16,12 @@ namespace Global
 	constexpr char kAppName[] = "Tiled";
 
 	extern App* g_app;
-	extern unique_ptr<SceneMgr> g_scene;
+	extern unique_ptr<Scenes> g_scene;
 	extern unique_ptr<Socket> g_sock;
 	extern unique_ptr<Map> g_map;
 	extern GameScene * g_game;
 	extern unique_ptr<Player> g_player;
+	extern unique_ptr<Units> g_units;
 
 	extern void Initialize();
 	extern void Deinitialize();

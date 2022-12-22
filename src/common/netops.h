@@ -6,6 +6,8 @@ namespace common
 	enum class NetOp : u8
 	{
 		Main,
+		Game,
+		Unit,
 		Disconnect,
 	};
 
@@ -14,5 +16,15 @@ namespace common
 		Login,
 		CreateAccount,
 		EnterGame,
+	};
+
+	enum class GameOp : u8
+	{
+		Action,
+	};
+
+	enum class UnitOp : u8
+	{
+		Action,
 	};
 }

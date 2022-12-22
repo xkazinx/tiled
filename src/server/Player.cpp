@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "Player.h"
-#include "MapMgr.h"
+#include "Maps.h"
 #include "Map.h"
 #include "Tile.h"
-#include "PlayerMgr.h"
+#include "Units.h"
 #include "App.h"
 
 namespace Server
@@ -47,8 +47,7 @@ void Player::OnEnterGame(const Auth & auth)
 	
 	_map = map;
 	map->_players.push_back(this);
-
-	_pt = { 50 + (TilePointValue)g_players->_list.size(), 50 };
+	_pt = { 80, 80 };
 
 	map->SetUnit(this);
 

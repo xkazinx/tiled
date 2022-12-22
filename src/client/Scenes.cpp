@@ -1,21 +1,21 @@
 #include "stdafx.h"
-#include "SceneMgr.h"
+#include "Scenes.h"
 #include "LoginScene.h"
 #include "GameScene.h"
 
 namespace Client
 {
-SceneMgr::SceneMgr()
+Scenes::Scenes()
 {
 	Set(ID::Login);
 }
 
-SceneMgr::~SceneMgr()
+Scenes::~Scenes()
 {
 	
 }
 
-void SceneMgr::Set(ID id)
+void Scenes::Set(ID id)
 {
 	using enum ID;
 	switch(id)
@@ -30,18 +30,18 @@ void SceneMgr::Set(ID id)
 	}
 }
 
-void SceneMgr::Render(sf::RenderTarget& tgt, const sf::RenderStates& states) const
+void Scenes::Render(sf::RenderTarget& tgt, const sf::RenderStates& states) const
 {
 	_ptr->Render(tgt, states);
 	_ptr->ProcessUI();
 }
 
-void SceneMgr::Tick()
+void Scenes::Tick()
 {
 	_ptr->Tick();
 }
 
-bool SceneMgr::HandleEvent([[maybe_unused]] const sf::Event& ev)
+bool Scenes::HandleEvent([[maybe_unused]] const sf::Event& ev)
 {
 	return _ptr->HandleEvents(ev);
 }

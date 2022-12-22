@@ -7,8 +7,8 @@ class Tile final
 	using Type = tile::Type;
 
 public:
-	Tile(InPacket * pkt);
-	Tile(Type type, const sf::Vector2i& pos);
+	Tile(InPacket * pkt, TilePoint pt);
+	Tile(Type type, TilePoint pt);
 	~Tile();
 
 	Type _type;
@@ -16,6 +16,6 @@ public:
 
 	void Render(sf::RenderTarget& tgt, const sf::RenderStates& states) const;
 	
-	sf::Vector2i _pos;
+	TilePoint _pt;
 };
 }

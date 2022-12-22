@@ -3,9 +3,9 @@
 namespace Server
 {
 class App;
-class PlayerMgr;
+class Units;
 class Player;
-class MapMgr;
+class Maps;
 
 namespace Global
 {
@@ -13,8 +13,8 @@ namespace Global
 
 	extern App * g_app;
 	extern unique_ptr<kazin::Socket> g_sock;
-	extern unique_ptr<PlayerMgr> g_players;
-	extern unique_ptr<MapMgr> g_maps;
+	extern unique_ptr<Units> g_units;
+	extern unique_ptr<Maps> g_maps;
 
 	extern void Initialize();
 	extern void Deinitialize();

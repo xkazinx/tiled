@@ -4,13 +4,13 @@
 
 namespace Client
 {
-Tile::Tile(Type type, const sf::Vector2i& pos)
-	: _type(type), _pos(pos)
+Tile::Tile(Type type, TilePoint pt)
+	: _type(type), _pt(pt)
 {
 
 }
 
-Tile::Tile(InPacket* pkt)
+Tile::Tile(InPacket* pkt, TilePoint pt) : _pt(pt)
 {
 	pkt->Read(_type);
 }
@@ -24,6 +24,6 @@ void Tile::Render(
 	[[maybe_unused]] sf::RenderTarget& tgt, 
 	[[maybe_unused]] const sf::RenderStates& states) const
 {
-
+	
 }
 }

@@ -3,6 +3,7 @@
 #include "Tile.h"
 #include "App.h"
 #include "Player.h"
+#include "Units.h"
 
 namespace Client
 {
@@ -25,13 +26,8 @@ Map::Map()
 	}
 
 	{
-		_visible_tiles = { 
-			(g_app->_res_x / tile::kSize),
-			(g_app->_res_y / tile::kSize) 
-		};
-
-		_visible_tiles_range.x = _visible_tiles.x / 2;
-		_visible_tiles_range.y = _visible_tiles.y / 2;
+		_visible_tiles = map::VisibleTiles;
+		_visible_tiles_range = map::VisibleTilesRange;
 
 		if((_visible_tiles.x % 2) == 0)
 			_half_tile_offset.x = -tile::kHalfSize;
@@ -45,12 +41,18 @@ Map::Map()
 
 Map::Map(InPacket * pkt) : Map()
 {
-	auto total = pkt->ReadAs<u32>();
-	_tiles.reserve(total);
+	pkt->Read(_size);
+	PrintError("Map::Map: Reading from packet, map of size {}", Format(_size));
 
-	while(total-- > 0)
+	_tiles.reserve(_size.x * _size.y);
+
+	TilePoint pt;
+	for (pt.y = 0; pt.y < _size.y; ++pt.y)
 	{
-		_tiles.push_back(make_unique<Tile>(pkt));
+		for (pt.x = 0; pt.x < _size.x; ++pt.x)
+		{
+			_tiles.push_back(make_unique<Tile>(pkt, pt));	
+		}
 	}
 }
 
@@ -60,6 +62,14 @@ void Map::UpdateCamera()
 
 	_visible_tile_offset.x = player_pt.x - _visible_tiles_range.x;
 	_visible_tile_offset.y = player_pt.y - _visible_tiles_range.y;
+
+	/*
+	if(_visible_tile_offset.x < 0)
+		_visible_tile_offset.x = 0;
+
+	if(_visible_tile_offset.y < 0)
+		_visible_tile_offset.y = 0;
+	*/
 
 	_world_offset.x = _visible_tile_offset.x * tile::kSize;
 	_world_offset.y = _visible_tile_offset.y * tile::kSize;
@@ -96,7 +106,6 @@ Map::~Map()
 void Map::Render(sf::RenderTarget& tgt, const sf::RenderStates& states)
 {
 	szt i;
-	RenderPoint pt;
 
 	// for East and South
 	constexpr auto extra_tile_sz = tile::kSize + tile::kHalfSize;
@@ -110,35 +119,57 @@ void Map::Render(sf::RenderTarget& tgt, const sf::RenderStates& states)
 	Print("_world_offset_movement = {} {}", _world_offset_movement.x, _world_offset_movement.y);
 	*/
 
-	sf::Vector2<i16> index;
+	/*
+	RenderPoint render_offset = {0, 0};
+	if(_visible_tile_offset.x == 0)
+		render_offset.x = abs(g_player->_pt.x - _visible_tiles_range.x);
+
+	if (_visible_tile_offset.y == 0)
+		render_offset.y = abs(g_player->_pt.y - _visible_tiles_range.y);
+	*/
+	RenderPoint rpt;
+	TilePoint tpt;
 	for(i = 0,
-		index.y = _visible_tile_offset.y,
-		pt.y = -tile::kSize + (_world_offset_adjust.y - _world_offset.y) + _world_offset_movement.y;
-		pt.y <= g_app->_res_y + extra_tile_sz;
-		pt.y += tile::kSize, ++index.y)
+		tpt.y = _visible_tile_offset.y,
+		rpt.y = /*-tile::kSize +*/ (_world_offset_adjust.y - _world_offset.y) + _world_offset_movement.y;
+		rpt.y <= g_app->_res_y + extra_tile_sz;
+		rpt.y += tile::kSize, ++tpt.y)
 	{
-		for(index.x = _visible_tile_offset.x,
-			pt.x = -tile::kSize + (_world_offset_adjust.x - _world_offset.x) + _world_offset_movement.x;
-			 pt.x <= g_app->_res_x + extra_tile_sz;
-			 pt.x += tile::kSize, ++index.x, ++i)
+		for(tpt.x = _visible_tile_offset.x,
+			rpt.x = /*-tile::kSize +*/ (_world_offset_adjust.x - _world_offset.x) + _world_offset_movement.x;
+			 rpt.x <= g_app->_res_x + extra_tile_sz;
+			 rpt.x += tile::kSize, ++tpt.x, ++i)
 		{
 			if(_grid_visible)
 			{
 				auto v = &_grid_vertex[i * 8];
-				auto px = float(pt.x);
-				auto py = float(pt.y);
-				if (v[0].position != sf::Vector2f(px, (float)pt.y))
+				auto px = float(rpt.x);
+				auto py = float(rpt.y);
+				//if (v[0].position != Vector2f(px, py))
 				{
-					v[0].position = sf::Vector2f(px, py);
-					v[1].position = sf::Vector2f(px + tile::kSize, py);
-					v[2].position = sf::Vector2f(px + tile::kSize, py);
-					v[3].position = sf::Vector2f(px + tile::kSize, py + tile::kSize);
-					v[4].position = sf::Vector2f(px + tile::kSize, py + tile::kSize);
-					v[5].position = sf::Vector2f(px, py + tile::kSize);
-					v[6].position = sf::Vector2f(px, py + tile::kSize);
-					v[7].position = sf::Vector2f(px, py);
+					v[0].position = Vector2f(px, py);
+					v[1].position = Vector2f(px + tile::kSize, py);
+					v[2].position = Vector2f(px + tile::kSize, py);
+					v[3].position = Vector2f(px + tile::kSize, py + tile::kSize);
+					v[4].position = Vector2f(px + tile::kSize, py + tile::kSize);
+					v[5].position = Vector2f(px, py + tile::kSize);
+					v[6].position = Vector2f(px, py + tile::kSize);
+					v[7].position = Vector2f(px, py);
 
 					auto color = sf::Color(255, 255, 255, 255 / 6);
+					
+					if(!IsValidPoint(tpt))
+						continue;
+					
+					auto tile = GetTile(tpt);
+					if (!tile)
+						continue;
+
+					if (tile->_unit)
+						color = sf::Color::Green;
+
+					if(!IsMovable(tpt))
+						color = sf::Color::Red;
 					if (v[0].color != color)
 					{
 						v[0].color = color;
@@ -150,6 +181,8 @@ void Map::Render(sf::RenderTarget& tgt, const sf::RenderStates& states)
 						v[6].color = color;
 						v[7].color = color;
 					}
+
+					font::Fixed(rpt, format("{}", Format(tpt)), sf::Color::White);
 				}
 			}
 		}
@@ -169,22 +202,6 @@ RenderPoint Map::GetRenderPoint(const TilePoint& tile_pt, const TilePoint& offse
 
 void Map::SetUnit(Unit * base)
 {
-	// #todo
-	if(!IsValidPoint(base->_pt))
-	{
-		PrintError("Map::SetUnit::!IsValidPoint {}", Format(base->_pt));
-		return;
-	}
-
-	auto tile = GetTile(base->_pt - g_map->_visible_tile_offset.As<TilePointValue>());
-	if(!tile)
-	{
-		PrintError("Map::SetUnit::if(!tile) {}", Format(base->_pt));
-		return;
-	}
-
-	tile->_unit = base;
-
 	switch (base->_action)
 	{
 	case unit::Action::Move:
@@ -201,13 +218,44 @@ void Map::SetUnit(Unit * base)
 	}
 
 	case unit::Action::Stop:
-		//base->_last_pt = base->_pt;
+		base->_last_pt = base->_pt;
+
+		if(g_player)
+			g_player->_next_pt = base->_pt;
+
+		base->_wpt = GetWorldPoint(base->_pt);
+		base->_mvpt = base->_wpt.As<float>();
+		base->_mvpt_decrease = { 0, 0 };
+		base->_is_moving = false;
 		break;
 
 	default:
 
 		break;
 	}
+
+	// #todo
+	if (!IsValidPoint(base->_pt))
+	{
+		PrintError("Map::SetUnit::!IsValidPoint {}", Format(base->_pt));
+		return;
+	}
+
+	// What happens if the unit is being set as non-Stop and was never registered?
+	// 
+	//auto tile = GetTile(base->_pt - g_map->_visible_tile_offset.As<TilePointValue>());
+	auto tile = GetTile(base->_pt);
+	if (!tile)
+	{
+		PrintError("Map::SetUnit::if(!tile) {}", Format(base->_pt));
+		return;
+	}
+
+	PrintDebug("SetUnit tile pos: {}", Format(base->_pt));
+
+	// #todo check that the correct tile is being set to unit and rendered
+	static auto cnt = 0;
+	PrintError("tile->_unit = base CNT({})", ++cnt);
 
 	if (auto it = find_if(_units, [&](auto * u)
 	{
@@ -216,9 +264,18 @@ void Map::SetUnit(Unit * base)
 	{
 		auto * found_unit = *it;
 
+		
+
 		// Updates Unit
 		if (g_player->_idx == found_unit->_idx)
 		{
+			{
+				auto new_pt = found_unit->_pt;
+				found_unit->_pt = found_unit->_last_pt;
+				UnsetUnit(found_unit);
+				found_unit->_pt = new_pt;
+			}
+
 			(unit::Base&)(*g_player.get()) = *base;
 
 			if (found_unit->_action != unit::Action::Stop)
@@ -226,8 +283,11 @@ void Map::SetUnit(Unit * base)
 		}
 		else
 		{
+			UnsetUnit(found_unit);
 			(unit::Base&)(found_unit) = *base;
 		}
+
+		tile->_unit = found_unit;
 
 		if (found_unit->_last_pt != found_unit->_pt)
 		{
@@ -269,6 +329,8 @@ void Map::SetUnit(Unit * base)
 		Print("Added new unit({}) at ({}) wpt({})",
 			new_unit->_name.c_str(), Format(new_unit->_pt), Format(new_unit->_wpt)
 		);
+
+		tile->_unit = new_unit;
 	}
 }
 
@@ -288,7 +350,7 @@ void Map::UnsetUnit(Unit * unit)
 	if(!tile->_unit)
 	{
 		PrintError("Map::UnsetUnit::!tile->_unit not present to unset ({} {})",
-			unit->_name, Format(unit->_pt)
+			unit->_name.c_str(), Format(unit->_pt)
 		);
 
 		return;
@@ -297,8 +359,8 @@ void Map::UnsetUnit(Unit * unit)
 	if (tile->_unit != unit)
 	{
 		PrintError("Map::UnsetUnit: Unit is present ({} {}) but doesn't match owner ({} {})",
-			tile->_unit->_name, Format(tile->_unit->_pt),
-			unit->_name, Format(unit->_pt)
+			tile->_unit->_name.c_str(), Format(tile->_unit->_pt),
+			unit->_name.c_str(), Format(unit->_pt)
 		);
 
 		return;
@@ -309,39 +371,7 @@ void Map::UnsetUnit(Unit * unit)
 
 void Map::Tick()
 {
-	if(auto * unit = g_player.get())
-	{
-		if (!unit->_is_moving && unit->_pt != unit->_next_pt)
-		{
-			PrintDebug("Map::Tick(): Point: {} | NextPoint: {}",
-				Format(unit->_pt), Format(unit->_next_pt)
-			);
-
-			if (g_player->_stop_dir != Direction::None)
-			{
-				g_player->_dir = g_player->_stop_dir;
-				g_player->_stop_dir = Direction::None;
-
-				g_player->_action = unit::Action::Stop;
-
-				SetUnit(g_player.get());
-			}
-			else
-			{
-				auto dir = g_player->GetNextDir(
-					unit->_pt, unit->_next_pt
-				);
-
-				if (dir == Direction::None)
-					return;
-
-				unit->_dir = dir;
-				unit->_action = unit::Action::Move;
-
-				SetUnit(g_player.get());
-			}
-		}
-	}
+	g_units->Tick();
 }
 
 void Map::RenderObjects([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] const sf::RenderStates & states)

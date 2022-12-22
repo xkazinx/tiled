@@ -4,6 +4,10 @@ namespace common
 {
 namespace tile
 {
+	
+}
 
+namespace map
+{
 }
 }

@@ -6,11 +6,15 @@ namespace Client
 class Map;
 class Tile;
 
-class GameScene : public Scene
+class GameScene : public Scene, public Broadcaster<GameOp>
 {
 public:
+	using Op = GameOp;
+
 	GameScene();
 	~GameScene();
+
+	void NetOperationProcess() override;
 
 	static constexpr auto kID = SceneID::Game;
 
@@ -20,5 +24,9 @@ public:
 	TilePoint GetMouseTile();
 
 	sf::View _game_view;
+
+private:
+	void NetOp_Action();
+
 };
 }

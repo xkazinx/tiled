@@ -4,12 +4,14 @@ namespace Server
 {
 class Map;
 
-class MapMgr
+class Maps
 {
 public:
-	MapMgr();
-	~MapMgr();
+	Maps();
+	~Maps();
 
+	void Tick();
+	
 	vector<unique_ptr<Map>> _list, _tpl;
 };
 }

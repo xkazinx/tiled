@@ -1,26 +1,29 @@
 #include "stdafx.h"
 #include "Global.h"
-#include "SceneMgr.h"
+#include "Scenes.h"
 #include "GameScene.h"
 #include "Player.h"
 #include "Map.h"
 #include "App.h"
+#include "Units.h"
 
 namespace Client
 {
 namespace Global
 {
 	App * g_app;
-	unique_ptr<SceneMgr> g_scene;
+	unique_ptr<Scenes> g_scene;
 	unique_ptr<kazin::Socket>	g_sock;
 	unique_ptr<Map> g_map;
 	GameScene * g_game = nullptr;
 	unique_ptr<Player> g_player;
+	unique_ptr<Units> g_units;
 
 	void Initialize()
 	{
 		// unordered
-		g_scene	= make_unique<SceneMgr>();
+		g_scene	= make_unique<Scenes>();
+		g_units  = make_unique<Units>();
 
 		for(auto font_name : enum_names<font::ID>())
 		{
@@ -32,7 +35,7 @@ namespace Global
 				PrintError("Couldn't load font {}", file_name);
 		}
 
-		font::Text.setCharacterSize(16);
+		font::Text.setCharacterSize(10);
 		font::Text.setFont(font::List.back());
 
 		// ordered
