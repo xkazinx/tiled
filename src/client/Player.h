@@ -7,7 +7,7 @@ class Player : public Unit
 {
 public:
 	Player(const string & name) : Unit() {
-		_name = name;
+		(string&)_name = name;
 	}
 	Direction GetNextDir(TilePoint src, TilePoint dst);
 	TilePoint _next_pt = {0, 0};

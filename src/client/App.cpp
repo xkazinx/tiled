@@ -184,6 +184,7 @@ void App::NetOp_EnterGame()
 
 	g_map = make_unique<Map>(GetPacket());
 	PrintDebug("NetOp_EnterGame()");
+	PrintError("----------------------------------");
 	// #todo Temporarily reading map data until passing it into files or something
 	//GetPacket()->
 

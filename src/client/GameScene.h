@@ -27,6 +27,5 @@ public:
 
 private:
 	void NetOp_Action();
-
 };
 }

@@ -131,4 +131,25 @@ namespace Server
 			break;
 		}
 	}
+
+	void Map::Send(packet::OutPktPtr& out)
+	{
+		for(auto player : _players)
+		{
+			Global::Send(player, out);
+		}
+	}
+
+	void Map::SendNearby(packet::OutPktPtr& out, Unit * unit)
+	{
+		// #todo add boundary checks to only notify to players that are nearby
+		for (auto player : _players)
+		{
+			if(player == unit)
+				continue;
+
+			Global::Send(player, out);
+		}
+	}
+
 }

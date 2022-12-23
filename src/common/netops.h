@@ -26,5 +26,6 @@ namespace common
 	enum class UnitOp : u8
 	{
 		Action,
+		Spawn
 	};
 }

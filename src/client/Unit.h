@@ -6,6 +6,7 @@ class Unit : public unit::Base
 {
 public:
 	Unit();
+	Unit(const unit::Base * base);
 
 	void Render(sf::RenderTarget & tgt, const sf::RenderStates & states);
 

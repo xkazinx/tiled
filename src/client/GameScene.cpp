@@ -85,6 +85,12 @@ void GameScene::Tick()
 			return;
 		}
 
+		if(g_player->_action == unit::Action::Stop &&
+			g_player->_dir == dir)
+		{
+			return;
+		}
+
 		g_player->_dir = dir;
 
 		g_player->_action = unit::Action::Stop;

@@ -17,6 +17,8 @@ public:
 
 	virtual void NetOperationProcess() override;
 
+
+
 private:
 	void NetOp_Action();
 };

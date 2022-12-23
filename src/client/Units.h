@@ -15,6 +15,7 @@ public:
 
 private:
 	void NetOp_Action();
+	void NetOp_Spawn();
 };
 }
 

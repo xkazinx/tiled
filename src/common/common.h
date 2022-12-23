@@ -87,6 +87,11 @@ public:
 		return _id == id;
 	}
 
+	auto operator==(const Direction& dir)
+	{
+		return operator==(dir._id);
+	}
+
 	auto operator!=(const ID & id)
 	{
 		return !(operator==(id));
@@ -203,7 +208,7 @@ namespace unit
 		None = u8(-1),
 	};
 
-	class Base
+	class Base : public packet::Serializable
 	{
 	public:
 		string _name;
@@ -211,6 +216,28 @@ namespace unit
 		Idx _idx = kNullIdx;
 		Action _action = Action::None;
 		Direction _dir;
+
+#define sparams _name, _pt, _idx, _action, _dir
+		void Write([[maybe_unused]] packet::Out& out) const override
+		{
+#ifndef CLIENT
+			out.Write(sparams);
+#endif
+		}
+
+		void Read([[maybe_unused]] packet::In* in) override
+		{
+#ifdef CLIENT
+			in->Read(sparams);
+#endif
+		}
+
+		packet::Size GetPacketSize() const override
+		{
+			return packet::Base::Sizer::Get(sparams);
+		}
+#undef sparams
+
 	};
 }
 

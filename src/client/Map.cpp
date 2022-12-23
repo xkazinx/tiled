@@ -106,27 +106,9 @@ Map::~Map()
 void Map::Render(sf::RenderTarget& tgt, const sf::RenderStates& states)
 {
 	szt i;
-
 	// for East and South
 	constexpr auto extra_tile_sz = tile::kSize + tile::kHalfSize;
 
-	/*
-	Print("---");
-	Print("_visible_tile_offset = {} {}", _visible_tile_offset.x, _visible_tile_offset.y);
-	Print("g_app->_res = {} {}", g_app->_res_x, g_app->_res_y);
-	Print("_world_offset = {} {}", _world_offset.x, _world_offset.y);
-	Print("_world_offset_adjust = {} {}", _world_offset_adjust.x, _world_offset_adjust.y);
-	Print("_world_offset_movement = {} {}", _world_offset_movement.x, _world_offset_movement.y);
-	*/
-
-	/*
-	RenderPoint render_offset = {0, 0};
-	if(_visible_tile_offset.x == 0)
-		render_offset.x = abs(g_player->_pt.x - _visible_tiles_range.x);
-
-	if (_visible_tile_offset.y == 0)
-		render_offset.y = abs(g_player->_pt.y - _visible_tiles_range.y);
-	*/
 	RenderPoint rpt;
 	TilePoint tpt;
 	for(i = 0,
@@ -158,18 +140,17 @@ void Map::Render(sf::RenderTarget& tgt, const sf::RenderStates& states)
 
 					auto color = sf::Color(255, 255, 255, 255 / 6);
 					
-					if(!IsValidPoint(tpt))
+					if (!IsValidPoint(tpt))
 						continue;
-					
+
 					auto tile = GetTile(tpt);
-					if (!tile)
-						continue;
 
 					if (tile->_unit)
 						color = sf::Color::Green;
 
 					if(!IsMovable(tpt))
 						color = sf::Color::Red;
+
 					if (v[0].color != color)
 					{
 						v[0].color = color;
@@ -182,7 +163,7 @@ void Map::Render(sf::RenderTarget& tgt, const sf::RenderStates& states)
 						v[7].color = color;
 					}
 
-					font::Fixed(rpt, format("{}", Format(tpt)), sf::Color::White);
+					//font::Fixed(rpt, format("{}", Format(tpt)), sf::Color::White);
 				}
 			}
 		}
@@ -200,40 +181,8 @@ RenderPoint Map::GetRenderPoint(const TilePoint& tile_pt, const TilePoint& offse
 	};
 }
 
-void Map::SetUnit(Unit * base)
+void Map::SetUnit(unit::Base * base)
 {
-	switch (base->_action)
-	{
-	case unit::Action::Move:
-	{
-		//auto last_last_pt = base._last_pt;
-
-		base->_last_pt = base->_pt;
-		
-		/*Log::Info("XMap::SetUnit: base._last_pt({} {}) changed to ({} {})",
-			last_last_pt.x, last_last_pt.y, base._last_pt.x, base._last_pt.y);
-			*/
-		base->_dir.Move(base->_pt);
-		break;
-	}
-
-	case unit::Action::Stop:
-		base->_last_pt = base->_pt;
-
-		if(g_player)
-			g_player->_next_pt = base->_pt;
-
-		base->_wpt = GetWorldPoint(base->_pt);
-		base->_mvpt = base->_wpt.As<float>();
-		base->_mvpt_decrease = { 0, 0 };
-		base->_is_moving = false;
-		break;
-
-	default:
-
-		break;
-	}
-
 	// #todo
 	if (!IsValidPoint(base->_pt))
 	{
@@ -252,10 +201,42 @@ void Map::SetUnit(Unit * base)
 	}
 
 	PrintDebug("SetUnit tile pos: {}", Format(base->_pt));
-
 	// #todo check that the correct tile is being set to unit and rendered
-	static auto cnt = 0;
-	PrintError("tile->_unit = base CNT({})", ++cnt);
+
+	auto update_unit = [&](auto * unit)
+	{
+		switch (unit->_action)
+		{
+		case unit::Action::Move:
+		{
+			//auto last_last_pt = base._last_pt;
+
+			unit->_last_pt = unit->_pt;
+		
+			/*Log::Info("XMap::SetUnit: base._last_pt({} {}) changed to ({} {})",
+				last_last_pt.x, last_last_pt.y, base._last_pt.x, base._last_pt.y);
+				*/
+			unit->_dir.Move(unit->_pt);
+			break;
+		}
+
+		case unit::Action::Stop:
+			unit->_last_pt = unit->_pt;
+
+			if(g_player && unit->_idx == g_player->_idx)
+				g_player->_next_pt = unit->_pt;
+
+			unit->_wpt = GetWorldPoint(unit->_pt);
+			unit->_mvpt = unit->_wpt.As<float>();
+			unit->_mvpt_decrease = { 0, 0 };
+			unit->_is_moving = false;
+			break;
+
+		default:
+
+			break;
+		}
+	};
 
 	if (auto it = find_if(_units, [&](auto * u)
 	{
@@ -264,36 +245,36 @@ void Map::SetUnit(Unit * base)
 	{
 		auto * found_unit = *it;
 
-		
-
-		// Updates Unit
-		if (g_player->_idx == found_unit->_idx)
-		{
-			{
-				auto new_pt = found_unit->_pt;
-				found_unit->_pt = found_unit->_last_pt;
-				UnsetUnit(found_unit);
-				found_unit->_pt = new_pt;
-			}
+		if(base->_idx == g_player->_idx)
+		{	
+			if (found_unit->_action == unit::Action::Move)
+				UnsetUnit(g_player.get());
 
 			(unit::Base&)(*g_player.get()) = *base;
-
-			if (found_unit->_action != unit::Action::Stop)
-				found_unit->_wpt = GetWorldPoint(found_unit->_pt);
 		}
 		else
 		{
-			UnsetUnit(found_unit);
-			(unit::Base&)(found_unit) = *base;
+			if (found_unit->_action == unit::Action::Move)
+				UnsetUnit(found_unit);
+
+			(unit::Base&)(*found_unit) = *base;
 		}
 
-		tile->_unit = found_unit;
+		update_unit(found_unit);
+
+		if (g_player->_idx == found_unit->_idx)
+		{
+			if (found_unit->_action != unit::Action::Stop)
+				found_unit->_wpt = GetWorldPoint(found_unit->_pt);
+		}
+
+		GetTile(found_unit->_pt)->_unit = found_unit;
 
 		if (found_unit->_last_pt != found_unit->_pt)
 		{
 			found_unit->_is_moving = true;
 		}
-		else
+		//else
 		{
 			UpdateCamera();
 		}
@@ -304,25 +285,28 @@ void Map::SetUnit(Unit * base)
 
 		if (g_player->_idx == base->_idx)
 		{
-			g_player->_pt = base->_pt;
 			new_unit = g_player.get();
 		}
 		else
 		{
-			//_units_storage.push_back(make_unique<unit::Base>(unit));
+			_units_storage.push_back(make_unique<Unit>(base));
 			new_unit = _units_storage.back().get();
 		}
 
+		(unit::Base&)(*new_unit) = *base;
+
+		new_unit->_dir = base->_dir;
+
+		update_unit(new_unit);
+
 		_units.push_back(new_unit);
+
+		new_unit->_wpt = GetWorldPoint(new_unit->_pt);
+		new_unit->_mvpt = new_unit->_wpt.As<float>();
 
 		if (g_player->_idx == base->_idx)
 		{
 			g_player->_next_pt = new_unit->_last_pt = new_unit->_pt;
-
-			new_unit->_wpt = GetWorldPoint(new_unit->_pt);
-
-			new_unit->_mvpt = new_unit->_wpt.As<float>();
-
 			UpdateCamera();
 		}
 
@@ -330,11 +314,11 @@ void Map::SetUnit(Unit * base)
 			new_unit->_name.c_str(), Format(new_unit->_pt), Format(new_unit->_wpt)
 		);
 
-		tile->_unit = new_unit;
+		GetTile(new_unit->_pt)->_unit = new_unit;
 	}
 }
 
-void Map::UnsetUnit(Unit * unit)
+void Map::UnsetUnit(unit::Base * unit)
 {
 	// #todo
 	if (!IsValidPoint(unit->_pt))
@@ -367,6 +351,7 @@ void Map::UnsetUnit(Unit * unit)
 	}
 
 	tile->_unit = nullptr;
+	PrintDebug("Map::UnsetUnit Success At {}", Format(unit->_pt));
 }
 
 void Map::Tick()

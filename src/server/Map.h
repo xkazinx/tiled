@@ -30,5 +30,7 @@ public:
 	// #todo can this method be private?
 	void NetOperationProcess() override;
 
+	void Send(packet::OutPktPtr & pkt);
+	void SendNearby(packet::OutPktPtr & pkt, Unit * unit);
 };
 }

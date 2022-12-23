@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Unit.h"
 #include "Map.h"
+#include "Player.h"
 
 namespace Client
 {
@@ -8,6 +9,11 @@ namespace Client
 Unit::Unit()
 {
 
+}
+
+Unit::Unit(const unit::Base * base)
+{
+	(unit::Base&)*this = *base;
 }
 
 void Unit::Render([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] const sf::RenderStates & states)
@@ -36,14 +42,19 @@ void Unit::Render([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] cons
 		);
 
 		auto mvpt_diff = new_mvpt - _mvpt;
-		_mvpt_decrease += mvpt_diff / 2;
+
+		if (g_player->_idx == _idx)
+			_mvpt_decrease += mvpt_diff / 2;
 
 		TilePoint offset = { 0, 0 };
 		auto rpt = g_map->GetRenderPoint(_pt, offset);
-		rpt -= delta.As<decltype(rpt.x)>() * (tile::kHalfSize - 1);
-		rpt += ((_pt.As<decltype(rpt.x)>() * tile::kSize) - rpt).As<decltype(rpt.x)>();
-		rpt -= _mvpt_decrease.As<decltype(rpt.x)>();
 
+		if (g_player->_idx == _idx)
+		{
+			rpt -= delta.As<decltype(rpt.x)>() * (tile::kHalfSize - 1);
+			rpt += ((_pt.As<decltype(rpt.x)>() * tile::kSize) - rpt).As<decltype(rpt.x)>();
+			rpt -= _mvpt_decrease.As<decltype(rpt.x)>();
+		}
 		shape.setSize({ 2.f, 2.f });
 
 		{
@@ -99,14 +110,22 @@ void Unit::Render([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] cons
 		}
 	}
 
+	RenderPoint dst;
 	if ((Unit*)g_player.get() == this)
 	{
 		g_map->UpdateCamera();
+		dst = {
+			(RenderPointValue)round(_mvpt.x - (_mvpt_decrease.x * 2)),
+			(RenderPointValue)round(_mvpt.y - (_mvpt_decrease.y * 2))
+		};
 	}
-	auto dst = RenderPoint(
-		(RenderPointValue)round(_mvpt.x - (_mvpt_decrease.x * 2)),
-		(RenderPointValue)round(_mvpt.y - (_mvpt_decrease.y * 2))
-	);
+	else
+	{
+		dst = {
+			(RenderPointValue)round(_mvpt.x + g_map->_world_offset_movement.x),
+			(RenderPointValue)round(_mvpt.y + g_map->_world_offset_movement.y)
+		};
+	}
 
 	auto pre_dst = dst;
 	dst -= g_map->_world_offset + g_map->_half_tile_offset.Abs();

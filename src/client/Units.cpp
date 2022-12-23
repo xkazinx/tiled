@@ -16,6 +16,7 @@ void Units::NetOperationProcess()
 	switch (GetOperation())
 	{
 		OP(Action); // #todo move to PlayerMgr(Server) / Player(Client)?
+		OP(Spawn);
 
 	default:
 		PrintError("Unknown UnitOp{}", Format(GetOperation()));
@@ -68,5 +69,14 @@ void Units::Tick()
 			}
 		}
 	}
+}
+
+
+void Units::NetOp_Spawn()
+{
+	unit::Base base;
+	GetPacket()->Read(base);
+	PrintDebug("NetOp_Spawn {} {} {}", base._name, base._idx, Format(base._pt));
+	g_map->SetUnit(&base);
 }
 }

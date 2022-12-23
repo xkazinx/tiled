@@ -29,8 +29,8 @@ public:
 
 	RenderPoint GetRenderPoint(const TilePoint& tile_pt, const TilePoint& offset);
 
-	void SetUnit(Unit * unit);
-	void UnsetUnit(Unit * unit);
+	void SetUnit(unit::Base * unit);
+	void UnsetUnit(unit::Base * unit);
 	void Tick();
 	void RenderObjects(sf::RenderTarget& tgt, const sf::RenderStates& states);
 

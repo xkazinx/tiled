@@ -12,7 +12,7 @@ Direction Player::GetNextDir(TilePoint src, TilePoint dst)
 
 	dir.SetNext(src, dst);
 
-	PrintDebug("Deduced dir: {} - {} - {}", enum_name(dir._id), Format(src), Format(dst));
+	//PrintDebug("Deduced dir: {} - {} - {}", enum_name(dir._id), Format(src), Format(dst));
 
 	auto get = [&](const auto & i)
 	{
@@ -72,12 +72,12 @@ Direction Player::GetNextDir(TilePoint src, TilePoint dst)
 
 		if (cnt1 >= cnt2)
 			_player_turn = 0;
-		else _player_turn = 1;
+		else _player_turn = 1;	
 
 		return _player_turn;
 	}(dst);
 
-	PrintDebug("PlayerTurn!: {}", turn);
+	//PrintDebug("PlayerTurn!: {}", turn);
 
 	if(turn == 0) 
 	{
@@ -102,7 +102,7 @@ Direction Player::GetNextDir(TilePoint src, TilePoint dst)
 		}
 	}
 	
-	PrintDebug("Player::GetNextDir returned latest Direction::None");
+	//PrintDebug("Player::GetNextDir returned latest Direction::None");
 	return { Direction::None };
 }
 }

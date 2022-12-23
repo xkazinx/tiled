@@ -49,6 +49,13 @@ void Player::OnEnterGame(const Auth & auth)
 	map->_players.push_back(this);
 	_pt = { 80, 80 };
 
+	_pt.x += _map->_players.size();
+
+	if(!_map->IsValidPoint(_pt))
+	{
+		// #todo Make it so that it searches for a new spot
+	}
+
 	map->SetUnit(this);
 
 	{
@@ -57,6 +64,11 @@ void Player::OnEnterGame(const Auth & auth)
 		map->Write_EnterGame(pkt);
 
 		Global::Send(this, pkt);
+	}
+
+	{
+		auto pkt = g_units->StaticPacket(UnitOp::Spawn, (unit::Base&)*this);
+		_map->SendNearby(pkt, this);
 	}
 
 	// Spawn for nearby
