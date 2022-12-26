@@ -184,46 +184,29 @@ RenderPoint Map::GetRenderPoint(const TilePoint& tile_pt, const TilePoint& offse
 void Map::SetUnit(unit::Base * base)
 {
 	// #todo
-	if (!IsValidPoint(base->_pt))
-	{
-		PrintError("Map::SetUnit::!IsValidPoint {}", Format(base->_pt));
-		return;
-	}
+	assert(g_map->IsValidPoint(base->_pt));
 
 	// What happens if the unit is being set as non-Stop and was never registered?
-	// 
-	//auto tile = GetTile(base->_pt - g_map->_visible_tile_offset.As<TilePointValue>());
-	auto tile = GetTile(base->_pt);
-	if (!tile)
-	{
-		PrintError("Map::SetUnit::if(!tile) {}", Format(base->_pt));
-		return;
-	}
-
-	PrintDebug("SetUnit tile pos: {}", Format(base->_pt));
-	// #todo check that the correct tile is being set to unit and rendered
-
+	PrintDebug("SetUnit At: {}", Format(base->_pt));
+	
 	auto update_unit = [&](auto * unit)
 	{
 		switch (unit->_action)
 		{
 		case unit::Action::Move:
 		{
-			//auto last_last_pt = base._last_pt;
-
-			unit->_last_pt = unit->_pt;
-		
-			/*Log::Info("XMap::SetUnit: base._last_pt({} {}) changed to ({} {})",
-				last_last_pt.x, last_last_pt.y, base._last_pt.x, base._last_pt.y);
-				*/
-			unit->_dir.Move(unit->_pt);
+			if(unit->IsSelf())
+			{
+				unit->_last_pt = unit->_pt;
+				unit->_dir.Move(unit->_pt);
+			}
 			break;
 		}
 
 		case unit::Action::Stop:
 			unit->_last_pt = unit->_pt;
 
-			if(g_player && unit->_idx == g_player->_idx)
+			if(unit->IsSelf())
 				g_player->_next_pt = unit->_pt;
 
 			unit->_wpt = GetWorldPoint(unit->_pt);
@@ -240,41 +223,41 @@ void Map::SetUnit(unit::Base * base)
 
 	if (auto it = find_if(_units, [&](auto * u)
 	{
-		return u->_idx == base->_idx;
+		return u->Is(base);
 	}); it != _units.end())
 	{
-		auto * found_unit = *it;
+		auto * unit = *it;
 
-		if(base->_idx == g_player->_idx)
+		if(base->IsSelf())
 		{	
-			if (found_unit->_action == unit::Action::Move)
+			if (unit->_action == unit::Action::Move)
 				UnsetUnit(g_player.get());
 
 			(unit::Base&)(*g_player.get()) = *base;
 		}
 		else
 		{
-			if (found_unit->_action == unit::Action::Move)
-				UnsetUnit(found_unit);
+			if (unit->_action == unit::Action::Move)
+				UnsetUnit(unit);
 
-			(unit::Base&)(*found_unit) = *base;
+			(unit::Base&)(*unit) = *base;
 		}
 
-		update_unit(found_unit);
+		update_unit(unit);
 
-		if (g_player->_idx == found_unit->_idx)
+		GetTile(unit->_pt)->_unit = unit;
+
+		if (unit->_last_pt != unit->_pt)
 		{
-			if (found_unit->_action != unit::Action::Stop)
-				found_unit->_wpt = GetWorldPoint(found_unit->_pt);
+			unit->_is_moving = true;
 		}
 
-		GetTile(found_unit->_pt)->_unit = found_unit;
+		// Not sure what this was for
+		if (unit->_action != unit::Action::Stop)
+			unit->_wpt = GetWorldPoint(unit->_pt);
 
-		if (found_unit->_last_pt != found_unit->_pt)
-		{
-			found_unit->_is_moving = true;
-		}
 		//else
+		if(unit->IsSelf())
 		{
 			UpdateCamera();
 		}
@@ -283,7 +266,7 @@ void Map::SetUnit(unit::Base * base)
 	{
 		Unit * new_unit;
 
-		if (g_player->_idx == base->_idx)
+		if (base->IsSelf())
 		{
 			new_unit = g_player.get();
 		}
@@ -295,18 +278,17 @@ void Map::SetUnit(unit::Base * base)
 
 		(unit::Base&)(*new_unit) = *base;
 
-		new_unit->_dir = base->_dir;
-
 		update_unit(new_unit);
 
 		_units.push_back(new_unit);
 
 		new_unit->_wpt = GetWorldPoint(new_unit->_pt);
 		new_unit->_mvpt = new_unit->_wpt.As<float>();
+		new_unit->_last_pt = new_unit->_pt;
 
-		if (g_player->_idx == base->_idx)
+		if (base->IsSelf())
 		{
-			g_player->_next_pt = new_unit->_last_pt = new_unit->_pt;
+			g_player->_next_pt = new_unit->_pt;
 			UpdateCamera();
 		}
 

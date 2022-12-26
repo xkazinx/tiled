@@ -23,10 +23,6 @@ void Units::NetOperationProcess()
 		break;
 	}
 }
-void Units::NetOp_Action()
-{
-
-}
 
 void Units::Tick()
 {
@@ -77,6 +73,16 @@ void Units::NetOp_Spawn()
 	unit::Base base;
 	GetPacket()->Read(base);
 	PrintDebug("NetOp_Spawn {} {} {}", base._name, base._idx, Format(base._pt));
+	g_map->SetUnit(&base);
+}
+
+void Units::NetOp_Action()
+{
+	unit::Base base;
+	GetPacket()->Read(base);
+
+	PrintDebug("NetOp_Action {} {} {}", base._name, base._idx, Format(base._pt));
+
 	g_map->SetUnit(&base);
 }
 }

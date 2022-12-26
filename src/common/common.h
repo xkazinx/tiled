@@ -193,7 +193,71 @@ public:
 	{
 		return GetContrary(_id);
 	}
+
+	auto IsValid() const
+	{
+		return enum_contains(_id);
+	}
 };
+
+
+namespace map
+{
+	static constexpr RenderPoint
+		Resolution =
+	{
+		1024, 768
+	},
+		VisibleTiles =
+	{
+		Resolution / tile::kSize
+	}, VisibleTilesRange =
+	{
+		VisibleTiles / 2
+	};
+
+	enum ID : u8
+	{
+		Battlefield,
+
+		None = u8(-1)
+	};
+
+	template<typename Tile>
+	class Base
+	{
+	public:
+		ID _id = ID::None;
+
+		TilePoint _size;
+
+		vector<unique_ptr<Tile>> _tiles;
+
+		Tile* GetTile(TilePoint pt)
+		{
+			return _tiles[pt.y + pt.x * _size.y].get();
+		}
+
+		bool IsValidPoint(TilePoint pt) const
+		{
+			return pt.x > 0 && pt.y > 0 && pt.x < _size.x&& pt.y < _size.y;
+		}
+
+		bool IsMovable([[maybe_unused]] TilePoint pt) const
+		{
+			if (pt.x < VisibleTilesRange.x || pt.y < VisibleTilesRange.y ||
+				pt.x + VisibleTilesRange.x >= _size.x || pt.y + VisibleTilesRange.y >= _size.y)
+			{
+				return false;
+			}
+
+			// #todo read from tile
+			return true;
+		}
+	};
+}
+
+using MapID = map::ID;
 
 namespace unit
 {
@@ -211,6 +275,8 @@ namespace unit
 	class Base : public packet::Serializable
 	{
 	public:
+		using Idx = unit::Idx;
+
 		string _name;
 		TilePoint _pt;
 		Idx _idx = kNullIdx;
@@ -238,6 +304,24 @@ namespace unit
 		}
 #undef sparams
 
+		bool IsOnSight(unit::Base * base)
+		{
+			// #todo check if it's >= or >
+			return 
+				_pt.x - map::VisibleTilesRange.x >= base->_pt.x && 
+				_pt.x + map::VisibleTilesRange.x <= base->_pt.x && 
+				_pt.y - map::VisibleTilesRange.y >= base->_pt.y &&
+				_pt.y + map::VisibleTilesRange.y <= base->_pt.y;
+		}
+
+		bool Is(Base * base) const
+		{
+			return _idx == base->_idx;	
+		}
+
+#ifdef CLIENT
+		bool IsSelf() const;
+#endif
 	};
 }
 
@@ -269,64 +353,6 @@ namespace npc
 }
 
 using PlayerIdx = player::Idx;
-
-namespace map
-{
-	static constexpr RenderPoint 
-		Resolution =
-	{
-		1024, 768
-	},
-		VisibleTiles = 
-	{
-		Resolution / tile::kSize
-	}, VisibleTilesRange = 
-	{
-		VisibleTiles / 2	
-	};
-
-	enum ID : u8
-	{
-		Battlefield,
-
-		None = u8(-1)
-	};
-
-	template<typename Tile>
-	class Base
-	{
-	public:
-		ID _id = ID::None;
-
-		TilePoint _size;
-
-		vector<unique_ptr<Tile>> _tiles;
-
-		Tile * GetTile(TilePoint pt)
-		{
-			return _tiles[pt.y + pt.x * _size.y].get();
-		}
-
-		bool IsValidPoint(TilePoint pt) const
-		{
-			return pt.x > 0 && pt.y > 0 && pt.x < _size.x && pt.y < _size.y;
-		}
-
-		bool IsMovable([[maybe_unused]] TilePoint pt) const
-		{
-			if(pt.x < VisibleTilesRange.x || pt.y < VisibleTilesRange.y ||
-				pt.x + VisibleTilesRange.x >= _size.x || pt.y + VisibleTilesRange.y >= _size.y)
-			{
-				return false;
-			}
-
-			// #todo read from tile
-			return true;
-		}
-	};
-}
-
-using MapID = map::ID;
 
 enum class FormatType : u8
 {

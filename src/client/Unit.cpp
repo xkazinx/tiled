@@ -43,18 +43,15 @@ void Unit::Render([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] cons
 
 		auto mvpt_diff = new_mvpt - _mvpt;
 
-		if (g_player->_idx == _idx)
-			_mvpt_decrease += mvpt_diff / 2;
+		_mvpt_decrease += mvpt_diff / 2;
 
 		TilePoint offset = { 0, 0 };
 		auto rpt = g_map->GetRenderPoint(_pt, offset);
 
-		if (g_player->_idx == _idx)
-		{
-			rpt -= delta.As<decltype(rpt.x)>() * (tile::kHalfSize - 1);
-			rpt += ((_pt.As<decltype(rpt.x)>() * tile::kSize) - rpt).As<decltype(rpt.x)>();
-			rpt -= _mvpt_decrease.As<decltype(rpt.x)>();
-		}
+		rpt -= delta.As<decltype(rpt.x)>() * (tile::kHalfSize - 1);
+		rpt += ((_pt.As<decltype(rpt.x)>() * tile::kSize) - rpt).As<decltype(rpt.x)>();
+		rpt -= _mvpt_decrease.As<decltype(rpt.x)>();
+		
 		shape.setSize({ 2.f, 2.f });
 
 		{
@@ -111,25 +108,28 @@ void Unit::Render([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] cons
 	}
 
 	RenderPoint dst;
-	if ((Unit*)g_player.get() == this)
+	if(IsSelf())
 	{
 		g_map->UpdateCamera();
+
 		dst = {
 			(RenderPointValue)round(_mvpt.x - (_mvpt_decrease.x * 2)),
 			(RenderPointValue)round(_mvpt.y - (_mvpt_decrease.y * 2))
 		};
 	}
-	else
+	else 
 	{
 		dst = {
-			(RenderPointValue)round(_mvpt.x + g_map->_world_offset_movement.x),
-			(RenderPointValue)round(_mvpt.y + g_map->_world_offset_movement.y)
+			(RenderPointValue)round(_mvpt.x + g_map->_world_offset_movement.x + _mvpt_decrease.x),
+			(RenderPointValue)round(_mvpt.y + g_map->_world_offset_movement.y + _mvpt_decrease.y)
 		};
 	}
 
 	auto pre_dst = dst;
 	dst -= g_map->_world_offset + g_map->_half_tile_offset.Abs();
-	dst += extra;
+
+	if(IsSelf())
+		dst += extra;
 
 	shape.setPosition(
 		dst.x
@@ -145,4 +145,10 @@ void Unit::Render([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] cons
 		*/
 	tgt.draw(shape);
 }
+
+bool Unit::IsSelf() const
+{
+	return g_player->_idx == _idx;
+}
+
 }

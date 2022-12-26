@@ -42,6 +42,9 @@ void GameScene::Tick()
 
 	if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	{
+		if(!g_app->_window.hasFocus())
+			return;
+
 		if (g_player->_pt == tile_dst)
 			return;
 
@@ -74,6 +77,9 @@ void GameScene::Tick()
 	}
 	else if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
 	{
+		if (!g_app->_window.hasFocus())
+			return;
+
 		auto dir = Direction::GetNext(g_player->_pt, tile_dst);
 
 		if (dir == Direction::None)

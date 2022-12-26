@@ -173,9 +173,6 @@
     <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\random.cpp">
       <Filter>dep\kazin</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\scenes.cpp">
-      <Filter>dep\kazin</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\socket.cpp">
       <Filter>dep\kazin</Filter>
     </ClCompile>

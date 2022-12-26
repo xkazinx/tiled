@@ -13,6 +13,7 @@ Player::Player(PlayerIdx idx, ENetPeer * peer) :
 {
 	// #todo Unit constructor
 	_idx = idx;
+	PrintDebug("Player constructed with index {}", _idx);
 }
 
 Player::~Player()

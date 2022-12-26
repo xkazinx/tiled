@@ -243,7 +243,6 @@
     <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\packet.cpp" />
     <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\process.cpp" />
     <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\random.cpp" />
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\scenes.cpp" />
     <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\socket.cpp" />
     <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\time.cpp" />
     <ClCompile Include="..\common\common.cpp" />
