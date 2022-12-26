@@ -2,28 +2,30 @@
 
 namespace Client
 {
-template<class Op = kazin::broadcaster::DummyOp>
-class Broadcaster : public kazin::broadcaster::Base<Op>
+using namespace kazin;
+
+template<class Op = broadcaster::DummyOp>
+class Broadcaster : public broadcaster::Base<Op>
 {
-	kazin::broadcaster::InOperationBase _opt;
+	broadcaster::InOperationBase _opt;
 
 public:
 	using Peer = ENetPeer;
 
-	explicit Broadcaster(const NetOp net_op) : kazin::broadcaster::Base<Op>(net_op){}
+	explicit Broadcaster(const NetOp net_op) : broadcaster::Base<Op>(net_op){}
 	~Broadcaster() override {}
 
 	template <typename ... Args>
-	void Send(Op op, const Args&...args) const
+	void Send(Op op, const Args &...args) const
 	{
-		auto out = kazin::packet::Out::CreateStatic(this->_net_op, op, std::forward<const Args>(args)...);
+		auto out = packet::Out::CreateStatic(this->_net_op, op, std::forward<const Args>(args)...);
 		Global::Send(out);
 	}
 
-	void NetOperation(kazin::packet::In & pkt)
+	void NetOperation(packet::In & pkt)
 	{
 		pkt.Read(this->_op);
-		_opt = kazin::broadcaster::InOperationBase(pkt);
+		_opt = broadcaster::InOperationBase(pkt);
 		NetOperationProcess();
 	}
 

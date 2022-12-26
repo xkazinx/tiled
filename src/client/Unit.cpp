@@ -143,12 +143,8 @@ void Unit::Render([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] cons
 	Print("RENDERING! {} | g_map->_world_offset: {} | g_map->_half_tile_offset: {} | PlayerPos: {}", 
 		Format(dst), Format(g_map->_world_offset), Format(g_map->_half_tile_offset), Format(_pt));
 		*/
-	tgt.draw(shape);
-}
 
-bool Unit::IsSelf() const
-{
-	return g_player->_idx == _idx;
+	tgt.draw(shape);
 }
 
 }

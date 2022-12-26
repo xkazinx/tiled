@@ -19,7 +19,5 @@ public:
 
 	// #todo maybe move to Player?
 	MovePoint _mvpt_decrease = {0.f, 0.f};
-
-	bool IsSelf() const;
 };
 }

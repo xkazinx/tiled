@@ -8,6 +8,8 @@
 using namespace kazin::global;
 using Socket = kazin::Socket;
 using InPacket = kazin::InPacket;
+using OutPktRef = kazin::OutPktRef;
+
 using Auth = kazin::Auth;
 using namespace kazin;
 

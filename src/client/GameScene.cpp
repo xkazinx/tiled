@@ -13,8 +13,6 @@ GameScene::GameScene()
 	Broadcaster<Op>(NetOp::Game)
 {
 	g_game = this;
-
-	PrintDebug("Initialized GameScene with player name {}", g_player->_name);
 }
 
 GameScene::~GameScene()
@@ -24,16 +22,17 @@ GameScene::~GameScene()
 
 void GameScene::NetOperationProcess()
 {
-	PrintDebug("NetOperationProcess GameOp{}", Format(GetOperation()));
+	PrintDebug("GameScene: Incoming GameOp{}", Format(GetOperation()));
 
+	/*
 	switch (GetOperation())
 	{
-		OP(Action); // #todo move to PlayerMgr(Server) / Player(Client)?
+
 
 	default:
 		PrintError("Unknown GameOp{}", Format(GetOperation()));
 		break;
-	}
+	}*/
 }
 
 void GameScene::Tick()
@@ -56,6 +55,7 @@ void GameScene::Tick()
 			}
 
 			g_player->_next_pt = tile_dst;
+			Log::Error("g_player->_is_moving reached");
 			return;
 		}
 
@@ -206,11 +206,10 @@ TilePoint GameScene::GetMouseTile()
 		++tile.y;
 	}
 
-	return tile + g_map->_visible_tile_offset.As<TilePointValue>();
-}
+	TilePoint offset = g_player->_is_moving ? g_player->_last_pt - g_map->_visible_tiles_range : g_map->_visible_tile_offset;
 
-void GameScene::NetOp_Action()
-{
+	tile += offset.As<TilePointValue>();
 
+	return tile;
 }
 }

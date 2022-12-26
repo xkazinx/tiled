@@ -15,18 +15,19 @@ namespace Global
 {
 	constexpr char kAppName[] = "Tiled";
 
-	extern App* g_app;
-	extern unique_ptr<Scenes> g_scene;
-	extern unique_ptr<Socket> g_sock;
-	extern unique_ptr<Map> g_map;
-	extern GameScene * g_game;
-	extern unique_ptr<Player> g_player;
-	extern unique_ptr<Units> g_units;
+	extern App			* g_app;
+	extern GameScene	* g_game;
+
+	extern unique_ptr<Scenes>	g_scene;
+	extern unique_ptr<Socket>	g_sock;
+	extern unique_ptr<Map>		g_map;
+	extern unique_ptr<Player>	g_player;
+	extern unique_ptr<Units>	g_units;
 
 	extern void Initialize();
 	extern void Deinitialize();
 
-	extern void Send(const kazin::OutPktRef out, enet_uint8 channel = 0);
+	extern void Send(const OutPktRef out, enet_uint8 channel = 0);
 
 	class Guard
 	{

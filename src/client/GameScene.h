@@ -26,6 +26,6 @@ public:
 	sf::View _game_view;
 
 private:
-	void NetOp_Action();
+
 };
 }

@@ -11,19 +11,20 @@ namespace Client
 {
 namespace Global
 {
-	App * g_app;
-	unique_ptr<Scenes> g_scene;
-	unique_ptr<kazin::Socket>	g_sock;
-	unique_ptr<Map> g_map;
+	App		 * g_app;
 	GameScene * g_game = nullptr;
-	unique_ptr<Player> g_player;
-	unique_ptr<Units> g_units;
+
+	unique_ptr<Scenes>			g_scene;
+	unique_ptr<Socket>			g_sock;
+	unique_ptr<Map>				g_map;
+	unique_ptr<Player>			g_player;
+	unique_ptr<Units>				g_units;
 
 	void Initialize()
 	{
 		// unordered
-		g_scene	= make_unique<Scenes>();
-		g_units  = make_unique<Units>();
+		g_scene = make_unique<Scenes>();
+		g_units = make_unique<Units>();
 
 		for(auto font_name : enum_names<font::ID>())
 		{
@@ -46,7 +47,7 @@ namespace Global
 
 	}
 
-	void Send(const kazin::OutPktRef out, enet_uint8 channel)
+	void Send(const OutPktRef out, enet_uint8 channel)
 {
 		g_sock->Send(out, channel);
 	}
@@ -63,7 +64,7 @@ namespace font
 
 	sf::Text Text;
 
-	void Internal(RenderPoint pt, const char* str, sf::Color color)
+	void Internal(RenderPoint pt, const char * str, sf::Color color)
 	{
 		auto & text = Text;
 		text.setPosition({ float(pt.x), float(pt.y) });
@@ -82,12 +83,14 @@ namespace font
 		auto sz = str.size();
 		for (std::size_t pos(0); pos < sz; ++pos) {
 			auto currentChar = str[pos];
-			if (currentChar == '\n') {
+			if (currentChar == '\n') 
+			{
 				currentOffset = 0;
 				firstWord = true;
 				continue;
 			}
-			else if (currentChar == ' ') {
+			else if (currentChar == ' ')
+			{
 				wordBegining = pos;
 				firstWord = false;
 			}
@@ -95,7 +98,8 @@ namespace font
 			auto glyph = font.getGlyph(currentChar, charicterSize, bold);
 			currentOffset += (unsigned int)glyph.advance;
 
-			if (!firstWord && currentOffset > width) {
+			if (!firstWord && currentOffset > width)
+			{
 				pos = wordBegining;
 				str[pos] = '\n';
 				firstWord = true;
