@@ -135,7 +135,7 @@ bool App::HandleEvents()
 	return true;
 }
 
-void App::OnConnect([[maybe_unused]] ENetEvent& ev)
+void App::OnConnect([[maybe_unused]] ENetEvent & ev)
 {
 	PrintDebug("OnConnect()");
 	if(g_game)
@@ -144,12 +144,12 @@ void App::OnConnect([[maybe_unused]] ENetEvent& ev)
 	}
 }
 
-void App::OnDisconnect([[maybe_unused]] ENetEvent& ev)
+void App::OnDisconnect([[maybe_unused]] ENetEvent & ev)
 {
 	PrintDebug("OnDisconnect()");
 }
 
-void App::OnPacket([[maybe_unused]] ENetEvent& ev)
+void App::OnPacket([[maybe_unused]] ENetEvent & ev)
 {
 	PrintDebug("OnPacket()");
 

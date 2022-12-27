@@ -26,31 +26,31 @@ void Units::NetOperationProcess()
 
 void Units::Tick()
 {
-	if (auto* unit = g_player.get())
+	// #todo move this 
+	for(auto unit : g_map->_units)
 	{
-		// #todo move to Player tick
-		if (!unit->_is_moving && unit->_pt != unit->_next_pt)
+		if(!unit->_is_moving && 
+			(!unit->IsSelf() || (unit->IsSelf() && unit->_pt != g_player->_next_pt)))
 		{
-			PrintDebug("Map::Tick(): Point: {} | NextPoint: {}",
-				Format(unit->_pt), Format(unit->_next_pt)
-			);
-
-			if (g_player->_stop_dir != Direction::None)
+			if (unit->_stop_dir != Direction::None)
 			{
-				g_player->_dir = g_player->_stop_dir;
-				g_player->_stop_dir = Direction::None;
+				unit->_dir = unit->_stop_dir;
+				unit->_stop_dir = Direction::None;
+				unit->_action = unit::Action::Stop;
 
-				g_player->_action = unit::Action::Stop;
+				g_map->SetUnit(unit);
 
-				g_map->SetUnit(g_player.get());
-
-				g_units->Send(UnitOp::Action, 
-					g_player->_action, g_player->_pt, g_player->_dir);
+				if(unit->IsSelf())
+				{
+					g_units->Send(UnitOp::Action,
+						g_player->_action, g_player->_pt, g_player->_dir
+					);
+				}
 			}
-			else
+			else if(unit->IsSelf())
 			{
 				auto dir = g_player->GetNextDir(
-					unit->_pt, unit->_next_pt
+					unit->_pt, g_player->_next_pt
 				);
 
 				if (dir == Direction::None)
@@ -59,9 +59,11 @@ void Units::Tick()
 				unit->_dir = dir;
 				unit->_action = unit::Action::Move;
 
-				g_map->SetUnit(g_player.get());
+				g_map->SetUnit(unit);
 
-				g_units->Send(UnitOp::Action, g_player->_action, g_player->_pt, g_player->_dir);
+				g_units->Send(UnitOp::Action, 
+					g_player->_action, g_player->_pt, g_player->_dir
+				);
 			}
 		}
 	}

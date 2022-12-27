@@ -283,7 +283,7 @@ namespace unit
 		TilePoint _pt;
 		Idx _idx = kNullIdx;
 		Action _action = Action::None;
-		Direction _dir;
+		Direction _dir = Direction::South;
 
 #define sparams _name, _pt, _idx, _action, _dir
 		void Write([[maybe_unused]] packet::Out& out) const override

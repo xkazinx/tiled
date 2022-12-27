@@ -204,6 +204,10 @@ void Map::SetUnit(unit::Base * base)
 		}
 
 		case unit::Action::Stop:
+			// #todo if the unit is moving, the stop must occur after it reached destination 
+			if(unit->_is_moving)
+				unit->_stop_dir = unit->_dir;
+
 			unit->_last_pt = unit->_pt;
 
 			if(unit->IsSelf())
@@ -240,7 +244,13 @@ void Map::SetUnit(unit::Base * base)
 			if (unit->_action == unit::Action::Move)
 				UnsetUnit(unit);
 
+			auto dir = unit->_dir;
+
 			(unit::Base&)(*unit) = *base;
+
+			// Direction is kept so that it shifts once it has reached destination
+			if(unit->_is_moving)
+				unit->_dir = dir;
 		}
 
 		update_unit(unit);

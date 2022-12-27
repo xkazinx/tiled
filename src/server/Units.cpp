@@ -51,23 +51,28 @@ void Units::NetOp_Action()
 		return;
 
 	// #todo add move speedhack check
-
 	//player->_last_action_tm = time_;
 
-	map->UnsetUnit(p);
+	if(action == unit::Action::Move)
+		map->UnsetUnit(p);
 	
 	p->_action = action;
 	p->_dir = dir;
-	p->_dir.Move(p->_pt);
-
-	if (pt != p->_pt)
+	
+	if(action == unit::Action::Move)
 	{
-		PrintError("NetOp_Actiod: received point is different from current player point");
-		return;
+		p->_dir.Move(p->_pt);
+
+		if (pt != p->_pt)
+		{
+			PrintError("NetOp_Actiod: received point is different from current player point");
+			return;
+		}
+
+		if(action == unit::Action::Move)
+			map->SetUnit(p);
 	}
-
-	map->SetUnit(p);
-
+	
 	PrintDebug("Units::NetOp_Action: Action: {}, Dir: {}, Pt: {}",
 		enum_name(action), enum_name(dir._id), Format(pt));
 

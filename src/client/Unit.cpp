@@ -139,12 +139,24 @@ void Unit::Render([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] cons
 		+ (tile::kHalfSize) - (sz / 2.f)
 	);
 
+	Vector2f half_sz = shape.getSize();
+	half_sz.x /= 2.f;
+	half_sz.y /= 2.f;
+
+	static sf::VertexArray lines(sf::LineStrip, 2);
+	lines[0].position = shape.getPosition() + half_sz;
+	lines[1].position = shape.getPosition() + half_sz + Vector2f(half_sz.x * _dir.GetDelta().x, half_sz.y * _dir.GetDelta().y);
+
+	lines[0].color = sf::Color::Green;
+	lines[1].color = sf::Color::Green;
+
 	/*
 	Print("RENDERING! {} | g_map->_world_offset: {} | g_map->_half_tile_offset: {} | PlayerPos: {}", 
 		Format(dst), Format(g_map->_world_offset), Format(g_map->_half_tile_offset), Format(_pt));
 		*/
 
 	tgt.draw(shape);
+	tgt.draw(lines);
 }
 
 }
