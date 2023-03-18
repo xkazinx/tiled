@@ -183,11 +183,21 @@ void App::NetOp_EnterGame()
 	GetPacket()->Read(g_player->_idx, g_player->_pt);
 
 	g_map = make_unique<Map>(GetPacket());
+
 	PrintDebug("NetOp_EnterGame()");
 	PrintError("----------------------------------");
 	// #todo Temporarily reading map data until passing it into files or something
 	//GetPacket()->
 
 	g_map->SetUnit(g_player.get());
+
+	auto total_units = GetPacket()->ReadAs<u16>();
+	while(total_units-- > 0)
+	{
+		unit::Base base;
+		GetPacket()->Read(base);
+		PrintError("Base {} received", base._name);
+		g_map->SetUnit(&base);
+	}
 }
 }

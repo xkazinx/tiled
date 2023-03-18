@@ -61,8 +61,35 @@ void Player::OnEnterGame(const Auth & auth)
 
 	{
 		// #todo create rooms | a map = a game
-		auto pkt = g_app->DynamicPacket(MainOp::EnterGame, sizeof(u32) + (map->_tiles.size() * sizeof(TileType)), _idx, _pt);
+		auto pkt = g_app->DynamicPacket(MainOp::EnterGame, 
+			sizeof(u32) + 
+			(map->_tiles.size() * sizeof(TileType)) + 
+			(sizeof(unit::Base) * map->_players.size()), // #todo
+			_idx, _pt);
+
 		map->Write_EnterGame(pkt);
+
+		auto total = pkt->GetPointer<u16>();
+		pkt->Write((u16)0);
+
+
+		for (auto player : map->_players)
+		{
+			if (player == this)
+				continue;
+
+			if (IsOnSight(player))
+			{
+				++(*total);
+				player->Write(*pkt);
+				PrintError("WROTE PPLAYEER ON SIGHT  FOR SPAAWN!");
+			}
+			else
+			{
+
+				PrintError("PLAYER NOT ON SIGHT FOR SPAWN!: {} | {}", Format(_pt), Format(player->_pt));
+			}
+		}
 
 		Global::Send(this, pkt);
 	}

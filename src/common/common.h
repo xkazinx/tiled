@@ -310,10 +310,10 @@ namespace unit
 		{
 			// #todo check if it's >= or >
 			return 
-				_pt.x - map::VisibleTilesRange.x >= base->_pt.x && 
-				_pt.x + map::VisibleTilesRange.x <= base->_pt.x && 
-				_pt.y - map::VisibleTilesRange.y >= base->_pt.y &&
-				_pt.y + map::VisibleTilesRange.y <= base->_pt.y;
+				base->_pt.x >= _pt.x - map::VisibleTilesRange.x && 
+				base->_pt.x <= _pt.x + map::VisibleTilesRange.x &&
+				base->_pt.y >= _pt.y - map::VisibleTilesRange.y &&
+				base->_pt.y <= _pt.y + map::VisibleTilesRange.y;
 		}
 
 		bool Is(Base * base) const
