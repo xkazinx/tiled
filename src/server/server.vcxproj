@@ -72,8 +72,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\common;$(LIBPATH)\MySQL Connector C 6.1\include;$(LIBPATH)\enet-1.3.17\include;$(LIBPATH)\kazin\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(LIBPATH)\MySQL Connector C 6.1\lib;$(LIBPATH)\enet-1.3.17\$(Configuration);$(LibraryPath)</LibraryPath>
+    <IncludePath>..\common;$(LIBPATH)\MySQL Connector C 6.1\include;$(LIBPATH)\enet-1.3.17\include;$(LIBPATH)\kazilib\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LIBPATH)\kazilib\$(PlatformName)\$(Configuration);$(LIBPATH)\MySQL Connector C 6.1\lib;$(LIBPATH)\enet-1.3.17\$(Configuration);$(LibraryPath)</LibraryPath>
     <OutDir>$(Configuration)\</OutDir>
     <TargetName>$(ProjectName)_d</TargetName>
     <IntDir>$(Configuration)\</IntDir>
@@ -85,8 +85,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\common;$(LIBPATH)/MySQL Connector C 6.1/include;$(LIBPATH)\enet-1.3.17\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(LIBPATH)/MySQL Connector C 6.1/lib;$(LIBPATH)\enet-1.3.17\$(Configuration);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(LIBPATH)\kazilib\include;..\common;$(LIBPATH)/MySQL Connector C 6.1/include;$(LIBPATH)\enet-1.3.17\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LIBPATH)\kazilib\$(PlatformName)\$(Configuration);$(LIBPATH)/MySQL Connector C 6.1/lib;$(LIBPATH)\enet-1.3.17\$(Configuration);$(LibraryPath)</LibraryPath>
     <OutDir>$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -99,7 +99,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SERVER;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(OutDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
@@ -115,11 +115,13 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kazilib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>..\..\deploy\$(ProjectName)\$(TargetName)$(TargetExt)</OutputFile>
       <ManifestFile>$(OutDir)$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
       <LinkTimeCodeGenerationObjectFile>$(OutDir)$(TargetName).iobj</LinkTimeCodeGenerationObjectFile>
       <IncrementalLinkDatabaseFile>$(OutDir)$(TargetName).ilk</IncrementalLinkDatabaseFile>
+      <IgnoreAllDefaultLibraries>
+      </IgnoreAllDefaultLibraries>
     </Link>
     <Manifest>
       <OutputManifestFile>$(OutDir)$(TargetName)$(TargetExt).embed.manifest</OutputManifestFile>
@@ -144,6 +146,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -154,7 +157,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SERVER;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeaderOutputFile>$(OutDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
@@ -171,7 +174,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kazilib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ManifestFile>$(OutDir)$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
       <LinkTimeCodeGenerationObjectFile>$(OutDir)$(TargetName).iobj</LinkTimeCodeGenerationObjectFile>
       <OutputFile>..\..\deploy\$(ProjectName)\$(TargetName)$(TargetExt)</OutputFile>
@@ -197,6 +200,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -206,6 +210,7 @@
     <ClInclude Include="Map.h" />
     <ClInclude Include="Maps.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Units.h" />
     <ClInclude Include="Sql.h" />
     <ClInclude Include="stdafx.h" />
@@ -214,20 +219,6 @@
     <ClInclude Include="Unit.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\arg_parser.cpp" />
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\auth.cpp" />
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\container.cpp" />
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\file.cpp" />
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\kazin.cpp" />
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\log.cpp" />
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\net.cpp" />
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\os.cpp" />
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\packet.cpp" />
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\process.cpp" />
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\random.cpp" />
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\scenes.cpp" />
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\socket.cpp" />
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\time.cpp" />
     <ClCompile Include="..\common\common.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Global.cpp" />
@@ -245,6 +236,12 @@
     </ClCompile>
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="Unit.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="server.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -4,7 +4,7 @@ namespace Server
 {
 class Player;
 
-class App final : public kazin::app::Base, public Broadcaster<MainOp>
+class App final : public Broadcaster<MainOp>
 {
 public:
 	using Op = MainOp;
@@ -19,6 +19,8 @@ public:
 	[[nodiscard]] Player * OnAuth(const ENetEvent & ev) const;
 
 	void NetOperationProcess() override;
+
+	kazin::ArgParser _args;
 
 private:
 	void NetOp_Login();

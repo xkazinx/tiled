@@ -3,7 +3,10 @@
 #define KAZIN_WINDOWS
 #define KAZIN_NET
 #define DEBUG_PACKET
-#include <kazin/kazin.h>
+
+// Removes winsock api redefinition
+#define _WINSOCKAPI_
+#include <kazilib/kazilib.h>
 
 using namespace kazin::global;
 using Socket = kazin::Socket;
@@ -15,14 +18,14 @@ using namespace kazin;
 
 namespace common
 {
-constexpr u16 kPort = 321;
+constexpr u16 kPort = 333;
 constexpr const char * kHost = "localhost";
-
-template <typename T>
-constexpr underlying_type_t<T> to_underlying(T value) noexcept
+constexpr const char * kAppName = "Tiled";
+/*template <typename T>
+constexpr std::underlying_type_t<T> to_underlying(T value) noexcept
 {
 	return underlying_type_t<T>(value);
-}
+}*/
 
 using RenderPointValue = i16;
 using TilePointValue = i16;
@@ -350,8 +353,6 @@ namespace npc
 	using Idx = unit::Idx;
 	constexpr Idx
 		kNullIdx = unit::kNullIdx;
-
-
 }
 
 using PlayerIdx = player::Idx;
@@ -388,7 +389,7 @@ inline string Format(T v, FormatType type = FormatType::None)
 	}
 	else if constexpr (is_same_v<ENetPeer*, T>)
 	{
-		return format("({}:{}:PlayerIdx({}))", kazin::Socket::FetchIP(v), v->address.port, 
+		return format("({}:{}:PlayerIdx({}))", kazin::Socket::FetchIP(v), v->address.port,
 			v->data ? *reinterpret_cast<PlayerIdx*>(v->data) : player::kNullIdx);
 	}
 	else if constexpr (is_same_v<kazin::Auth, T>)
@@ -396,9 +397,9 @@ inline string Format(T v, FormatType type = FormatType::None)
 		return format("({}:{})", v._user.c_str(), v._pass.c_str());
 	}
 	else if constexpr (
-		is_same_v<TilePoint, T> || 
-		is_same_v<WorldPoint, T> || 
-		is_same_v<MovePoint, T> || 
+		is_same_v<TilePoint, T> ||
+		is_same_v<WorldPoint, T> ||
+		is_same_v<MovePoint, T> ||
 		is_same_v<RenderPoint, T>)
 	{
 		return format("({}:{})", v.x, v.y);

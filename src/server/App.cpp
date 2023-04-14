@@ -8,11 +8,15 @@
 namespace Server
 {
 App::App()
-	: kazin::app::Base("Tiled Server"), Broadcaster<Op>(NetOp::Main)
+	: Broadcaster<Op>(NetOp::Main)
 {
-	// #todo #param or whatever name it has for client and server
 	g_app = this;
 	Global::Initialize();
+
+	{
+		string title = format("Tiled Server - {}", ::_getpid()).c_str();
+		SetConsoleTitle(title.c_str());
+	}
 
 	using namespace std;
 	g_sock = make_unique<Socket>(Socket::Type::Server, 
@@ -52,7 +56,7 @@ int App::Tick()
 		g_sock->Tick();
 		g_maps->Tick();
 
-		this_thread::sleep_for(chrono::milliseconds(1));
+		this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 
 	return 0;
@@ -60,7 +64,7 @@ int App::Tick()
 
 void App::OnConnect([[maybe_unused]] ENetEvent& ev)
 {
-
+	Print("OnConnected()");
 }
 
 void App::OnPacket(ENetEvent& ev)
@@ -141,7 +145,7 @@ void App::NetOp_Login()
 
 	if (const auto res = sql->Select("players",
 		{ "username", "password" }, 
-		format(" WHERE `username` = '{}' LIMIT 1", auth._user)))
+		format(" WHERE `username` = '{}' LIMIT 1", auth._user.c_str())))
 	{
 		if (const auto it = res->Pop())
 		{
@@ -166,7 +170,7 @@ void App::NetOp_CreateAccount()
 		return;
 
 	const Auth auth(GetPacket());
-	Print("Received auth: {} {}", auth._user, auth._pass);
+	Print("Received auth: {} {}", (string&)auth._user, (string&)auth._pass);
 	if (!auth.IsValid())
 	{
 		PrintError("NetOp_CreateAccount: Invalid Auth{}", Format(auth));
@@ -174,7 +178,7 @@ void App::NetOp_CreateAccount()
 	}
 
 	const auto res = sql->Select("players",
-		{ "uid" }, format(" WHERE username = '{}' LIMIT 1", auth._user));
+		{ "uid" }, format(" WHERE username = '{}' LIMIT 1", (string&)auth._user));
 	
 	Send(GetPlayer(), MainOp::CreateAccount, res->IsEmpty());
 
@@ -185,11 +189,11 @@ void App::NetOp_CreateAccount()
 			vector<vector<string>>{ { { auth._user }, { auth._pass } }}
 		);
 
-		Print("Create account success: username({})", auth._user);
+		Print("Create account success: username({})", auth._user.c_str());
 	}
 	else
 	{	
-		Print("Create account failure: username({}) already in use", auth._user);
+		Print("Create account failure: username({}) already in use", auth._user.c_str());
 	}
 }
 

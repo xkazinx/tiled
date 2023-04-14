@@ -50,7 +50,7 @@ void Player::OnEnterGame(const Auth & auth)
 	map->_players.push_back(this);
 	_pt = { 80, 80 };
 
-	_pt.x += _map->_players.size();
+	_pt.x += (decltype(_pt.x))_map->_players.size();
 
 	if(!_map->IsValidPoint(_pt))
 	{
@@ -64,13 +64,34 @@ void Player::OnEnterGame(const Auth & auth)
 		auto pkt = g_app->DynamicPacket(MainOp::EnterGame, 
 			sizeof(u32) + 
 			(map->_tiles.size() * sizeof(TileType)) + 
+			sizeof(u16) + 
 			(sizeof(unit::Base) * map->_players.size()), // #todo
 			_idx, _pt);
 
 		map->Write_EnterGame(pkt);
 
-		auto total = pkt->GetPointer<u16>();
-		pkt->Write((u16)0);
+		u16 total = 0;
+		for (auto player : map->_players)
+		{
+			if (player == this)
+				continue;
+
+			if (IsOnSight(player))
+			{
+				++total;
+				//static_cast<Unit*>(player)->Write(*pkt);
+				//PrintError("WROTE PPLAYEER ON SIGHT  FOR SPAAWN!");
+			}
+			else
+			{
+
+				//PrintError("PLAYER NOT ON SIGHT FOR SPAWN!: {} | {}", Format(_pt), Format(player->_pt));
+			}
+		}
+
+		pkt->Write(total);
+		//auto total = pkt->GetPointer<u16>();
+		//pkt->Write((u16)0);
 
 
 		for (auto player : map->_players)
@@ -80,8 +101,8 @@ void Player::OnEnterGame(const Auth & auth)
 
 			if (IsOnSight(player))
 			{
-				++(*total);
-				player->Write(*pkt);
+				//++(*total);
+				static_cast<Unit*>(player)->Write(*pkt);
 				PrintError("WROTE PPLAYEER ON SIGHT  FOR SPAAWN!");
 			}
 			else

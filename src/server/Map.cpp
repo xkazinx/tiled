@@ -145,7 +145,7 @@ namespace Server
 		// #todo add boundary checks to only notify to players that are nearby
 		for (auto player : _players)
 		{
-			if(player == unit || player->IsOnSight(unit))
+			if(player == unit || !player->IsOnSight(unit))
 				continue;
 
 			Global::Send(player, out);

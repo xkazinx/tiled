@@ -7,31 +7,39 @@
 #include "Map.h"
 #include "Tile.h"
 #include "Units.h"
+#include <kazilib/imgui/imgui-SFML.h>
 
 namespace Client
 {
-App::App()
-	: kazin::app::Base("Tiled", [&](auto & wnd)
-		{
-			g_app = this;
-			Global::Initialize();
+App::App() :
+	Broadcaster<Op>(NetOp::Main)
+{
+	g_app = this;
+	Global::Initialize();
 
-			ContextSettings settings;
-			{
-				settings.depthBits = 24;
-				settings.stencilBits = 8;
-				settings.antialiasingLevel = 0;
-				settings.majorVersion = 3;
-				settings.minorVersion = 2;
-			}
+	_res_x = decltype(_res_x)(stoi(_args.Get("-resx", "1024")));
+	_res_y = decltype(_res_y)(stoi(_args.Get("-resy", "768")));
 
-			_res_x = decltype(_res_x)(stoi(_args.Get("-resx", "1024")));
-			_res_y = decltype(_res_y)(stoi(_args.Get("-resy", "768")));
+	_window.create(
+		VideoMode(1024, 768),
+		common::kAppName,
+		sf::Style::Default,
+		ContextSettings{ 0, 0, 0, 3, 2 }
+	);
 
-			wnd.create(VideoMode(_res_x, _res_y), kAppName, sf::Style::Default, settings);
-		}), 
-		Broadcaster<Op>(NetOp::Main)
-		{
+	{
+		string title = format("Tiled Client - {}", ::_getpid()).c_str();
+		SetConsoleTitle(title.c_str());
+		_window.setTitle(title);
+	}
+
+	_window.setActive(true);
+	_window.setVerticalSyncEnabled(true);
+
+	ImGui::SFML::Init(_window);
+
+	//ActiveAndAdjustWindow();
+
 	using namespace std;
 	(g_sock = make_unique<Socket>(Socket::Type::Client,
 		bind(&App::OnConnect,	 this, placeholders::_1),
@@ -43,6 +51,7 @@ App::App()
 App::~App()
 {
 	Global::Deinitialize();
+	ImGui::SFML::Shutdown();
 }
 
 void App::NetOperationProcess()
@@ -101,7 +110,7 @@ int App::Tick()
 			_window.display();
 		}
 
-		this_thread::sleep_for(chrono::milliseconds(1));
+		this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 
 	return 0;
@@ -124,7 +133,7 @@ bool App::HandleEvents()
 		if (ev.type == sf::Event::Resized)
 		{
 			//auto _ = WindowGuard();
-			AdjustViewport(ev.size.width, ev.size.height);
+			//AdjustViewport(ev.size.width, ev.size.height);
 		}
 		else 
 		{
@@ -192,6 +201,7 @@ void App::NetOp_EnterGame()
 	g_map->SetUnit(g_player.get());
 
 	auto total_units = GetPacket()->ReadAs<u16>();
+	PrintDebug("TotalUnits: {}", total_units);
 	while(total_units-- > 0)
 	{
 		unit::Base base;

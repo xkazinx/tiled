@@ -25,9 +25,6 @@
     <Filter Include="deps">
       <UniqueIdentifier>{f1e1d291-b6c4-4ff2-9d90-ca793dd7fde5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="deps\kazin">
-      <UniqueIdentifier>{b39886d3-a936-46c0-8646-97f0c00dd3c3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="deps\common">
       <UniqueIdentifier>{3d119c3c-4581-4ae9-bc3c-c69223a4ab0d}</UniqueIdentifier>
     </Filter>
@@ -67,6 +64,7 @@
       <Filter>map</Filter>
     </ClInclude>
     <ClInclude Include="Unit.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp">
@@ -99,51 +97,15 @@
     <ClCompile Include="Tile.cpp">
       <Filter>map</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\arg_parser.cpp">
-      <Filter>deps\kazin</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\auth.cpp">
-      <Filter>deps\kazin</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\container.cpp">
-      <Filter>deps\kazin</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\file.cpp">
-      <Filter>deps\kazin</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\kazin.cpp">
-      <Filter>deps\kazin</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\log.cpp">
-      <Filter>deps\kazin</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\net.cpp">
-      <Filter>deps\kazin</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\os.cpp">
-      <Filter>deps\kazin</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\packet.cpp">
-      <Filter>deps\kazin</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\process.cpp">
-      <Filter>deps\kazin</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\random.cpp">
-      <Filter>deps\kazin</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\scenes.cpp">
-      <Filter>deps\kazin</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\socket.cpp">
-      <Filter>deps\kazin</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\LIBPATH\kazin\include\kazin\time.cpp">
-      <Filter>deps\kazin</Filter>
-    </ClCompile>
     <ClCompile Include="Maps.cpp">
       <Filter>map</Filter>
     </ClCompile>
     <ClCompile Include="Unit.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="server.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico" />
   </ItemGroup>
 </Project>
