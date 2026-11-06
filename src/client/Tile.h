@@ -2,20 +2,19 @@
 
 namespace Client
 {
-class Tile final
+struct Tile final
 {
 	using Type = tile::Type;
 
-public:
-	Tile(InPacket * pkt, TilePoint pt);
+	Tile(IPkt * pkt, TilePoint pt);
 	Tile(Type type, TilePoint pt);
 	~Tile();
 
 	Type _type;
 	unit::Base * _unit = nullptr;
 
-	void Render(sf::RenderTarget& tgt, const sf::RenderStates& states) const;
-	
+	void Render(sf::RenderTarget & tgt, const sf::RenderStates & states) const;
+
 	TilePoint _pt;
 };
 }

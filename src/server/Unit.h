@@ -2,11 +2,10 @@
 
 namespace Server
 {
-class Map;
+struct Map;
 
-class Unit : public unit::Base
+struct Unit : unit::Base
 {
-public:
 	Map * _map = nullptr;
 	bool _is_dead = false;
 };

@@ -3,14 +3,13 @@
 
 namespace Client
 {
-class Player : public Unit
+struct Player : Unit
 {
-public:
 	Player(const string & name) : Unit() {
-		(string&)_name = name;
+		_name = name;
 	}
 
 	Direction GetNextDir(TilePoint src, TilePoint dst);
-	TilePoint _next_pt = {0, 0};
+	TilePoint _next_pt = { 0, 0 };
 };
 }

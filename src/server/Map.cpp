@@ -12,19 +12,19 @@ namespace Server
 	{
 		_id = id;
 
-		if(id == MapID::Battlefield)
+		if (id == MapID::Battlefield)
 		{
 			_size = { 100, 100 };
 		}
 
 		// #todo make files to sync these things, send on the meanwhile
-		for(TilePointValue y = 0; y < _size.y; ++y)
+		for (TilePointValue y = 0; y < _size.y; ++y)
 		{
-			for(TilePointValue x = 0; x < _size.x; ++x)
+			for (TilePointValue x = 0; x < _size.x; ++x)
 			{
 				_tiles.push_back(make_unique<Tile>(
-					g_rand->Probability(0.75) 
-					? TileType::Movable 
+					Probability(0.75)
+					? TileType::Movable
 					: TileType::Blocked)
 				);
 			}
@@ -32,13 +32,13 @@ namespace Server
 	}
 
 	Map::Map(Map * map)
-		: _uuid(++sUUID), Broadcaster<GameOp>(NetOp::Game)
+		: Broadcaster<GameOp>(NetOp::Game), _uuid(++sUUID)
 	{
 		_id = map->_id;
 
 		_size = map->_size;
 
-		for(auto & tile : map->_tiles)
+		for (auto & tile : map->_tiles)
 		{
 			_tiles.push_back(make_unique<Tile>(tile->_type));
 		}
@@ -49,18 +49,18 @@ namespace Server
 
 	}
 
-	bool Map::SetUnit(Unit* unit)
+	bool Map::SetUnit(Unit * unit)
 	{
-		auto tile = GetTile(unit->_pt);
-		if(!tile)
+		if (!IsValidPoint(unit->_pt))
 		{
-			PrintError("Map::SetUnit::!tile at position {}", Format(unit->_pt));
+			Err("Map::SetUnit::!tile at position {}", Format(unit->_pt));
 			return false;
 		}
 
-		if(tile->_unit)
+		auto tile = GetTile(unit->_pt);
+		if (tile->_unit)
 		{
-			PrintError("Map::SetUnit::tile->_unit already set ({}) for unit ({})", 
+			Err("Map::SetUnit::tile->_unit already set ({}) for unit ({})",
 				Format(tile->_unit->_pt), tile->_unit->_name
 			);
 
@@ -73,26 +73,26 @@ namespace Server
 
 	bool Map::UnsetUnit(Unit * unit)
 	{
-		auto tile = GetTile(unit->_pt);
-		if (!tile)
+		if (!IsValidPoint(unit->_pt))
 		{
-			PrintError("Map::UnsetUnit::!tile at position {}", Format(unit->_pt));
+			Err("Map::UnsetUnit::!tile at position {}", Format(unit->_pt));
 			return false;
 		}
 
+		auto tile = GetTile(unit->_pt);
 		if (!tile->_unit)
 		{
-			PrintError("Map::UnsetUnit::!tile->_unit not present to unset ({} {})",
+			Err("Map::UnsetUnit::!tile->_unit not present to unset ({} {})",
 				unit->_name, Format(unit->_pt)
 			);
 
 			return false;
 		}
 
-		if(tile->_unit != unit)
+		if (tile->_unit != unit)
 		{
-			PrintError("Map::UnsetUnit: Unit is present ({} {}) but doesn't match owner ({} {})",
-				tile->_unit->_name, Format(tile->_unit->_pt), 
+			Err("Map::UnsetUnit: Unit is present ({} {}) but doesn't match owner ({} {})",
+				tile->_unit->_name, Format(tile->_unit->_pt),
 				unit->_name, Format(unit->_pt)
 			);
 
@@ -103,16 +103,16 @@ namespace Server
 		return true;
 	}
 
-	void Map::Write_EnterGame([[maybe_unused]] OutPktRef pkt)
+	void Map::Write_EnterGame(OPktPtr & pkt)
 	{
-		PrintDebug("Map::Write_EnterGame: Sending {} tiles", Format(_size));
+		DebugLog("Map::Write_EnterGame: Sending {} tiles", Format(_size));
 
 		pkt->Write(_size);
 
 		TilePoint pt;
-		for(pt.y = 0; pt.y < _size.y; ++pt.y)
+		for (pt.y = 0; pt.y < _size.y; ++pt.y)
 		{
-			for(pt.x = 0; pt.x < _size.x; ++pt.x)
+			for (pt.x = 0; pt.x < _size.x; ++pt.x)
 			{
 				pkt->Write(GetTile(pt)->_type);
 			}
@@ -121,31 +121,31 @@ namespace Server
 
 	void Map::NetOperationProcess()
 	{
-		PrintDebug("NetOperationProcess GameOp{}", Format(GetOperation()));
+		DebugLog("NetOperationProcess GameOp{}", Format(_op));
 
-		switch (GetOperation())
+		switch (_op)
 		{
 
 		default:
-			PrintError("Unknown GamenOp{}", Format(GetOperation()));
+			Err("Unknown GameOp{}", Format(_op));
 			break;
 		}
 	}
 
-	void Map::Send(packet::OutPktPtr& out)
+	void Map::Send(OPktPtr & out)
 	{
-		for(auto player : _players)
+		for (auto player : _players)
 		{
 			Global::Send(player, out);
 		}
 	}
 
-	void Map::SendNearby(packet::OutPktPtr& out, Unit * unit)
+	void Map::SendNearby(OPktPtr & out, Unit * unit)
 	{
 		// #todo add boundary checks to only notify to players that are nearby
 		for (auto player : _players)
 		{
-			if(player == unit || !player->IsOnSight(unit))
+			if (player == unit || !player->IsOnSight(unit))
 				continue;
 
 			Global::Send(player, out);

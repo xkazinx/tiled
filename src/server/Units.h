@@ -2,22 +2,19 @@
 
 namespace Server
 {
-class Player;
+struct Player;
 
-class Units : public Broadcaster<UnitOp>
+struct Units : Broadcaster<UnitOp>
 {
-public:
 	using Op = UnitOp;
 
 	array<unique_ptr<Player>, player::kMax> _array;
-	vector<Player*> _list;
+	vector<Player *> _list;
 
 	Units();
 	~Units();
 
 	virtual void NetOperationProcess() override;
-
-
 
 private:
 	void NetOp_Action();

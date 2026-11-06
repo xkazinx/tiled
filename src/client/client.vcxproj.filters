@@ -1,121 +1,59 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="common">
+      <UniqueIdentifier>{1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d}</UniqueIdentifier>
+    </Filter>
     <Filter Include="app">
       <UniqueIdentifier>{a2ae25f5-a17b-415a-881e-c427a1c9a0fe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="app\ph">
-      <UniqueIdentifier>{23f1edb3-f2e9-461b-b454-d9b1a3ccf4e6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="scene">
-      <UniqueIdentifier>{783ef24e-6021-4844-a61c-f03287a1a544}</UniqueIdentifier>
+      <UniqueIdentifier>{2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="scene\ui">
-      <UniqueIdentifier>{9de2342f-b339-443b-8819-8492688b0b98}</UniqueIdentifier>
+    <Filter Include="game">
+      <UniqueIdentifier>{3c4d5e6f-7a8b-4c9d-0e1f-2a3b4c5d6e7f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="scene\lobby">
-      <UniqueIdentifier>{e53cded0-35c5-456d-87a8-27ed0b6c519a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="scene\login">
-      <UniqueIdentifier>{2065043a-04f5-492b-8c30-e7844f924648}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="dep">
-      <UniqueIdentifier>{14db8afb-fe26-484e-9068-f5a80763289c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="dep\common">
-      <UniqueIdentifier>{16eecd43-90ab-41a3-aa8d-dc30bce59ccb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="scene\game">
-      <UniqueIdentifier>{d5b24155-914f-4061-aabb-e51b0f847482}</UniqueIdentifier>
+    <Filter Include="resources">
+      <UniqueIdentifier>{5e6f7a8b-9c0d-4e1f-2a3b-4c5d6e7f8a9b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="App.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>app\ph</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>app\ph</Filter>
-    </ClInclude>
-    <ClInclude Include="Global.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="Broadcaster.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="LobbyScene.h">
-      <Filter>scene\lobby</Filter>
-    </ClInclude>
-    <ClInclude Include="LoginScene.h">
-      <Filter>scene\login</Filter>
-    </ClInclude>
-    <ClInclude Include="GameScene.h">
-      <Filter>scene\game</Filter>
-    </ClInclude>
-    <ClInclude Include="Map.h">
-      <Filter>scene\game</Filter>
-    </ClInclude>
-    <ClInclude Include="Tile.h">
-      <Filter>scene\game</Filter>
-    </ClInclude>
-    <ClInclude Include="Scenes.h">
-      <Filter>scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="Unit.h" />
-    <ClInclude Include="Units.h" />
-    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\common\common.h"><Filter>common</Filter></ClInclude>
+    <ClInclude Include="..\common\netops.h"><Filter>common</Filter></ClInclude>
+    <ClInclude Include="..\common\point.h"><Filter>common</Filter></ClInclude>
+    <ClInclude Include="App.h"><Filter>app</Filter></ClInclude>
+    <ClInclude Include="Broadcaster.h"><Filter>app</Filter></ClInclude>
+    <ClInclude Include="Global.h"><Filter>app</Filter></ClInclude>
+    <ClInclude Include="stdafx.h"><Filter>app</Filter></ClInclude>
+    <ClInclude Include="Scene.h"><Filter>scene</Filter></ClInclude>
+    <ClInclude Include="Scenes.h"><Filter>scene</Filter></ClInclude>
+    <ClInclude Include="LoginScene.h"><Filter>scene</Filter></ClInclude>
+    <ClInclude Include="GameScene.h"><Filter>scene</Filter></ClInclude>
+    <ClInclude Include="Map.h"><Filter>game</Filter></ClInclude>
+    <ClInclude Include="Player.h"><Filter>game</Filter></ClInclude>
+    <ClInclude Include="Tile.h"><Filter>game</Filter></ClInclude>
+    <ClInclude Include="Unit.h"><Filter>game</Filter></ClInclude>
+    <ClInclude Include="Units.h"><Filter>game</Filter></ClInclude>
+    <ClInclude Include="resource.h"><Filter>resources</Filter></ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="App.cpp">
-      <Filter>app</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>app\ph</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>app</Filter>
-    </ClCompile>
-    <ClCompile Include="Global.cpp">
-      <Filter>app</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\common.cpp">
-      <Filter>dep\common</Filter>
-    </ClCompile>
-    <ClCompile Include="LobbyScene.cpp">
-      <Filter>scene\lobby</Filter>
-    </ClCompile>
-    <ClCompile Include="LoginScene.cpp">
-      <Filter>scene\login</Filter>
-    </ClCompile>
-    <ClCompile Include="GameScene.cpp">
-      <Filter>scene\game</Filter>
-    </ClCompile>
-    <ClCompile Include="Map.cpp">
-      <Filter>scene\game</Filter>
-    </ClCompile>
-    <ClCompile Include="Tile.cpp">
-      <Filter>scene\game</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Scenes.cpp">
-      <Filter>scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Unit.cpp" />
-    <ClCompile Include="Units.cpp" />
+    <ClCompile Include="App.cpp"><Filter>app</Filter></ClCompile>
+    <ClCompile Include="Global.cpp"><Filter>app</Filter></ClCompile>
+    <ClCompile Include="main.cpp"><Filter>app</Filter></ClCompile>
+    <ClCompile Include="stdafx.cpp"><Filter>app</Filter></ClCompile>
+    <ClCompile Include="Scenes.cpp"><Filter>scene</Filter></ClCompile>
+    <ClCompile Include="LoginScene.cpp"><Filter>scene</Filter></ClCompile>
+    <ClCompile Include="GameScene.cpp"><Filter>scene</Filter></ClCompile>
+    <ClCompile Include="Map.cpp"><Filter>game</Filter></ClCompile>
+    <ClCompile Include="Player.cpp"><Filter>game</Filter></ClCompile>
+    <ClCompile Include="Tile.cpp"><Filter>game</Filter></ClCompile>
+    <ClCompile Include="Unit.cpp"><Filter>game</Filter></ClCompile>
+    <ClCompile Include="Units.cpp"><Filter>game</Filter></ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="client.rc" />
+    <ResourceCompile Include="client.rc"><Filter>resources</Filter></ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="icon.ico" />
+    <Image Include="icon.ico"><Filter>resources</Filter></Image>
   </ItemGroup>
 </Project>

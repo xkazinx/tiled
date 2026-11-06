@@ -2,35 +2,37 @@
 
 namespace Client
 {
-using namespace kazin;
-
-template<class Op = broadcaster::DummyOp>
-class Broadcaster : public broadcaster::Base<Op>
+// A family of packets under one NetOp (kazilib net/broadcaster.h): <NetOp><Op><fields>.
+// NetOperation reads the Op and keeps the packet while NetOperationProcess runs.
+template <class Op>
+struct Broadcaster : lib::BroadcasterBase<NetOp, Op, lib::PktSizing::Exact>
 {
-	broadcaster::InOperationBase _opt;
-
-public:
+	using Base = lib::BroadcasterBase<NetOp, Op, lib::PktSizing::Exact>;
 	using Peer = ENetPeer;
 
-	explicit Broadcaster(const NetOp net_op) : broadcaster::Base<Op>(net_op){}
+	explicit Broadcaster(const NetOp net_op) : Base(net_op) {}
 	~Broadcaster() override {}
 
 	template <typename ... Args>
-	void Send(Op op, const Args &...args) const
+	void Send(Op op, const Args & ... args) const
 	{
-		auto out = packet::Out::CreateStatic(this->_net_op, op, std::forward<const Args>(args)...);
+		auto out = this->Pkt(op, args...);
 		Global::Send(out);
 	}
 
-	void NetOperation(packet::In & pkt)
+	void NetOperation(IPkt * const in)
 	{
-		pkt.Read(this->_op);
-		_opt = broadcaster::InOperationBase(pkt);
+		if (!this->FetchOperation(in))
+			return;
+
+		_in = in;
 		NetOperationProcess();
+		_in = nullptr;
 	}
 
 	virtual void NetOperationProcess() = 0;
 
-	auto GetPacket() const { return _opt.GetPacket(); }
+	// The packet being read (NetOperationProcess)
+	IPkt * _in = nullptr;
 };
 }

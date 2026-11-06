@@ -3,12 +3,11 @@
 
 namespace Client
 {
-class Map;
-class Tile;
+struct Map;
+struct Tile;
 
-class GameScene : public Scene, public Broadcaster<GameOp>
+struct GameScene : Scene, Broadcaster<GameOp>
 {
-public:
 	using Op = GameOp;
 
 	GameScene();
@@ -19,13 +18,14 @@ public:
 	static constexpr auto kID = SceneID::Game;
 
 	void Tick() override;
-	void Render(sf::RenderTarget& tgt, const sf::RenderStates& states) override;
+	void Render() override;
 	bool HandleEvents(const sf::Event & ev) override;
 	TilePoint GetMouseTile();
 
 	sf::View _game_view;
 
-private:
-
+	// A click whose press and release came between two frames (a browser's slow
+	// frame, a test's click): taken as held for one Tick
+	bool _click_left = false, _click_right = false;
 };
 }

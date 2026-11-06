@@ -13,19 +13,19 @@ Units::Units() : Broadcaster<UnitOp>(NetOp::Unit)
 
 Units::~Units()
 {
-	
+
 }
 
 void Units::NetOperationProcess()
 {
-	PrintDebug("NetOperationProcess UnitOp{}", Format(GetOperation()));
+	DebugLog("NetOperationProcess UnitOp{}", Format(_op));
 
-	switch (GetOperation())
+	switch (_op)
 	{
 		OP(Action);
 
 	default:
-		PrintError("Unknown UnitOp{}", Format(GetOperation()));
+		Err("Unknown UnitOp{}", Format(_op));
 		break;
 	}
 }
@@ -36,49 +36,49 @@ void Units::NetOp_Action()
 	Direction dir;
 	TilePoint pt;
 
-	GetPacket()->Read(action, pt, dir);
+	_in->Read(action, pt, dir);
 
-	auto p = GetPlayer();
+	auto p = _player;
 	auto map = p->_map;
 
-	if(!dir.IsValid() || !enum_contains(action) || !map->IsValidPoint(pt))
+	if (_in->IsOverflow() || !dir.IsValid() || (action != unit::Action::Stop && action != unit::Action::Move) || !map->IsValidPoint(pt))
 	{
-		PrintError("NetOp_Action: Invalid incoming packet values");
+		Err("NetOp_Action: Invalid incoming packet values");
 		return;
 	}
-	
-	if(p->_is_dead)
+
+	if (p->_is_dead)
 		return;
 
 	// #todo add move speedhack check
 	//player->_last_action_tm = time_;
 
-	if(action == unit::Action::Move)
+	if (action == unit::Action::Move)
 		map->UnsetUnit(p);
-	
+
 	p->_action = action;
 	p->_dir = dir;
-	
-	if(action == unit::Action::Move)
+
+	if (action == unit::Action::Move)
 	{
 		p->_dir.Move(p->_pt);
 
 		if (pt != p->_pt)
 		{
-			PrintError("NetOp_Actiod: received point is different from current player point");
+			Err("NetOp_Action: received point is different from current player point");
 			return;
 		}
 
-		if(action == unit::Action::Move)
+		if (action == unit::Action::Move)
 			map->SetUnit(p);
 	}
-	
-	PrintDebug("Units::NetOp_Action: Action: {}, Dir: {}, Pt: {}",
+
+	DebugLog("Units::NetOp_Action: Action: {}, Dir: {}, Pt: {}",
 		enum_name(action), enum_name(dir._id), Format(pt));
 
 	// #todo CHECK HB move motion to see if must take something into account
 
-	auto pkt = StaticPacket(UnitOp::Action, (unit::Base&)*GetPlayer());
+	auto pkt = StaticPacket(UnitOp::Action, (unit::Base &)*_player);
 	map->SendNearby(pkt, p);
 }
 }

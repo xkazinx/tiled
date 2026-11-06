@@ -2,59 +2,57 @@
 
 namespace Server
 {
-class Player;
+struct Player;
 
-class InOperation : public kazin::broadcaster::InOperationBase
+// A family of packets under one NetOp (kazilib net/broadcaster.h): <NetOp><Op><fields>.
+// NetOperation reads the Op and keeps who sent it while NetOperationProcess runs.
+template <class Op>
+struct Broadcaster : lib::BroadcasterBase<NetOp, Op, lib::PktSizing::Exact>
 {
-	Player * _player;
-	ENetPeer* _peer;
-
-public:
-	auto GetPlayer() const { return _player; }
-	auto GetPeer() const { return _peer; }
-
-	InOperation() : _player(nullptr), _peer(nullptr){}
-	InOperation(kazin::packet::In & pkt, Player * player, ENetPeer * peer)
-		: InOperationBase(pkt), _player(player), _peer(peer){}
-	InOperation(const InOperation& opt) : _player(opt.GetPlayer()), _peer(opt.GetPeer()){}
-};
-
-template<class Op>
-class Broadcaster : public kazin::broadcaster::Base<Op>
-{
-	InOperation _opt;
-
-public:
+	using Base = lib::BroadcasterBase<NetOp, Op, lib::PktSizing::Exact>;
 	using Peer = ENetPeer;
 
-	explicit Broadcaster(const NetOp net_op) : kazin::broadcaster::Base<Op>(net_op){}
+	explicit Broadcaster(const NetOp net_op) : Base(net_op) {}
 	~Broadcaster() override = default;
 
 	template <typename ... Args>
-	void Send(const Player* player, Op op, Args && ... args)
+	void Send(const Player * player, Op op, const Args & ... args)
 	{
-		// #todo #packet make it so you can send the argument directly
-		auto out = kazin::broadcaster::Base<Op>::StaticPacket(op, forward<Args>(args)...);
+		auto out = this->Pkt(op, args...);
 		Global::Send(player, out);
 	}
 
-	/*template <typename ... Args>
-	void Send(const class Room* room, Op op, Args&& ... args)
+	// <NetOp><op><args...>, exactly their size
+	template <typename ... Args>
+	[[nodiscard]] OPktPtr StaticPacket(Op op, const Args & ... args) const
 	{
-		Global::Send(room, StaticPacket(this->_net_op, op, std::forward<Args>(args)...));
-	}*/
+		return this->Pkt(op, args...);
+	}
 
-	void NetOperation(const InOperation& opt)
+	// <NetOp><op><args...> with room for `extra` bytes the caller writes after them
+	template <typename ... Args>
+	[[nodiscard]] OPktPtr DynamicPacket(Op op, const PktSz extra, const Args & ... args) const
 	{
-		opt.GetPacket()->Read(this->_op);
-		_opt = opt;
+		return this->FixedPkt(extra, op, args...);
+	}
+
+	void NetOperation(IPkt * const in, Player * const player, ENetPeer * const peer)
+	{
+		if (!this->FetchOperation(in))
+			return;
+
+		_in = in;
+		_player = player;
+		_peer = peer;
 		NetOperationProcess();
+		_in = nullptr;
 	}
 
 	virtual void NetOperationProcess() = 0;
 
-	auto GetPlayer() const { return _opt.GetPlayer();	}
-	auto GetPacket() const { return _opt.GetPacket();	}
-	auto GetPeer()	  const { return _opt.GetPeer();		}
+	// The packet being read, who sent it (NetOperationProcess)
+	IPkt * _in = nullptr;
+	Player * _player = nullptr;
+	ENetPeer * _peer = nullptr;
 };
 }

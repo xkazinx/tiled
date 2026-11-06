@@ -4,6 +4,8 @@
 /src/server/Debug
 /src/server/Release
 
+# Build output: deploy\client (client.exe, SFML DLLs), deploy\server (server.exe,
+# libmysql.dll, init.json with the database password, web\ from build_web.ps1)
 /deploy/client
 /deploy/server
 
@@ -11,3 +13,13 @@
 src/.vs/
 
 *.vcxproj.user
+
+# Libraries fetched by setup.ps1
+/src/dep/SFML-3.1.0
+/src/dep/mysql-connector-c-*
+# Intermediates (FASTBuild, Linux and web builds, the deploy upload)
+/src/build/
+# A server's credentials, anywhere (src\server\init.json.example is the committed shape)
+init.json
+# Web test shots and logs
+/testerino/

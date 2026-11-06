@@ -2,9 +2,8 @@
 
 namespace Client
 {
-class App final : public Broadcaster<MainOp>
+struct App final : Broadcaster<MainOp>
 {
-public:
 	using Op = MainOp;
 
 	App();
@@ -14,14 +13,16 @@ public:
 
 	int Tick();
 
+	// One pass of the loop: events, network, update, render; false once the window closed
+	bool Frame(sf::Clock & delta_clock);
+
 	// false if the processed event has closed the window
 	bool HandleEvents();
-	
+
 	// #todo make dynamic resolution and scale, make it readable from config file, and changeable in game
 
 	sf::RenderWindow _window;
 	u16 _res_x, _res_y;
-	kazin::ArgParser _args;
 
 private:
 	void InitializeWindow();

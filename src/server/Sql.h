@@ -2,25 +2,24 @@
 
 namespace Server
 {
-class Sql;
+struct Sql;
 using SelectValue = szt;
 
-class SelectItem
+struct SelectItem
 {
-public:
-	SelectItem(const MYSQL_ROW & row, const vector<unsigned long> & length, const std::map<string, SelectValue>& fields)
+	SelectItem(const MYSQL_ROW & row, const vector<unsigned long> & length, const std::map<string, SelectValue> & fields)
 		: _row(row), _length(length), _fields(fields)
 	{
-		
+
 	}
 
-	template<typename T>
-	T Get(string field)
+	template <typename T>
+	T Get(const string & field)
 	{
 		if (_fields.contains(field))
 		{
 			const auto idx = _fields.at(field);
-			string data(_row[idx], _length[idx]);
+			string data = _row[idx] ? string(_row[idx], _length[idx]) : string();
 
 			if constexpr (is_same_v<bool, T>)
 			{
@@ -30,42 +29,38 @@ public:
 			{
 				if constexpr (std::is_floating_point_v<T>)
 				{
-					return (T)std::strtof(data);
+					return (T)std::stod(data);
+				}
+				else if constexpr (std::is_signed_v<T>)
+				{
+					return (T)std::stoll(data);
 				}
 				else
 				{
-					if constexpr (std::is_signed_v<T>)
-					{
-						return (T)std::stoll(data);
-					}
-					else if constexpr (std::is_unsigned_v<T>)
-					{
-						return (T)std::stoull(data);
-					}
+					return (T)std::stoull(data);
 				}
 			}
 			else return data;
 		}
 
-		PrintError("Field not found for SelectItem::Pop: {}", field);
-		return string("");
+		Err("Field not found for SelectItem::Pop: {}", field);
+		return T{};
 	}
 
 	const MYSQL_ROW & _row;
-	const vector<unsigned long>& _length;
+	const vector<unsigned long> & _length;
 	const std::map<string, SelectValue> & _fields;
 };
 
-class SelectResult final
+struct SelectResult final
 {
-public:
-	SelectResult(Sql* sql);
+	SelectResult(Sql * sql);
 
 	~SelectResult();
 
-	MYSQL_RES* _ptr;
+	MYSQL_RES * _ptr = nullptr;
 	vector<MYSQL_ROW> _rows;
-	vector<MYSQL_FIELD*> _fields;
+	vector<MYSQL_FIELD *> _fields;
 	vector<vector<unsigned long>> _lengths;
 	std::map<string, SelectValue> _fields_indexes;
 	SelectValue _current_row_idx = 0;
@@ -76,32 +71,42 @@ public:
 		if (idx >= _rows.size())
 			return nullptr;
 
-		return make_unique<SelectItem>(_rows[(szt)idx], _lengths[(szt)idx],_fields_indexes);
+		return make_unique<SelectItem>(_rows[idx], _lengths[idx], _fields_indexes);
 	}
 
 	auto GetCount() const { return _rows.size(); }
 	auto IsEmpty() const { return _rows.empty(); }
 };
 
-class Sql final
+// One connection to the game's database. Where it is: init.json beside the exe
+// (never committed: init.json.example) or launch flags, db_host (localhost),
+// db_port (3306), db_user (tiled), db_pass, db_name (tiled).
+struct Sql final
 {
-public:
 	Sql();
 	~Sql();
 
 	static unique_ptr<Sql> Create();
 	MYSQL _ptr;
 
-	auto Get() { return &_ptr; }
+	MYSQL * Get() { return &_ptr; }
 
 	unsigned FetchError();
 
-	// #todo make class query
-	void Query(const string & query);
-	void Insert(const string & table, const vector<string> & columns, const vector<vector<string>> & rows);
-	unique_ptr<SelectResult> Select(const string& table, const vector<string>& columns, const string& extra = "");
+	// A value for a query: escaped and quoted ('...')
+	string Quote(const string & value);
 
-	static string Scape(const string& str, const string& scape, const string& add = "")
+	// #todo make class query
+	bool Query(const string & query);
+	bool Insert(const string & table, const vector<string> & columns, const vector<vector<string>> & rows);
+	unique_ptr<SelectResult> Select(const string & table, const vector<string> & columns, const string & extra = "");
+
+	// The accounts (table `players`, server/sql/schema.sql): the password kept as
+	// SHA-256 of a random salt and the password, never as it was typed
+	bool CheckLogin(const string & user, const string & pass);
+	bool CreateAccount(const string & user, const string & pass);
+
+	static string Scape(const string & str, const string & scape, const string & add = "")
 	{
 		return scape + str + scape + add;
 	}

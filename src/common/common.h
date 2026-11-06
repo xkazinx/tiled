@@ -1,49 +1,140 @@
 #pragma once
+// What the client and the server share: kazilib (std names, startup flags, the
+// log, magic_enum, enet and its packet layer, the broadcaster base), the points,
+// tiles, directions, maps, units and players' common parts, and Format.
+#ifdef _MSC_VER
+#pragma warning(disable : 4996)
+#endif
 
-#define KAZIN_WINDOWS
-#define KAZIN_NET
-#define DEBUG_PACKET
+// winsock2 before anything includes <windows.h> (initflags.h does), or windows.h
+// brings the old winsock.h and enet's winsock2.h redefines it all. Linux (the
+// server) and the browser (the client, Emscripten) have neither.
+#ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <winsock2.h>
+#include <windows.h>
+#include <process.h>
+#else
+#include <unistd.h>
+#endif
 
-// Removes winsock api redefinition
-#define _WINSOCKAPI_
-#include <kazilib/kazilib.h>
+#include <cstddef>
+#include <cstdint>
+using u64 = std::uint64_t;
+using i64 = std::int64_t;
+using u32 = std::uint32_t;
+using i32 = std::int32_t;
+using u16 = std::uint16_t;
+using i16 = std::int16_t;
+using u8 = std::uint8_t;
+using i8 = std::int8_t;
+using szt = std::size_t;
 
-using namespace kazin::global;
-using Socket = kazin::Socket;
-using InPacket = kazin::InPacket;
-using OutPktRef = kazin::OutPktRef;
+// kazilib: std names without std::, startup flags, the log, enums, enet and packets
+#include <stdnames.h>
+#include <initflags.h>
+#include <under.h>
+#include <log.h>
+#include <magic_enum.h>
+#include <net/packet.h>
+#include <net/socket.h>
+#include <net/broadcaster.h>
+#include <time/thread_time.h>
+#include <algorithm>
+#include <cassert>
+#include <chrono>
+#include <cmath>
+#include <format>
+#include <map>
+#include <random>
+#include <thread>
+#include <utility>
 
-using Auth = kazin::Auth;
-using namespace kazin;
+#include "point.h"
+
+using std::format;
+using std::is_enum_v;
+using std::is_signed_v;
+using std::is_unsigned_v;
+using std::is_integral_v;
+using lib::OPkt;
+using lib::OPktPtr;
+using lib::IPkt;
+using lib::PktSz;
+using lib::Socket;
+using lib::SocketHandler;
+using magic_enum::enum_name;
+using magic_enum::enum_names;
+using magic_enum::enum_values;
+using magic_enum::enum_contains;
+namespace this_thread = std::this_thread;
+
+#include "netops.h"
 
 namespace common
 {
-constexpr u16 kPort = 333;
-constexpr const char * kHost = "localhost";
+// The game server: ENet on UDP 7031 (native clients), browsers through its WebSocket
+// gateway on 7030 (net/ws_gateway.h). Launch flags ip= / port= / ws= or init.json.
+constexpr u16 kPort = 7031;
+constexpr u16 kWsPort = 7030;
+constexpr const char * kHost = "127.0.0.1";
 constexpr const char * kAppName = "Tiled";
-/*template <typename T>
-constexpr std::underlying_type_t<T> to_underlying(T value) noexcept
+
+inline string ServerIp() { return lib::init::Value("ip", kHost); }
+inline u16 ServerPort() { return (u16)lib::init::Number("port", kPort); }
+
+// The per-packet traces (the old PrintDebug): launch flag `debug`
+inline bool DebugOn()
 {
-	return underlying_type_t<T>(value);
-}*/
+	static const bool on = lib::init::Flag("debug", false);
+	return on;
+}
+#define DebugLog(...) do { if (::common::DebugOn()) Info(__VA_ARGS__); } while (0)
+
+// The case of a broadcaster's switch: Op::Name runs NetOp_Name()
+#define OP(name) case Op::name: NetOp_##name(); break
+
+inline long long ProcessId()
+{
+#ifdef _WIN32
+	return (long long)::_getpid();
+#else
+	return (long long)::getpid();
+#endif
+}
+
+inline std::mt19937 & Rng()
+{
+	static std::mt19937 rng{ std::random_device{}() };
+	return rng;
+}
+
+// True with probability p (0..1)
+inline bool Probability(const double p)
+{
+	return std::bernoulli_distribution(p)(Rng());
+}
+
+// A login: the account's name and password (c->s Login / CreateAccount)
+struct Auth : lib::NetItem
+{
+	string _user, _pass;
+
+	Auth() = default;
+	Auth(string user, string pass) : _user(std::move(user)), _pass(std::move(pass)) {}
+	explicit Auth(IPkt * const in) { in->Read(_user, _pass); }
+
+	_serialize(_user, _pass)
+
+	bool IsValid() const;
+};
 
 using RenderPointValue = i16;
 using TilePointValue = i16;
 using WorldPointValue = i16;
 
-/*
-#ifdef CLIENT
-using RenderPoint = sf::Vector2<RenderPointValue>;
-using TilePoint = sf::Vector2<TilePointValue>;
-using WorldPoint = sf::Vector2<WorldPointValue>;
-using MovePoint = sf::Vector2f;
-#else
-using RenderPoint =	Point<RenderPointValue>;
-using TilePoint =		Point<TilePointValue>;
-using WorldPoint =	Point<WorldPointValue>;
-using MovePoint =		Point<float>;
-#endif
-*/
 using RenderPoint = Point<RenderPointValue>;
 using TilePoint = Point<TilePointValue>;
 using WorldPoint = Point<WorldPointValue>;
@@ -55,7 +146,7 @@ namespace tile
 	{
 		Movable,
 		Blocked, // Can't move
-		Water, 
+		Water,
 		Max
 	};
 
@@ -66,9 +157,8 @@ namespace tile
 
 using TileType = tile::Type;
 
-class Direction
+struct Direction
 {
-public:
 	enum ID : u8
 	{
 		North,
@@ -87,17 +177,17 @@ public:
 	Direction(const ID & id) : _id(id) {}
 	Direction() : Direction(ID::None) {}
 
-	auto operator==(const ID & id)
+	bool operator==(const ID & id) const
 	{
 		return _id == id;
 	}
 
-	auto operator==(const Direction& dir)
+	bool operator==(const Direction & dir) const
 	{
 		return operator==(dir._id);
 	}
 
-	auto operator!=(const ID & id)
+	bool operator!=(const ID & id) const
 	{
 		return !(operator==(id));
 	}
@@ -149,32 +239,33 @@ public:
 		return (*this = GetNext(src, dst));
 	}
 
-	Point<i8> GetDelta(ID id)
+	static Point<i8> GetDelta(ID id)
 	{
-		static const vector<Point<i8>> list =
+		static const Point<i8> list[] =
 		{
-			{  0, -1	},
-			{  1, -1	},
-			{  1,  0	},
-			{  1,  1	},
-			{  0,  1	},
-			{ -1,  1	},
-			{ -1,  0	},
+			{  0, -1 },
+			{  1, -1 },
+			{  1,  0 },
+			{  1,  1 },
+			{  0,  1 },
+			{ -1,  1 },
+			{ -1,  0 },
 			{ -1, -1 }
 		};
 
-		return list[id];
+		// None (and anything past NorthWest) moves nowhere
+		return id < ID::Max ? list[id] : Point<i8>{};
 	}
 
-	auto GetDelta()
+	auto GetDelta() const
 	{
 		return GetDelta(_id);
 	}
 
-	template<typename U>
-	void Move(U & pos)
+	template <typename U>
+	void Move(U & pos) const
 	{
-		pos += GetDelta().As<decltype(pos.x)>();
+		pos += GetDelta().template As<typename U::Value>();
 	}
 
 	static Direction GetContrary(ID id)
@@ -183,28 +274,28 @@ public:
 		{
 		case ID::North:		return ID::South;
 		case ID::NorthEast:	return ID::SouthWest;
-		case ID::East:			return ID::West;
+		case ID::East:		return ID::West;
 		case ID::SouthEast:	return ID::NorthWest;
 		case ID::South:		return ID::North;
 		case ID::SouthWest:	return ID::NorthEast;
-		case ID::West:			return ID::East;
+		case ID::West:		return ID::East;
 		case ID::NorthWest:	return ID::SouthEast;
+		default:			break;
 		}
 
 		return ID::None;
 	}
 
-	auto GetContrary() const 
+	auto GetContrary() const
 	{
 		return GetContrary(_id);
 	}
 
-	auto IsValid() const
+	bool IsValid() const
 	{
-		return enum_contains(_id);
+		return _id < ID::Max;
 	}
 };
-
 
 namespace map
 {
@@ -218,7 +309,7 @@ namespace map
 		Resolution / tile::kSize
 	}, VisibleTilesRange =
 	{
-		VisibleTiles / 2
+		VisibleTiles / (RenderPointValue)2
 	};
 
 	enum ID : u8
@@ -228,24 +319,23 @@ namespace map
 		None = u8(-1)
 	};
 
-	template<typename Tile>
-	class Base
+	template <typename Tile>
+	struct Base
 	{
-	public:
 		ID _id = ID::None;
 
 		TilePoint _size;
 
 		vector<unique_ptr<Tile>> _tiles;
 
-		Tile* GetTile(TilePoint pt)
+		Tile * GetTile(TilePoint pt)
 		{
 			return _tiles[pt.y + pt.x * _size.y].get();
 		}
 
 		bool IsValidPoint(TilePoint pt) const
 		{
-			return pt.x > 0 && pt.y > 0 && pt.x < _size.x&& pt.y < _size.y;
+			return pt.x > 0 && pt.y > 0 && pt.x < _size.x && pt.y < _size.y;
 		}
 
 		bool IsMovable([[maybe_unused]] TilePoint pt) const
@@ -270,16 +360,15 @@ namespace unit
 	constexpr Idx
 		kNullIdx = 0;
 
-	enum Action
+	enum Action : u8
 	{
 		Stop,
 		Move,
 		None = u8(-1),
 	};
 
-	class Base : public packet::Serializable
+	struct Base : lib::NetItem
 	{
-	public:
 		using Idx = unit::Idx;
 
 		string _name;
@@ -288,40 +377,21 @@ namespace unit
 		Action _action = Action::None;
 		Direction _dir = Direction::South;
 
-#define sparams _name, _pt, _idx, _action, _dir
-		void Write([[maybe_unused]] packet::Out& out) const override
-		{
-#ifndef CLIENT
-			out.Write(sparams);
-#endif
-		}
+		_serialize(_name, _pt, _idx, _action, _dir)
 
-		void Read([[maybe_unused]] packet::In* in) override
-		{
-#ifdef CLIENT
-			in->Read(sparams);
-#endif
-		}
-
-		packet::Size GetPacketSize() const override
-		{
-			return packet::Base::Sizer::Get(sparams);
-		}
-#undef sparams
-
-		bool IsOnSight(unit::Base * base)
+		bool IsOnSight(const unit::Base * base) const
 		{
 			// #todo check if it's >= or >
-			return 
-				base->_pt.x >= _pt.x - map::VisibleTilesRange.x && 
+			return
+				base->_pt.x >= _pt.x - map::VisibleTilesRange.x &&
 				base->_pt.x <= _pt.x + map::VisibleTilesRange.x &&
 				base->_pt.y >= _pt.y - map::VisibleTilesRange.y &&
 				base->_pt.y <= _pt.y + map::VisibleTilesRange.y;
 		}
 
-		bool Is(Base * base) const
+		bool Is(const Base * base) const
 		{
-			return _idx == base->_idx;	
+			return _idx == base->_idx;
 		}
 
 #ifdef CLIENT
@@ -340,12 +410,6 @@ namespace player
 	constexpr u8
 		kUsernameSize = 32,
 		kPasswordSize = 32;
-
-	class Base
-	{
-	public:
-
-	};
 }
 
 namespace npc
@@ -357,6 +421,17 @@ namespace npc
 
 using PlayerIdx = player::Idx;
 
+inline bool Auth::IsValid() const
+{
+	if (_user.empty() || _user.size() > player::kUsernameSize || _pass.empty() || _pass.size() > player::kPasswordSize)
+		return false;
+
+	return std::all_of(_user.begin(), _user.end(), [](const char c)
+	{
+		return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_' || c == '-';
+	});
+}
+
 enum class FormatType : u8
 {
 	None,
@@ -367,12 +442,12 @@ enum class FormatType : u8
 	bool_Affirmation, // Yes, No
 };
 
-template<typename T>
+template <typename T>
 inline string Format(T v, FormatType type = FormatType::None)
 {
 	if constexpr (is_enum_v<T>)
 	{
-		return format("({}:{})", to_underlying(v), enum_name(v));
+		return format("({}:{})", (long long)std::to_underlying(v), enum_name(v));
 	}
 	else if constexpr (is_same_v<bool, T>)
 	{
@@ -387,14 +462,17 @@ inline string Format(T v, FormatType type = FormatType::None)
 		default:				return format("{}", v);
 		}
 	}
-	else if constexpr (is_same_v<ENetPeer*, T>)
+	else if constexpr (is_same_v<ENetPeer *, T>)
 	{
-		return format("({}:{}:PlayerIdx({}))", kazin::Socket::FetchIP(v), v->address.port,
-			v->data ? *reinterpret_cast<PlayerIdx*>(v->data) : player::kNullIdx);
+		char ip[64] = {};
+		enet_address_get_host_ip(&v->address, ip, sizeof(ip));
+		return format("({}:{}:PlayerIdx({}))", ip, v->address.port,
+			v->data ? *reinterpret_cast<PlayerIdx *>(v->data) : player::kNullIdx);
 	}
-	else if constexpr (is_same_v<kazin::Auth, T>)
+	else if constexpr (is_same_v<Auth, T>)
 	{
-		return format("({}:{})", v._user.c_str(), v._pass.c_str());
+		// The password never printed
+		return format("({}:{} bytes)", v._user, v._pass.size());
 	}
 	else if constexpr (
 		is_same_v<TilePoint, T> ||

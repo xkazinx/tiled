@@ -4,6 +4,11 @@
 #include "Units.h"
 #include "Map.h"
 #include "Maps.h"
+#include <os/exe_path.h>
+#ifdef _WIN32
+#include <os/console_window.h>
+#endif
+#include <filesystem>
 
 namespace Server
 {
@@ -13,47 +18,77 @@ App::App()
 	g_app = this;
 	Global::Initialize();
 
+#ifdef _WIN32
+	lib::console_window::SetTitle(format("Tiled Server - {}", ProcessId()));
+#endif
+
+	g_sock = make_unique<SocketHandler>(Socket::Type::Host, ServerIp(), ServerPort(), player::kMax, 1);
+	if (!g_sock->Get()->_host)
 	{
-		string title = format("Tiled Server - {}", ::_getpid()).c_str();
-		SetConsoleTitle(title.c_str());
+		Err("Could not listen on port {}", ServerPort());
+		std::exit(1);
+	}
+	Out("Listening on port {}", ServerPort());
+
+	if (const u16 ws_port = (u16)lib::init::Number("ws", kWsPort))
+	{
+		std::error_code ec;
+		const auto web_dir = lib::exe::Dir() / "web";
+		const string web = lib::init::Value("web", std::filesystem::is_directory(web_dir, ec) ? web_dir.string() : string());
+		if (_ws.Start({ .bind = lib::init::Value("ws_bind", "127.0.0.1"), .port = ws_port,
+			.enet_host = "127.0.0.1", .enet_port = ServerPort(), .channels = 1, .max_clients = player::kMax, .web_root = web }))
+			Out("WebSocket gateway on port {}{}", ws_port, web.empty() ? "" : " (serving " + web + ")");
+		else
+			Err("WebSocket gateway: could not listen on port {}", ws_port);
 	}
 
-	using namespace std;
-	g_sock = make_unique<Socket>(Socket::Type::Server, 
-		bind(&App::OnConnect,	 this,	placeholders::_1), 
-		bind(&App::OnPacket,		 this,	placeholders::_1),
-		bind(&App::OnDisconnect, this,	placeholders::_1),
-		256);
+	// The database answers before the first player comes
+	if (!Sql::Create())
+		Err("MySQL: not reachable (init.json db_host / db_port / db_user / db_pass / db_name): logins fail until it is");
 }
 
 App::~App()
 {
+	_ws.Stop();
 	Global::Deinitialize();
 }
 
 void App::NetOperationProcess()
 {
-	Print("NetOperationProcess: MainOp{}", Format(GetOperation()));
+	DebugLog("NetOperationProcess: MainOp{}", Format(_op));
 
-	switch(GetOperation())
+	switch (_op)
 	{
 		OP(Login);
 		OP(CreateAccount);
 		OP(EnterGame);
 
 	default:
-		PrintError("Unknown MainOp{}", Format(GetOperation()));
+		Err("Unknown MainOp{}", Format(_op));
 		break;
 	}
 }
 
-int App::Tick() 
+int App::Tick()
 {
 	while (true)
 	{
-		time::Tick();
+		lib::thread_time::Update();
 
-		g_sock->Tick();
+		// The socket's own Service (not the handler's: that clears a peer's data on
+		// its disconnect, where OnDisconnect finds the player's index)
+		ENetEvent ev;
+		while (g_sock->Get()->Service(&ev) > 0)
+		{
+			switch ((Socket::Event)ev.type)
+			{
+			case Socket::Event::Connect:	OnConnect(ev);		break;
+			case Socket::Event::Packet:		OnPacket(ev);		break;
+			case Socket::Event::Disconnect:	OnDisconnect(ev);	break;
+			default: break;
+			}
+		}
+
 		g_maps->Tick();
 
 		this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -62,60 +97,80 @@ int App::Tick()
 	return 0;
 }
 
-void App::OnConnect([[maybe_unused]] ENetEvent& ev)
+void App::OnConnect(ENetEvent & ev)
 {
-	Print("OnConnected()");
+	Socket::ApplyPeerTimeout(ev.peer);
+	Out("OnConnected() {}", Format(ev.peer));
 }
 
-void App::OnPacket(ENetEvent& ev)
+void App::OnPacket(ENetEvent & ev)
 {
-	auto* p = OnAuth(ev);
+	IPkt in(ev.packet); // destroys the enet packet when read
+
+	auto * p = OnAuth(ev);
 	if (!p)
 	{
-		PrintError("App::OnPacket::!p");
+		Err("App::OnPacket::!p");
 		return;
 	}
-	
-	using enum NetOp;
-	InPacket in(ev.packet);
-	const InOperation opt(in, p, ev.peer);
 
-	switch (const auto op = in.ReadAs<NetOp>();
-		op)
+	using enum NetOp;
+	switch (const auto op = in.ReadAs<NetOp>(); op)
 	{
-	case Main:	this->NetOperation(opt);					break;
-	case Game:	if(GetPlayer()->_map) GetPlayer()->_map->NetOperation(opt);  break;
-	case Unit:	g_units->NetOperation(opt);				break;
+	case Main:	NetOperation(&in, p, ev.peer);	break;
+	case Game:	if (p->_map) p->_map->NetOperation(&in, p, ev.peer);	break;
+	case Unit:	if (p->_map) g_units->NetOperation(&in, p, ev.peer);	break;
 
 	default: // #todo
-		PrintError("Unknown NetOp{}", Format(op));
+		Err("Unknown NetOp{}", Format(op));
 		break;
 	}
 }
 
-void App::OnDisconnect([[maybe_unused]] ENetEvent & ev)
+void App::OnDisconnect(ENetEvent & ev)
 {
-	//g_player_mgr->_list.push_back(p.get());
-	//g_player_mgr->_array[*player_idx].get();
+	auto *& player_idx = reinterpret_cast<PlayerIdx *&>(ev.peer->data);
+	Out("OnDisconnect() {}", Format(ev.peer));
+	if (!player_idx)
+		return;
+
+	const auto idx = *player_idx;
+	delete player_idx;
+	player_idx = nullptr;
+
+	// The player leaves the map (the others told) and frees its slot
+	auto & p = g_units->_array[idx];
+	if (!p)
+		return;
+
+	if (p->_map)
+	{
+		p->_map->UnsetUnit(p.get());
+		auto pkt = g_units->StaticPacket(UnitOp::Remove, idx);
+		p->_map->SendNearby(pkt, p.get());
+	}
+
+	std::erase(g_units->_list, p.get());
+	p.reset();
 }
 
-Player* App::OnAuth(const ENetEvent & ev) const
+Player * App::OnAuth(const ENetEvent & ev) const
 {
-	Player* player = nullptr;
+	Player * player = nullptr;
 
-	if (auto& player_idx = reinterpret_cast<PlayerIdx*&>(ev.peer->data); 
+	if (auto & player_idx = reinterpret_cast<PlayerIdx *&>(ev.peer->data);
 		!player_idx)
 	{
 		for (PlayerIdx i = 1; i < player::kMax; i++)
 		{
-			auto& p = g_units->_array[i];
+			auto & p = g_units->_array[i];
 			if (!p)
 			{
 				p = make_unique<Player>(i, ev.peer);
 				player_idx = new PlayerIdx(i);
 				player = p.get();
 				g_units->_list.push_back(p.get());
-				Print("OnAuth: PlayerIdx {}", i);
+				Out("OnAuth: PlayerIdx {}", i);
 				break;
 			}
 		}
@@ -130,77 +185,65 @@ Player* App::OnAuth(const ENetEvent & ev) const
 
 void App::NetOp_Login()
 {
-	const Auth auth(GetPacket());
+	const Auth auth(_in);
 	if (!auth.IsValid())
 	{
-		PrintError("NetOp_Login: Invalid Auth{}", Format(auth));
+		Err("NetOp_Login: Invalid Auth{}", Format(auth));
+		Send(_player, MainOp::Login, false);
 		return;
 	}
-	
-	Print("NetOp_Login: Incoming Auth{}", Format(auth));
 
-	const auto sql = Sql::Create();
-	if (!sql)
-		return;
-
-	if (const auto res = sql->Select("players",
-		{ "username", "password" }, 
-		format(" WHERE `username` = '{}' LIMIT 1", auth._user.c_str())))
+	if (_player->_in_game)
 	{
-		if (const auto it = res->Pop())
+		Err("NetOp_Login: Auth{} already in game", Format(auth));
+		return;
+	}
+
+	Out("NetOp_Login: Incoming Auth{}", Format(auth));
+
+	if (const auto sql = Sql::Create())
+	{
+		if (sql->CheckLogin(auth._user, auth._pass))
 		{
-			if (auth._pass == it->Get<string>("password"))
-			{
-				Print("Login success for Auth{}", Format(auth));
-				Send(GetPlayer(), MainOp::Login, true);
-				GetPlayer()->OnEnterGame(auth);
-				return;
-			}
+			Out("Login success for Auth{}", Format(auth));
+			Send(_player, MainOp::Login, true);
+			_player->OnEnterGame(auth);
+			return;
 		}
 	}
-	
-	Send(GetPlayer(), MainOp::Login, false);
-	Print("Login failure for Auth{}", Format(auth));
+
+	Send(_player, MainOp::Login, false);
+	Out("Login failure for Auth{}", Format(auth));
 }
 
 void App::NetOp_CreateAccount()
 {
-	const auto sql = Sql::Create();
-	if (!sql)
-		return;
-
-	const Auth auth(GetPacket());
-	Print("Received auth: {} {}", (string&)auth._user, (string&)auth._pass);
+	const Auth auth(_in);
 	if (!auth.IsValid())
 	{
-		PrintError("NetOp_CreateAccount: Invalid Auth{}", Format(auth));
+		Err("NetOp_CreateAccount: Invalid Auth{}", Format(auth));
+		Send(_player, MainOp::CreateAccount, false);
 		return;
 	}
 
-	const auto res = sql->Select("players",
-		{ "uid" }, format(" WHERE username = '{}' LIMIT 1", (string&)auth._user));
-	
-	Send(GetPlayer(), MainOp::CreateAccount, res->IsEmpty());
-
-	if (res->IsEmpty())
+	const auto sql = Sql::Create();
+	if (!sql)
 	{
-		sql->Insert("players",
-			vector<string>{"username", "password" },
-			vector<vector<string>>{ { { auth._user }, { auth._pass } }}
-		);
+		Send(_player, MainOp::CreateAccount, false);
+		return;
+	}
 
-		Print("Create account success: username({})", auth._user.c_str());
-	}
+	const bool created = sql->CreateAccount(auth._user, auth._pass);
+	Send(_player, MainOp::CreateAccount, created);
+
+	if (created)
+		Out("Create account success: username({})", auth._user);
 	else
-	{	
-		Print("Create account failure: username({}) already in use", auth._user.c_str());
-	}
+		Out("Create account failure: username({}) already in use", auth._user);
 }
 
 void App::NetOp_EnterGame()
 {
-	Print("NetOp_EnterGame!!!");
-
-
+	DebugLog("NetOp_EnterGame!!!");
 }
 }

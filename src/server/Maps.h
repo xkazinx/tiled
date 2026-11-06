@@ -2,16 +2,15 @@
 
 namespace Server
 {
-class Map;
+struct Map;
 
-class Maps
+struct Maps
 {
-public:
 	Maps();
 	~Maps();
 
 	void Tick();
-	
+
 	vector<unique_ptr<Map>> _list, _tpl;
 };
 }

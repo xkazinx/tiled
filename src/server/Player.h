@@ -3,14 +3,13 @@
 
 namespace Server
 {
-class Map;
-class Player : public Unit
+struct Map;
+struct Player : Unit
 {
-public:
-	Player(PlayerIdx idx, ENetPeer* peer);
+	Player(PlayerIdx idx, ENetPeer * peer);
 	~Player();
-	
-	ENetPeer* _peer;
+
+	ENetPeer * _peer;
 	string _ip;
 
 	bool _in_game = false;

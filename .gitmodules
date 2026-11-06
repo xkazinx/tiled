@@ -1,0 +1,3 @@
+[submodule "src/dep/kazilib"]
+	path = src/dep/kazilib
+	url = ../kazilib.git

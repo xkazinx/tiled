@@ -1,0 +1,10 @@
+{
+  "port": 7031,
+  "ws": 7030,
+  "ws_bind": "127.0.0.1",
+  "db_host": "localhost",
+  "db_port": 3306,
+  "db_user": "tiled",
+  "db_pass": "<the password: this file goes beside the server exe as init.json, never into git>",
+  "db_name": "tiled"
+}

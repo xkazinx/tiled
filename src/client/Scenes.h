@@ -1,28 +1,30 @@
 #pragma once
+#include "Scene.h"
 
 namespace Client
 {
-class Scene;
-
-class Scenes
+// The scenes, one at a time (kazilib's lib::scene::Manager switches them): Set
+// makes the scene of that id, enters it and drops the one it leaves
+struct Scenes
 {
-public:
 	using ID = SceneID;
 
 	Scenes();
 	~Scenes();
-	
+
 	unique_ptr<Scene> _ptr;
+	lib::scene::Manager _mgr;
 
 	void Set(ID id);
-	void Render(sf::RenderTarget& tgt, const sf::RenderStates& states) const;
+	void Render();
 	void Tick();
-	bool HandleEvent(const sf::Event& ev);
+	void HandleEvent(const sf::Event * ev);
 
-	template<typename T>
+	// The current scene when it is a T, else null
+	template <typename T>
 	T * Get()
 	{
-		return (T*)_ptr.get();
+		return dynamic_cast<T *>(_ptr.get());
 	}
 };
 }

@@ -1,0 +1,19 @@
+# tiled (github.com/xkazinx/tiled) at kazin.dev/projects/tiled: the web build, and
+# its WebSocket to the game server's gateway (tiled.service on 127.0.0.1:7030).
+# Written by deploy/ubuntu/install.sh. Imported inside the kazin.dev site block
+# (`import /etc/caddy/sites/kazin.dev.d/*.caddy`).
+redir /projects/tiled /projects/tiled/ permanent
+
+# The page's WebSocket (wss://kazin.dev/projects/tiled/ws): the gateway takes the
+# upgrade on any path
+handle /projects/tiled/ws {
+	reverse_proxy 127.0.0.1:7030
+}
+
+# The web build, with the prefix taken off; revalidated each visit (a new build
+# keeps its names)
+handle_path /projects/tiled/* {
+	root * /opt/tiled/web
+	header Cache-Control "no-cache"
+	file_server
+}

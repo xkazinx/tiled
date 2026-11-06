@@ -2,10 +2,8 @@
 
 namespace Client
 {
-class Unit : public unit::Base
+struct Unit : unit::Base
 {
-public:
-
 	Unit();
 	Unit(const unit::Base * base);
 
@@ -20,6 +18,6 @@ public:
 	Direction _stop_dir = Direction::None;
 
 	// #todo maybe move to Player?
-	MovePoint _mvpt_decrease = {0.f, 0.f};
+	MovePoint _mvpt_decrease = { 0.f, 0.f };
 };
 }

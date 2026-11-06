@@ -11,17 +11,18 @@ Map::Map()
 {
 	{
 		auto res = g_app->_window.getSize();
-		Print("Map::Map Resolution: (g_app->_window.getSize()) = {}x{}", res.x, res.y);
+		DebugLog("Map::Map Resolution: (g_app->_window.getSize()) = {}x{}", res.x, res.y);
 	}
 
 	{
-		auto tile_cnt = szt(((g_app->_res_x + 4 * tile::kSize) / tile::kSize) 
+		auto tile_cnt = szt(((g_app->_res_x + 4 * tile::kSize) / tile::kSize)
 			* ((g_app->_res_y + 4 * tile::kSize) / tile::kSize)
 			+ (ceil(g_app->_res_x / tile::kSize) + ceil(g_app->_res_y / tile::kSize) + 1));
-	
-		_grid.create(tile_cnt * 8);
+
+		if (!_grid.create(tile_cnt * 8))
+			Err("Map: the grid's vertex buffer could not be made");
 		_grid.setPrimitiveType(sf::PrimitiveType::Lines);
-		_grid.setUsage(sf::VertexBuffer::Dynamic);
+		_grid.setUsage(sf::VertexBuffer::Usage::Dynamic);
 		_grid_vertex.resize(tile_cnt * 8);
 	}
 
@@ -29,20 +30,20 @@ Map::Map()
 		_visible_tiles = map::VisibleTiles;
 		_visible_tiles_range = map::VisibleTilesRange;
 
-		if((_visible_tiles.x % 2) == 0)
+		if ((_visible_tiles.x % 2) == 0)
 			_half_tile_offset.x = -tile::kHalfSize;
-	
-		if((_visible_tiles.y % 2) == 0)
+
+		if ((_visible_tiles.y % 2) == 0)
 			_half_tile_offset.y = -tile::kHalfSize;
 	}
 
 	UpdateCamera();
 }
 
-Map::Map(InPacket * pkt) : Map()
+Map::Map(IPkt * pkt) : Map()
 {
 	pkt->Read(_size);
-	PrintError("Map::Map: Reading from packet, map of size {}", Format(_size));
+	DebugLog("Map::Map: Reading from packet, map of size {}", Format(_size));
 
 	_tiles.reserve(_size.x * _size.y);
 
@@ -51,7 +52,7 @@ Map::Map(InPacket * pkt) : Map()
 	{
 		for (pt.x = 0; pt.x < _size.x; ++pt.x)
 		{
-			_tiles.push_back(make_unique<Tile>(pkt, pt));	
+			_tiles.push_back(make_unique<Tile>(pkt, pt));
 		}
 	}
 }
@@ -103,7 +104,7 @@ Map::~Map()
 
 }
 
-void Map::Render(sf::RenderTarget& tgt, const sf::RenderStates& states)
+void Map::Render(sf::RenderTarget & tgt, const sf::RenderStates & states)
 {
 	szt i;
 	// for East and South
@@ -111,18 +112,18 @@ void Map::Render(sf::RenderTarget& tgt, const sf::RenderStates& states)
 
 	RenderPoint rpt;
 	TilePoint tpt;
-	for(i = 0,
+	for (i = 0,
 		tpt.y = _visible_tile_offset.y,
 		rpt.y = /*-tile::kSize +*/ (_world_offset_adjust.y - _world_offset.y) + _world_offset_movement.y;
 		rpt.y <= g_app->_res_y + extra_tile_sz;
 		rpt.y += tile::kSize, ++tpt.y)
 	{
-		for(tpt.x = _visible_tile_offset.x,
+		for (tpt.x = _visible_tile_offset.x,
 			rpt.x = /*-tile::kSize +*/ (_world_offset_adjust.x - _world_offset.x) + _world_offset_movement.x;
 			 rpt.x <= g_app->_res_x + extra_tile_sz;
 			 rpt.x += tile::kSize, ++tpt.x, ++i)
 		{
-			if(_grid_visible)
+			if (_grid_visible && (i + 1) * 8 <= _grid_vertex.size())
 			{
 				auto v = &_grid_vertex[i * 8];
 				auto px = float(rpt.x);
@@ -139,7 +140,7 @@ void Map::Render(sf::RenderTarget& tgt, const sf::RenderStates& states)
 					v[7].position = Vector2f(px, py);
 
 					auto color = sf::Color(255, 255, 255, 255 / 6);
-					
+
 					if (!IsValidPoint(tpt))
 						continue;
 
@@ -148,19 +149,13 @@ void Map::Render(sf::RenderTarget& tgt, const sf::RenderStates& states)
 					if (tile->_unit)
 						color = sf::Color::Green;
 
-					if(!IsMovable(tpt))
+					if (!IsMovable(tpt))
 						color = sf::Color::Red;
 
 					if (v[0].color != color)
 					{
-						v[0].color = color;
-						v[1].color = color;
-						v[2].color = color;
-						v[3].color = color;
-						v[4].color = color;
-						v[5].color = color;
-						v[6].color = color;
-						v[7].color = color;
+						for (int c = 0; c < 8; ++c)
+							v[c].color = color;
 					}
 
 					//font::Fixed(rpt, format("{}", Format(tpt)), sf::Color::White);
@@ -169,11 +164,12 @@ void Map::Render(sf::RenderTarget& tgt, const sf::RenderStates& states)
 		}
 	}
 
-	_grid.update(_grid_vertex.data());
+	if (!_grid.update(_grid_vertex.data()))
+		return;
 	tgt.draw(_grid, 0, _grid.getVertexCount(), states);
 }
 
-RenderPoint Map::GetRenderPoint(const TilePoint& tile_pt, const TilePoint& offset)
+RenderPoint Map::GetRenderPoint(const TilePoint & tile_pt, const TilePoint & offset)
 {
 	return {
 		((tile_pt.x - offset.x) * tile::kSize) + _half_tile_offset.x,
@@ -184,18 +180,22 @@ RenderPoint Map::GetRenderPoint(const TilePoint& tile_pt, const TilePoint& offse
 void Map::SetUnit(unit::Base * base)
 {
 	// #todo
-	assert(g_map->IsValidPoint(base->_pt));
+	if (!IsValidPoint(base->_pt))
+	{
+		Err("Map::SetUnit::!IsValidPoint {}", Format(base->_pt));
+		return;
+	}
 
 	// What happens if the unit is being set as non-Stop and was never registered?
-	PrintDebug("SetUnit At: {}", Format(base->_pt));
-	
+	DebugLog("SetUnit At: {}", Format(base->_pt));
+
 	auto update_unit = [&](auto * unit)
 	{
 		switch (unit->_action)
 		{
 		case unit::Action::Move:
 		{
-			if(unit->IsSelf())
+			if (unit->IsSelf())
 			{
 				unit->_last_pt = unit->_pt;
 				unit->_dir.Move(unit->_pt);
@@ -204,17 +204,17 @@ void Map::SetUnit(unit::Base * base)
 		}
 
 		case unit::Action::Stop:
-			// #todo if the unit is moving, the stop must occur after it reached destination 
-			if(unit->_is_moving)
+			// #todo if the unit is moving, the stop must occur after it reached destination
+			if (unit->_is_moving)
 				unit->_stop_dir = unit->_dir;
 
 			unit->_last_pt = unit->_pt;
 
-			if(unit->IsSelf())
+			if (unit->IsSelf())
 				g_player->_next_pt = unit->_pt;
 
 			unit->_wpt = GetWorldPoint(unit->_pt);
-			unit->_mvpt = unit->_wpt.As<float>();
+			unit->_mvpt = unit->_wpt.template As<float>();
 			unit->_mvpt_decrease = { 0, 0 };
 			unit->_is_moving = false;
 			break;
@@ -225,19 +225,19 @@ void Map::SetUnit(unit::Base * base)
 		}
 	};
 
-	if (auto it = find_if(_units, [&](auto * u)
+	if (auto it = std::ranges::find_if(_units, [&](auto * u)
 	{
 		return u->Is(base);
 	}); it != _units.end())
 	{
 		auto * unit = *it;
 
-		if(base->IsSelf())
-		{	
+		if (base->IsSelf())
+		{
 			if (unit->_action == unit::Action::Move)
 				UnsetUnit(g_player.get());
 
-			(unit::Base&)(*g_player.get()) = *base;
+			(unit::Base &)(*g_player.get()) = *base;
 		}
 		else
 		{
@@ -246,16 +246,17 @@ void Map::SetUnit(unit::Base * base)
 
 			auto dir = unit->_dir;
 
-			(unit::Base&)(*unit) = *base;
+			(unit::Base &)(*unit) = *base;
 
 			// Direction is kept so that it shifts once it has reached destination
-			if(unit->_is_moving)
+			if (unit->_is_moving)
 				unit->_dir = dir;
 		}
 
 		update_unit(unit);
 
-		GetTile(unit->_pt)->_unit = unit;
+		if (IsValidPoint(unit->_pt))
+			GetTile(unit->_pt)->_unit = unit;
 
 		if (unit->_last_pt != unit->_pt)
 		{
@@ -267,7 +268,7 @@ void Map::SetUnit(unit::Base * base)
 			unit->_wpt = GetWorldPoint(unit->_pt);
 
 		//else
-		if(unit->IsSelf())
+		if (unit->IsSelf())
 		{
 			UpdateCamera();
 		}
@@ -286,7 +287,7 @@ void Map::SetUnit(unit::Base * base)
 			new_unit = _units_storage.back().get();
 		}
 
-		(unit::Base&)(*new_unit) = *base;
+		(unit::Base &)(*new_unit) = *base;
 
 		update_unit(new_unit);
 
@@ -302,11 +303,12 @@ void Map::SetUnit(unit::Base * base)
 			UpdateCamera();
 		}
 
-		Print("Added new unit({}) at ({}) wpt({})",
-			new_unit->_name.c_str(), Format(new_unit->_pt), Format(new_unit->_wpt)
+		Out("Added new unit({}) at ({}) wpt({})",
+			new_unit->_name, Format(new_unit->_pt), Format(new_unit->_wpt)
 		);
 
-		GetTile(new_unit->_pt)->_unit = new_unit;
+		if (IsValidPoint(new_unit->_pt))
+			GetTile(new_unit->_pt)->_unit = new_unit;
 	}
 }
 
@@ -315,7 +317,7 @@ void Map::UnsetUnit(unit::Base * unit)
 	// #todo
 	if (!IsValidPoint(unit->_pt))
 	{
-		PrintError("Map::SetUnit::!IsValidPoint {}", Format(unit->_pt));
+		Err("Map::UnsetUnit::!IsValidPoint {}", Format(unit->_pt));
 		return;
 	}
 
@@ -323,10 +325,10 @@ void Map::UnsetUnit(unit::Base * unit)
 	if (!tile)
 		return;
 
-	if(!tile->_unit)
+	if (!tile->_unit)
 	{
-		PrintError("Map::UnsetUnit::!tile->_unit not present to unset ({} {})",
-			unit->_name.c_str(), Format(unit->_pt)
+		Err("Map::UnsetUnit::!tile->_unit not present to unset ({} {})",
+			unit->_name, Format(unit->_pt)
 		);
 
 		return;
@@ -334,16 +336,34 @@ void Map::UnsetUnit(unit::Base * unit)
 
 	if (tile->_unit != unit)
 	{
-		PrintError("Map::UnsetUnit: Unit is present ({} {}) but doesn't match owner ({} {})",
-			tile->_unit->_name.c_str(), Format(tile->_unit->_pt),
-			unit->_name.c_str(), Format(unit->_pt)
+		Err("Map::UnsetUnit: Unit is present ({} {}) but doesn't match owner ({} {})",
+			tile->_unit->_name, Format(tile->_unit->_pt),
+			unit->_name, Format(unit->_pt)
 		);
 
 		return;
 	}
 
 	tile->_unit = nullptr;
-	PrintDebug("Map::UnsetUnit Success At {}", Format(unit->_pt));
+	DebugLog("Map::UnsetUnit Success At {}", Format(unit->_pt));
+}
+
+void Map::RemoveUnit(const unit::Idx idx)
+{
+	const auto it = std::ranges::find_if(_units, [&](const Unit * u) { return u->_idx == idx; });
+	if (it == _units.end() || (*it)->IsSelf())
+		return;
+
+	Unit * const unit = *it;
+	for (auto & tile : _tiles)
+	{
+		if (tile->_unit == unit)
+			tile->_unit = nullptr;
+	}
+
+	Out("Removed unit({}) at ({})", unit->_name, Format(unit->_pt));
+	_units.erase(it);
+	std::erase_if(_units_storage, [&](const unique_ptr<Unit> & u) { return u.get() == unit; });
 }
 
 void Map::Tick()
@@ -353,9 +373,9 @@ void Map::Tick()
 
 void Map::RenderObjects([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] const sf::RenderStates & states)
 {
-	for(auto unit : _units)
+	for (auto unit : _units)
 	{
-		if(!IsInSight(unit->_wpt))
+		if (!IsInSight(unit->_wpt))
 			continue;
 
 		unit->Render(tgt, states);

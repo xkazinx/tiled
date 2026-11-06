@@ -2,16 +2,15 @@
 
 namespace Server
 {
-class Unit;
+struct Unit;
 
-class Tile
+struct Tile
 {
-public:
 	using Type = TileType;
 	Tile(Type type);
 	Type _type;
 
-	bool IsMovable() const 
+	bool IsMovable() const
 	{
 		return _type == TileType::Movable;
 	}

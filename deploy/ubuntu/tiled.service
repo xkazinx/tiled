@@ -1,0 +1,24 @@
+# tiled's game server on the Ubuntu box (kazin.dev/projects/tiled): ENet on UDP
+# 7031 (native clients), browsers through its WebSocket gateway on 127.0.0.1:7030
+# behind Caddy (tiled.caddy); its accounts in the box's MySQL (database tiled, the
+# credentials in /opt/tiled/bin/init.json, mode 600). Installed by install.sh.
+[Unit]
+Description=tiled game server (kazin.dev/projects/tiled)
+After=network-online.target mysql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=tiled
+Group=tiled
+WorkingDirectory=/opt/tiled
+ExecStart=/opt/tiled/bin/tiled_server port=7031 ws=7030 ws_bind=127.0.0.1
+Restart=always
+RestartSec=2
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

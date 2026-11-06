@@ -2,9 +2,8 @@
 
 namespace Client
 {
-class Units final : public Broadcaster<UnitOp>
+struct Units final : Broadcaster<UnitOp>
 {
-public:
 	using Op = UnitOp;
 
 	Units();
@@ -16,6 +15,6 @@ public:
 private:
 	void NetOp_Action();
 	void NetOp_Spawn();
+	void NetOp_Remove();
 };
 }
-

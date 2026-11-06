@@ -8,9 +8,9 @@
 
 namespace Client
 {
-GameScene::GameScene() 
-	: _game_view({ 0.f, 0.f, (float)g_app->_res_x, (float)g_app->_res_y }),
-	Broadcaster<Op>(NetOp::Game)
+GameScene::GameScene()
+	: Broadcaster<Op>(NetOp::Game),
+	_game_view(sf::FloatRect({ 0.f, 0.f }, { (float)g_app->_res_x, (float)g_app->_res_y }))
 {
 	g_game = this;
 }
@@ -22,40 +22,48 @@ GameScene::~GameScene()
 
 void GameScene::NetOperationProcess()
 {
-	PrintDebug("GameScene: Incoming GameOp{}", Format(GetOperation()));
+	DebugLog("GameScene: Incoming GameOp{}", Format(_op));
 
 	/*
-	switch (GetOperation())
+	switch (_op)
 	{
 
 
 	default:
-		PrintError("Unknown GameOp{}", Format(GetOperation()));
+		Err("Unknown GameOp{}", Format(_op));
 		break;
 	}*/
 }
 
 void GameScene::Tick()
 {
+	// The map comes in EnterGame, after the login's answer
+	if (!g_map)
+		return;
+
 	TilePoint tile_dst = GetMouseTile();
 
-	if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	// A held button counts only in the focused window; a click event came to it anyway
+	const bool focus = g_app->_window.hasFocus();
+	const bool left = (focus && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) || _click_left;
+	const bool right = (focus && sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)) || _click_right;
+	_click_left = _click_right = false;
+
+	if (left)
 	{
-		if(!g_app->_window.hasFocus())
-			return;
 
 		if (g_player->_pt == tile_dst)
 			return;
 
-		if(g_player->_is_moving)
+		if (g_player->_is_moving)
 		{
-			if(g_player->_stop_dir != Direction::None)
+			if (g_player->_stop_dir != Direction::None)
 			{
 				g_player->_stop_dir = Direction::None;
 			}
 
 			g_player->_next_pt = tile_dst;
-			Log::Error("g_player->_is_moving reached");
+			DebugLog("g_player->_is_moving reached");
 			return;
 		}
 
@@ -75,11 +83,8 @@ void GameScene::Tick()
 
 		g_units->Send(UnitOp::Action, g_player->_action, g_player->_pt, g_player->_dir);
 	}
-	else if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+	else if (right)
 	{
-		if (!g_app->_window.hasFocus())
-			return;
-
 		auto dir = Direction::GetNext(g_player->_pt, tile_dst);
 
 		if (dir == Direction::None)
@@ -91,7 +96,7 @@ void GameScene::Tick()
 			return;
 		}
 
-		if(g_player->_action == unit::Action::Stop &&
+		if (g_player->_action == unit::Action::Stop &&
 			g_player->_dir == dir)
 		{
 			return;
@@ -109,18 +114,20 @@ void GameScene::Tick()
 	g_map->Tick();
 }
 
-void GameScene::Render(sf::RenderTarget& tgt, const sf::RenderStates& states)
+void GameScene::Render()
 {
-	auto & default_view = g_app->_window.getDefaultView();
+	if (!g_map)
+		return;
+
+	auto & tgt = g_app->_window;
+	const sf::RenderStates states;
+	auto & default_view = tgt.getDefaultView();
 
 	tgt.setView(_game_view);
 
 	{
-		if(g_map)
-			g_map->Render(tgt, states);
-
-		if(g_map)
-			g_map->RenderObjects(tgt, states);
+		g_map->Render(tgt, states);
+		g_map->RenderObjects(tgt, states);
 	}
 
 	tgt.setView(default_view);
@@ -133,7 +140,7 @@ void GameScene::Render(sf::RenderTarget& tgt, const sf::RenderStates& states)
 			(RenderPointValue)pos.x,
 			(RenderPointValue)pos.y + 15
 			},
-			
+
 			format("mouse_pos {}\n"
 				"g_player->_pt {}\n"
 				"g_player->_last_pt {}\n"
@@ -149,27 +156,36 @@ void GameScene::Render(sf::RenderTarget& tgt, const sf::RenderStates& states)
 				Format(g_player->_pt),
 				Format(g_player->_last_pt),
 				Format(g_player->_next_pt),
-				Format(g_map->_visible_tiles), 
-				Format(g_map->_visible_tiles_range), 
+				Format(g_map->_visible_tiles),
+				Format(g_map->_visible_tiles_range),
 				Format(g_map->_visible_tile_offset),
-				Format(g_map->_world_offset), 
-				Format(g_map->_world_offset_adjust), 
-				Format(g_map->_world_offset_movement), 
+				Format(g_map->_world_offset),
+				Format(g_map->_world_offset_adjust),
+				Format(g_map->_world_offset_movement),
 				Format(g_map->_half_tile_offset)),
-			
+
 			sf::Color::White);
 	}
 }
 
-bool GameScene::HandleEvents([[maybe_unused]] const sf::Event & ev)
+bool GameScene::HandleEvents(const sf::Event & ev)
 {
-	if(ev.type == sf::Event::KeyPressed)
+	if (const auto * press = ev.getIf<sf::Event::MouseButtonPressed>())
 	{
-		switch(ev.key.code)
+		if (press->button == sf::Mouse::Button::Left)
+			_click_left = true;
+		else if (press->button == sf::Mouse::Button::Right)
+			_click_right = true;
+		return true;
+	}
+
+	if (const auto * key = ev.getIf<sf::Event::KeyPressed>())
+	{
+		switch (key->code)
 		{
 			using enum sf::Keyboard::Key;
 		case Subtract:
-			PrintDebug("SUBSTRACT!");
+			DebugLog("SUBSTRACT!");
 			_game_view.zoom(1.1f);
 			break;
 
@@ -208,7 +224,7 @@ TilePoint GameScene::GetMouseTile()
 
 	TilePoint offset = g_player->_is_moving ? g_player->_last_pt - g_map->_visible_tiles_range : g_map->_visible_tile_offset;
 
-	tile += offset.As<TilePointValue>();
+	tile += offset;
 
 	return tile;
 }

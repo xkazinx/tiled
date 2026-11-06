@@ -10,7 +10,7 @@ Tile::Tile(Type type, TilePoint pt)
 
 }
 
-Tile::Tile(InPacket* pkt, TilePoint pt) : _pt(pt)
+Tile::Tile(IPkt * pkt, TilePoint pt) : _pt(pt)
 {
 	pkt->Read(_type);
 }
@@ -21,9 +21,9 @@ Tile::~Tile()
 }
 
 void Tile::Render(
-	[[maybe_unused]] sf::RenderTarget& tgt, 
-	[[maybe_unused]] const sf::RenderStates& states) const
+	[[maybe_unused]] sf::RenderTarget & tgt,
+	[[maybe_unused]] const sf::RenderStates & states) const
 {
-	
+
 }
 }

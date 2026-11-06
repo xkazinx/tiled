@@ -1,0 +1,4 @@
+# What runs on the Linux box keeps LF endings in every checkout
+*.sh text eol=lf
+deploy/ubuntu/* text eol=lf
+src/server/sql/*.sql text eol=lf

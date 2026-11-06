@@ -3,6 +3,14 @@
 #include "Map.h"
 #include "Player.h"
 
+namespace common::unit
+{
+bool Base::IsSelf() const
+{
+	return g_player && _idx == g_player->_idx;
+}
+}
+
 namespace Client
 {
 
@@ -13,7 +21,7 @@ Unit::Unit()
 
 Unit::Unit(const unit::Base * base)
 {
-	(unit::Base&)*this = *base;
+	(unit::Base &)*this = *base;
 }
 
 void Unit::Render([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] const sf::RenderStates & states)
@@ -34,16 +42,15 @@ void Unit::Render([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] cons
 
 		const auto velocity = 64.0f;
 
-		//auto delta = Clock.delta();
-		auto delta_clock = time::DeltaFloat();
+		auto delta_clock = lib::thread_time::DeltaF();
 
-		auto new_mvpt = _mvpt.Project(
+		auto new_mvpt = _mvpt.MoveTo(
 			dst_wpt.As<float>(), velocity * delta_clock
 		);
 
 		auto mvpt_diff = new_mvpt - _mvpt;
 
-		_mvpt_decrease += mvpt_diff / 2;
+		_mvpt_decrease += mvpt_diff / 2.f;
 
 		TilePoint offset = { 0, 0 };
 		auto rpt = g_map->GetRenderPoint(_pt, offset);
@@ -51,7 +58,7 @@ void Unit::Render([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] cons
 		rpt -= delta.As<decltype(rpt.x)>() * (tile::kHalfSize - 1);
 		rpt += ((_pt.As<decltype(rpt.x)>() * tile::kSize) - rpt).As<decltype(rpt.x)>();
 		rpt -= _mvpt_decrease.As<decltype(rpt.x)>();
-		
+
 		shape.setSize({ 2.f, 2.f });
 
 		{
@@ -95,20 +102,19 @@ void Unit::Render([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] cons
 
 		if (_mvpt == rpt.As<float>())
 		{
-			PrintDebug("Object reached next tile destination");
+			DebugLog("Object reached next tile destination");
 
-			_last_pt			= _pt;
+			_last_pt		= _pt;
 			_is_moving		= false;
-			_wpt				= _wpt;
-			_mvpt				= _wpt.As<float>();
-			_mvpt_decrease = { 0, 0 };
+			_mvpt			= _wpt.As<float>();
+			_mvpt_decrease	= { 0, 0 };
 
 			extra = { 0, 0 };
 		}
 	}
 
 	RenderPoint dst;
-	if(IsSelf())
+	if (IsSelf())
 	{
 		g_map->UpdateCamera();
 
@@ -117,7 +123,7 @@ void Unit::Render([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] cons
 			(RenderPointValue)round(_mvpt.y - (_mvpt_decrease.y * 2))
 		};
 	}
-	else 
+	else
 	{
 		dst = {
 			(RenderPointValue)round(_mvpt.x + g_map->_world_offset_movement.x + _mvpt_decrease.x),
@@ -125,35 +131,29 @@ void Unit::Render([[maybe_unused]] sf::RenderTarget & tgt, [[maybe_unused]] cons
 		};
 	}
 
-	auto pre_dst = dst;
 	dst -= g_map->_world_offset + g_map->_half_tile_offset.Abs();
 
-	if(IsSelf())
+	if (IsSelf())
 		dst += extra;
 
-	shape.setPosition(
+	shape.setPosition({
 		dst.x
 		+ (tile::kHalfSize) - (sz / 2.f)
 		,
 		dst.y
 		+ (tile::kHalfSize) - (sz / 2.f)
-	);
+	});
 
 	Vector2f half_sz = shape.getSize();
 	half_sz.x /= 2.f;
 	half_sz.y /= 2.f;
 
-	static sf::VertexArray lines(sf::LineStrip, 2);
+	static sf::VertexArray lines(sf::PrimitiveType::LineStrip, 2);
 	lines[0].position = shape.getPosition() + half_sz;
 	lines[1].position = shape.getPosition() + half_sz + Vector2f(half_sz.x * _dir.GetDelta().x, half_sz.y * _dir.GetDelta().y);
 
 	lines[0].color = sf::Color::Green;
 	lines[1].color = sf::Color::Green;
-
-	/*
-	Print("RENDERING! {} | g_map->_world_offset: {} | g_map->_half_tile_offset: {} | PlayerPos: {}", 
-		Format(dst), Format(g_map->_world_offset), Format(g_map->_half_tile_offset), Format(_pt));
-		*/
 
 	tgt.draw(shape);
 	tgt.draw(lines);
