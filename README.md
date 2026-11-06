@@ -4,6 +4,8 @@ A tile-engine strategy game prototype: log in, walk a 100 x 100 tile map with th
 mouse and see the other players move. An SFML client, an ENet server with its
 accounts in MySQL, on kazilib.
 
+**Made without AI** until the first Claude commit (ec1df2b, 2026-11-06); AI was used after that for the updated deployment and this README.
+
 **Play it in your browser: https://kazin.dev/projects/tiled/** (make an account in the
 window: a name of letters, digits, `_` or `-`, up to 32 characters; then Login)
 
